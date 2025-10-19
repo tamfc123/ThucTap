@@ -41,7 +41,7 @@ function TagManage() {
 
   const showedPropertiesFragment = (entity: TagResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -62,7 +62,7 @@ function TagManage() {
     <>
       <tr>
         <td>{TagConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{TagConfigs.properties.createdAt.label}</td>
@@ -101,9 +101,9 @@ function TagManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -119,7 +119,7 @@ function TagManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

@@ -34,14 +34,14 @@ const categorySchema = new mongoose.Schema(
   },
 )
 
-categorySchema.set("toJSON", {
-  virtuals: true,
-  transform: (doc, ret) => {
-    ret.id = ret._id
-    delete ret._id
-    delete ret.__v
-    return ret
-  },
-})
+// categorySchema.set("toJSON", {
+//   virtuals: true,
+//   transform: (doc, ret) => {
+//     ret.id = ret._id
+//     delete ret._id
+//     delete ret.__v
+//     return ret
+//   },
+// })
 
 export default mongoose.model("Category", categorySchema)

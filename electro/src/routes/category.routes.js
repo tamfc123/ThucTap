@@ -1,12 +1,12 @@
 import express from "express"
 const router = express.Router()
-import  categoryController from "../controllers/category.controller.js"
+import categoryController from "../controllers/category.controller.js"
 import { authenticate, authorize } from "../middleware/auth.js"
 
 // Public routes
 router.get("/", categoryController.getAllCategories)
 router.get("/slug/:slug", categoryController.getCategoryBySlug)
-router.get("/:id", categoryController.getCategoryById)
+router.get("/:id", authenticate, categoryController.getCategoryById)
 
 // authenticateed routes - Admin only
 router.post("/", authenticate, authorize("ADMIN"), categoryController.createCategory)

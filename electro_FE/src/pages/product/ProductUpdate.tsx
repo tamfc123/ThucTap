@@ -30,6 +30,9 @@ import { ImageResponse } from 'models/Image';
 
 function ProductUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     product,
     form,
@@ -48,7 +51,7 @@ function ProductUpdate() {
     productPropertySelectList, setProductPropertySelectList,
     selectedVariantIndexes, setSelectedVariantIndexes,
     resetForm,
-  } = useProductUpdateViewModel(Number(id));
+  } = useProductUpdateViewModel(id);
 
   if (!product) {
     return null;
@@ -62,7 +65,7 @@ function ProductUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={product.id}
+        id={product._id}
         createdAt={product.createdAt}
         updatedAt={product.updatedAt}
         createdBy="1"
@@ -247,7 +250,7 @@ function ProductUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={resetForm}>Mặc định</Button>

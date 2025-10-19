@@ -24,7 +24,7 @@ function VariantTablePopover({
     return <Badge color="red" variant="outline" size="sm">Vô hiệu lực</Badge>;
   };
 
-  if (variants.length === 0) {
+  if (!variants || variants.length === 0) {
     return <em>không có</em>;
   }
 
@@ -34,6 +34,8 @@ function VariantTablePopover({
       onClose={() => setOpened(false)}
       position="bottom"
       placement="end"
+      trapFocus={false}
+      withinPortal={false}
       withArrow
       transition="pop-top-right"
       title="Thông tin phiên bản"
@@ -50,6 +52,7 @@ function VariantTablePopover({
         >
           {variants.length + ' phiên bản'}
         </Button>
+
       }
     >
       <Table
@@ -61,7 +64,7 @@ function VariantTablePopover({
         <thead>
           <tr>
             <th>#</th>
-            {productProperties && productProperties.content.map((property, index) => (
+            {productProperties && productProperties.content && productProperties.content.map((property, index) => (
               <th key={index} style={{ color: theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 5 : 7] }}>
                 {property.name}
               </th>
@@ -73,7 +76,7 @@ function VariantTablePopover({
           </tr>
         </thead>
         <tbody>
-          {variants.map((variant, index) => (
+          {variants && variants.map((variant, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
               {variant.properties && variant.properties.content.map((property, index) => (

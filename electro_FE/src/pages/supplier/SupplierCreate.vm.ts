@@ -2,7 +2,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import SupplierConfigs from 'pages/supplier/SupplierConfigs';
 import { SupplierRequest, SupplierResponse } from 'models/Supplier';
 import useCreateApi from 'hooks/use-create-api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SelectOption } from 'types';
 import useGetAllApi from 'hooks/use-get-all-api';
 import { ProvinceResponse } from 'models/Province';
@@ -10,12 +10,20 @@ import ProvinceConfigs from 'pages/province/ProvinceConfigs';
 import { DistrictResponse } from 'models/District';
 import DistrictConfigs from 'pages/district/DistrictConfigs';
 import { AddressRequest } from 'models/Address';
+import useSelectAddress from 'hooks/use-select-address';
 
 function useSupplierCreateViewModel() {
   const form = useForm({
     initialValues: SupplierConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(SupplierConfigs.createUpdateFormSchema),
   });
+
+  useEffect(() => {
+    // Khi Tỉnh ('address.provinceId') thay đổi,
+    // tự động reset Huyện ('address.districtId') về 'null'.
+    form.setFieldValue('address.districtId', null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values['address.provinceId']]); // <-- Chỉ theo dõi Tỉnh
 
   const [provinceSelectList, setProvinceSelectList] = useState<SelectOption[]>([]);
   const [districtSelectList, setDistrictSelectList] = useState<SelectOption[]>([]);
@@ -32,14 +40,20 @@ function useSupplierCreateViewModel() {
     }
   );
   useGetAllApi<DistrictResponse>(DistrictConfigs.resourceUrl, DistrictConfigs.resourceKey,
-    { provinceId: form.values['address.provinceId'] || undefined,
-      size: 999 },
+    {
+      provinceId: form.values['address.provinceId'] || undefined,
+      size: 999
+    },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
         value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!form.values['address.provinceId'] // <-- Dòng này vẫn RẤT QUAN TRỌNG
     }
   );
 

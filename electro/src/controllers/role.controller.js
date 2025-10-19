@@ -20,16 +20,23 @@ export const getAllRoles = async (req, res) => {
     }
 
     const [roles, total] = await Promise.all([
-      Role.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+      Role.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }).lean(),
       Role.countDocuments(filter),
     ])
 
+    // ... (code truy vấn)
+
+    const totalPages = Math.ceil(total / limit); // Tính totalPages
+
     res.json({
-      roles,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      totalItems: total,
+      content: roles,         // <-- SỬA 1: 'roles' -> 'content'
+      page: page,             // <-- SỬA 2: 'currentPage' -> 'page'
+      size: limit,            // <-- SỬA 3: Thêm 'size'
+      totalElements: total,   // <-- SỬA 4: 'totalItems' -> 'totalElements'
+      totalPages: totalPages, // <-- SỬA 5: Giữ nguyên
+      last: page >= totalPages, // <-- SỬA 6: Thêm 'last'
     })
+    // ...
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

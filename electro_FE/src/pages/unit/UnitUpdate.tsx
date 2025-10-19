@@ -7,12 +7,15 @@ import useUnitUpdateViewModel from 'pages/unit/UnitUpdate.vm';
 
 function UnitUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     unit,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useUnitUpdateViewModel(Number(id));
+  } = useUnitUpdateViewModel(id);
 
   if (!unit) {
     return null;
@@ -26,7 +29,7 @@ function UnitUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={unit.id}
+        id={unit._id}
         createdAt={unit.createdAt}
         updatedAt={unit.updatedAt}
         createdBy="1"
@@ -55,7 +58,7 @@ function UnitUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

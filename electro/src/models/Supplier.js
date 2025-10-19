@@ -2,32 +2,29 @@ import mongoose from "mongoose";
 
 const supplierSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    code: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    email: String,
-    phone: String,
+    displayName: { type: String, required: true },
+    companyName: { type: String },
+    code: { type: String, required: true, unique: true },
+    contactFullname: { type: String },
+    contactEmail: { type: String },
+    contactPhone: { type: String },
+    taxCode: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    fax: { type: String },
+    website: { type: String },
     address: {
-      line: { type: String },
+      line: String,
       provinceId: { type: mongoose.Schema.Types.ObjectId, ref: "Province" },
       districtId: { type: mongoose.Schema.Types.ObjectId, ref: "District" },
       wardId: { type: mongoose.Schema.Types.ObjectId, ref: "Ward" },
     },
-    contactPerson: String,
-    status: {
-      type: Number,
-      default: 1,
-    },
+    description: { type: String },
+    note: { type: String },
+    status: { type: Number, default: 1 },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model("Supplier", supplierSchema);
+

@@ -49,7 +49,7 @@ router.post("/upload", authenticate, authorize("ADMIN"), upload.single("image"),
 })
 
 // Upload multiple images
-router.post("/upload-multiple", authenticate, authorize("ADMIN"), upload.array("images", 10), (req, res) => {
+router.post("/upload-multiple", upload.array("images", 10), (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No files uploaded" })

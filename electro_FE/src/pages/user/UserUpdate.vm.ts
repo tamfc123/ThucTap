@@ -13,9 +13,9 @@ import DistrictConfigs from 'pages/district/DistrictConfigs';
 import { RoleResponse } from 'models/Role';
 import { SelectOption } from 'types';
 import RoleConfigs from 'pages/role/RoleConfigs';
-import {useAdminAuthStore} from 'stores/use-admin-auth-store';
+import { useAdminAuthStore } from 'stores/use-admin-auth-store';
 
-function useUserUpdateViewModel(id: number) {
+function useUserUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: UserConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(UserConfigs.createUpdateFormSchema),
@@ -41,11 +41,11 @@ function useUserUpdateViewModel(id: number) {
         phone: userResponse.phone,
         gender: userResponse.gender,
         'address.line': userResponse.address.line || '',
-        'address.provinceId': userResponse.address.province ? String(userResponse.address.province.id) : null,
-        'address.districtId': userResponse.address.district ? String(userResponse.address.district.id) : null,
+        'address.provinceId': userResponse.address.province ? String(userResponse.address.province._id) : null,
+        'address.districtId': userResponse.address.district ? String(userResponse.address.district._id) : null,
         avatar: userResponse.avatar || '',
         status: String(userResponse.status),
-        roles: userResponse.roles.map((role) => String(role.id)),
+        roles: userResponse.roles.map((role) => String(role._id)),
       };
       form.setValues(formValues);
       setPrevFormValues(formValues);
@@ -55,7 +55,7 @@ function useUserUpdateViewModel(id: number) {
     { all: 1 },
     (provinceListResponse) => {
       const selectList: SelectOption[] = provinceListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setProvinceSelectList(selectList);
@@ -65,7 +65,7 @@ function useUserUpdateViewModel(id: number) {
     { all: 1 },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
@@ -75,7 +75,7 @@ function useUserUpdateViewModel(id: number) {
     { sort: 'id,asc', all: 1 },
     (roleListResponse) => {
       const selectList: SelectOption[] = roleListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setRoleSelectList(selectList);
@@ -103,13 +103,13 @@ function useUserUpdateViewModel(id: number) {
           gender: formValues.gender,
           address: {
             line: formValues['address.line'],
-            provinceId: Number(formValues['address.provinceId']),
-            districtId: Number(formValues['address.districtId']),
+            provinceId: formValues['address.provinceId'],
+            districtId: formValues['address.districtId'],
             wardId: null,
           },
           avatar: formValues.avatar.trim() || null,
           status: Number(formValues.status),
-          roles: formValues.roles.map((roleId) => ({ id: Number(roleId) })),
+          roles: formValues.roles.map((roleId) => ({ id: roleId })),
         };
         updateApi.mutate(requestBody, {
           onSuccess: (userResponse) => {

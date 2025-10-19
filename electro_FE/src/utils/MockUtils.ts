@@ -365,7 +365,7 @@ class MockUtils {
 
   static sampleMessages: MessageResponse[] = [
     {
-      id: 2,
+      _id: "2",
       createdAt: '',
       updatedAt: '',
       content: 'This is a content',
@@ -378,7 +378,7 @@ class MockUtils {
       },
     },
     {
-      id: 1,
+      _id: "1",
       createdAt: '',
       updatedAt: '',
       content: 'This is a content',

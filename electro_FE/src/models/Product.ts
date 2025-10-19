@@ -45,14 +45,14 @@ export interface ProductResponse_VariantResponse extends BaseResponse {
 }
 
 export interface SpecificationItem {
-  id: number;
+  id: string;
   name: string;
   code: string;
   value: string;
 }
 
 export interface ProductPropertyItem {
-  id: number;
+  id: string;
   name: string;
   code: string;
   value: string[];
@@ -66,20 +66,20 @@ export interface ProductRequest {
   description: string | null;
   images: ImageRequest[];
   status: number;
-  categoryId: number | null;
-  brandId: number | null;
-  supplierId: number | null;
-  unitId: number | null;
+  categoryId: string | null;
+  brandId: string | null;
+  supplierId: string | null;
+  unitId: string | null;
   tags: ProductRequest_TagRequest[];
   specifications: CollectionWrapper<SpecificationItem> | null;
   properties: CollectionWrapper<ProductPropertyItem> | null;
   variants: VariantRequest[];
   weight: number | null;
-  guaranteeId: number | null;
+  guaranteeId: string | null;
 }
 
 export interface ProductRequest_TagRequest {
-  id?: number;
+  id?: string;
   name?: string;
   slug?: string;
   status?: number;

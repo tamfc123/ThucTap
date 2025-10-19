@@ -7,6 +7,9 @@ import useSupplierUpdateViewModel from 'pages/supplier/SupplierUpdate.vm';
 
 function SupplierUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     supplier,
     form,
@@ -14,7 +17,7 @@ function SupplierUpdate() {
     provinceSelectList,
     districtSelectList,
     statusSelectList,
-  } = useSupplierUpdateViewModel(Number(id));
+  } = useSupplierUpdateViewModel(id);
 
   if (!supplier) {
     return null;
@@ -28,7 +31,7 @@ function SupplierUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={supplier.id}
+        id={supplier._id}
         createdAt={supplier.createdAt}
         updatedAt={supplier.updatedAt}
         createdBy="1"
@@ -168,7 +171,7 @@ function SupplierUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

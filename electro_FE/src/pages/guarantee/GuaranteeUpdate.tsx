@@ -7,12 +7,15 @@ import useGuaranteeUpdateViewModel from 'pages/guarantee/GuaranteeUpdate.vm';
 
 function GuaranteeUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     guarantee,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useGuaranteeUpdateViewModel(Number(id));
+  } = useGuaranteeUpdateViewModel(id);
 
   if (!guarantee) {
     return null;
@@ -26,7 +29,7 @@ function GuaranteeUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={guarantee.id}
+        id={guarantee._id}
         createdAt={guarantee.createdAt}
         updatedAt={guarantee.updatedAt}
         createdBy="1"
@@ -61,7 +64,7 @@ function GuaranteeUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

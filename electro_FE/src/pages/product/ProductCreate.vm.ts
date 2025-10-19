@@ -61,7 +61,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (categoryListResponse) => {
       const selectList: SelectOption[] = categoryListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.parentCategory ? item.name + ' ← ' + item.parentCategory.name : item.name,
       }));
       setCategorySelectList(selectList);
@@ -71,7 +71,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (brandListResponse) => {
       const selectList: SelectOption[] = brandListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setBrandSelectList(selectList);
@@ -81,7 +81,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (supplierListResponse) => {
       const selectList: SelectOption[] = supplierListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.displayName,
       }));
       setSupplierSelectList(selectList);
@@ -91,7 +91,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (unitListResponse) => {
       const selectList: SelectOption[] = unitListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setUnitSelectList(selectList);
@@ -103,7 +103,7 @@ function useProductCreateViewModel() {
       const selectList: SelectOption[] = tagListResponse.content
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((item) => ({
-          value: String(item.id) + '#ORIGINAL',
+          value: String(item._id) + '#ORIGINAL',
           label: item.name,
         }));
       setTagSelectList(selectList);
@@ -113,7 +113,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (guaranteeListResponse) => {
       const selectList: SelectOption[] = guaranteeListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setGuaranteeSelectList(selectList);
@@ -123,7 +123,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (specificationListResponse) => {
       const selectList: SelectOption[] = specificationListResponse.content.map((item) => ({
-        value: JSON.stringify({ id: item.id, name: item.name, code: item.code }),
+        value: JSON.stringify({ id: item._id, name: item.name, code: item.code }),
         label: item.name,
       }));
       setSpecificationSelectList(selectList);
@@ -133,7 +133,7 @@ function useProductCreateViewModel() {
     { all: 1 },
     (propertyListResponse) => {
       const selectList: SelectOption[] = propertyListResponse.content.map((item) => ({
-        value: JSON.stringify({ id: item.id, name: item.name, code: item.code }),
+        value: JSON.stringify({ id: item._id, name: item.name, code: item.code }),
         label: item.name,
       }));
       setProductPropertySelectList(selectList);
@@ -142,7 +142,7 @@ function useProductCreateViewModel() {
 
   const transformTags = (tags: string[]): ProductRequest_TagRequest[] => tags.map((tagIdOrName) => {
     if (tagIdOrName.includes('#ORIGINAL')) {
-      return { id: Number(tagIdOrName.split('#')[0]) };
+      return { id: tagIdOrName.split('#')[0] };
     }
     return {
       name: tagIdOrName.trim(),
@@ -169,7 +169,7 @@ function useProductCreateViewModel() {
     if (specifications === null) {
       return null;
     }
-    const filteredSpecifications = specifications.content.filter((specification) => specification.id !== 0);
+    const filteredSpecifications = specifications.content.filter((specification) => specification.id !== '');
     return filteredSpecifications.length === 0 ? null : new CollectionWrapper(filteredSpecifications);
   };
 
@@ -186,6 +186,8 @@ function useProductCreateViewModel() {
   };
 
   const handleFormSubmit = form.onSubmit((formValues) => {
+    // (Thêm log này để xác nhận Zod thành công)
+    console.log("Validation THÀNH CÔNG, đang gọi API:", formValues);
     const createProduct = (uploadedImageResponses?: UploadedImageResponse[]) => {
       const requestBody: ProductRequest = {
         name: formValues.name,
@@ -195,23 +197,23 @@ function useProductCreateViewModel() {
         description: formValues.description || null,
         images: uploadedImageResponses ? transformImages(uploadedImageResponses) : [],
         status: Number(formValues.status),
-        categoryId: Number(formValues.categoryId) || null,
-        brandId: Number(formValues.brandId) || null,
-        supplierId: Number(formValues.supplierId) || null,
-        unitId: Number(formValues.unitId) || null,
+        categoryId: formValues.categoryId || null,
+        brandId: formValues.brandId || null,
+        supplierId: formValues.supplierId || null,
+        unitId: formValues.unitId || null,
         tags: transformTags(formValues.tags),
         specifications: filterSpecifications(formValues.specifications),
         properties: filterProperties(formValues.properties),
         variants: filterVariants(formValues.variants),
         weight: formValues.weight || null,
-        guaranteeId: Number(formValues.guaranteeId) || null,
+        guaranteeId: formValues.guaranteeId || null,
       };
       createApi.mutate(requestBody, {
         onSuccess: async (productResponse) => {
           await queryClient.invalidateQueries([TagConfigs.resourceKey, 'getAll']);
           const tags = productResponse.tags
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map((tag) => String(tag.id) + '#ORIGINAL');
+            .map((tag) => String(tag._id) + '#ORIGINAL');
           form.setFieldValue('tags', tags);
         },
       });
@@ -242,6 +244,11 @@ function useProductCreateViewModel() {
       label: 'Vô hiệu lực',
     },
   ];
+  // =======================================================
+  // THÊM DÒNG NÀY ĐỂ XEM LỖI VALIDATION
+  // Nó sẽ hiển thị lỗi ngay khi bạn bấm nút (nếu Zod thất bại)
+  console.log("Lỗi Form Hiện tại (Zod):", form.errors);
+  // =======================================================
 
   return {
     form,

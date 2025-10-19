@@ -7,7 +7,7 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 
-function useTagUpdateViewModel(id: number) {
+function useTagUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: TagConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(TagConfigs.createUpdateFormSchema),

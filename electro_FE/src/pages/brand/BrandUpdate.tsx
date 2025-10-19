@@ -7,12 +7,15 @@ import useBrandUpdateViewModel from 'pages/brand/BrandUpdate.vm';
 
 function BrandUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     brand,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useBrandUpdateViewModel(Number(id));
+  } = useBrandUpdateViewModel(id);
 
   if (!brand) {
     return null;
@@ -26,7 +29,7 @@ function BrandUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={brand.id}
+        id={brand._id}
         createdAt={brand.createdAt}
         updatedAt={brand.updatedAt}
         createdBy="1"
@@ -68,7 +71,7 @@ function BrandUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

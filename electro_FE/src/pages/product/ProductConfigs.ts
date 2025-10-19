@@ -235,7 +235,7 @@ class ProductConfigs extends Configs {
     tags: z.array(z.string()),
     specifications: z.object({
       content: z.array(z.object({
-        id: z.number(),
+        id: z.string(),
         name: z.string(),
         code: z.string(),
         value: z.string(),
@@ -244,7 +244,7 @@ class ProductConfigs extends Configs {
     }).nullable(),
     properties: z.object({
       content: z.array(z.object({
-        id: z.number(),
+        id: z.string(),
         name: z.string(),
         code: z.string(),
         value: z.array(z.string()),

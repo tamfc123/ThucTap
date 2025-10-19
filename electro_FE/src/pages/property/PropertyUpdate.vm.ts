@@ -7,7 +7,7 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 
-function usePropertyUpdateViewModel(id: number) {
+function usePropertyUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: PropertyConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(PropertyConfigs.createUpdateFormSchema),

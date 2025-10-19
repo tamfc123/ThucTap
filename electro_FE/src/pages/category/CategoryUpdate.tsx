@@ -7,13 +7,16 @@ import useCategoryUpdateViewModel from 'pages/category/CategoryUpdate.vm';
 
 function CategoryUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     category,
     form,
     handleFormSubmit,
     categorySelectList,
     statusSelectList,
-  } = useCategoryUpdateViewModel(Number(id));
+  } = useCategoryUpdateViewModel(id);
 
   if (!category) {
     return null;
@@ -27,7 +30,7 @@ function CategoryUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={category.id}
+        id={category._id}
         createdAt={category.createdAt}
         updatedAt={category.updatedAt}
         createdBy="1"
@@ -85,7 +88,7 @@ function CategoryUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

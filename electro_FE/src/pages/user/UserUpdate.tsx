@@ -18,6 +18,9 @@ import useUserUpdateViewModel from 'pages/user/UserUpdate.vm';
 
 function UserUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     user,
     form,
@@ -28,7 +31,7 @@ function UserUpdate() {
     statusSelectList,
     roleSelectList,
     isDisabledUpdateButton,
-  } = useUserUpdateViewModel(Number(id));
+  } = useUserUpdateViewModel(id);
 
   if (!user) {
     return null;
@@ -42,7 +45,7 @@ function UserUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={user.id}
+        id={user._id}
         createdAt={user.createdAt}
         updatedAt={user.updatedAt}
         createdBy="1"
@@ -151,7 +154,7 @@ function UserUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

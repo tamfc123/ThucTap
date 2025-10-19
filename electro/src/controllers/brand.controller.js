@@ -13,17 +13,20 @@ export const getAllBrands = async (req, res) => {
     const skip = (page - 1) * size
     const limit = Number.parseInt(size)
 
-    const brands = await Brand.find(query).sort(sort).skip(skip).limit(limit)
+    const brands = await Brand.find(query).sort(sort).skip(skip).limit(limit).lean()
 
-    const total = await Brand.countDocuments(query)
+    const total = await Brand.countDocuments(query);
+    const totalPages = Math.ceil(total / size);
 
+    // 2. SỬA LẠI CẤU TRÚC JSON
     res.json({
       content: brands,
       totalElements: total,
-      totalPages: Math.ceil(total / size),
+      totalPages: totalPages,
       size: limit,
-      number: Number.parseInt(page) - 1,
-    })
+      page: Number.parseInt(page), // <-- Sửa 'number' thành 'page'
+      last: page >= totalPages, // <-- Thêm 'last'
+    });
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

@@ -42,7 +42,7 @@ function CategoryManage() {
 
   const showedPropertiesFragment = (entity: CategoryResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.name}
@@ -55,7 +55,7 @@ function CategoryManage() {
       </td>
       <td>
         <Avatar src={entity.thumbnail} alt={entity.name} radius="lg" size="lg" color="grape">
-          <QuestionMark size={30}/>
+          <QuestionMark size={30} />
         </Avatar>
       </td>
       <td>{entity.parentCategory ? entity.parentCategory.name : <em>không có</em>}</td>
@@ -67,7 +67,7 @@ function CategoryManage() {
     <>
       <tr>
         <td>{CategoryConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{CategoryConfigs.properties.createdAt.label}</td>
@@ -93,7 +93,7 @@ function CategoryManage() {
         <td>{CategoryConfigs.properties.thumbnail.label}</td>
         <td>
           <Avatar src={entity.thumbnail} alt={entity.name} radius="lg" size="lg" color="grape">
-            <QuestionMark size={30}/>
+            <QuestionMark size={30} />
           </Avatar>
         </td>
       </tr>
@@ -122,9 +122,9 @@ function CategoryManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -140,7 +140,7 @@ function CategoryManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

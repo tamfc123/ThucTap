@@ -6,7 +6,7 @@ import { UseQueryOptions } from 'react-query/types/react/types';
 function useGetByIdApi<O>(
   resourceUrl: string,
   resourceKey: string,
-  entityId: number,
+  entityId: string,
   successCallback?: (data: O) => void,
   options?: UseQueryOptions<O, ErrorMessage>
 ) {

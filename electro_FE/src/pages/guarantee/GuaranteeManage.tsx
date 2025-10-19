@@ -41,7 +41,7 @@ function GuaranteeManage() {
 
   const showedPropertiesFragment = (entity: GuaranteeResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -57,7 +57,7 @@ function GuaranteeManage() {
     <>
       <tr>
         <td>{GuaranteeConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{GuaranteeConfigs.properties.createdAt.label}</td>
@@ -96,9 +96,9 @@ function GuaranteeManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -114,7 +114,7 @@ function GuaranteeManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

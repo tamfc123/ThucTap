@@ -9,7 +9,7 @@ import useGetAllApi from 'hooks/use-get-all-api';
 import { SelectOption } from 'types';
 import { useQueryClient } from 'react-query';
 
-function useCategoryUpdateViewModel(id: number) {
+function useCategoryUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: CategoryConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(CategoryConfigs.createUpdateFormSchema),
@@ -29,7 +29,7 @@ function useCategoryUpdateViewModel(id: number) {
         slug: categoryResponse.slug,
         description: categoryResponse.description || '',
         thumbnail: categoryResponse.thumbnail || '',
-        parentCategoryId: categoryResponse.parentCategory ? String(categoryResponse.parentCategory.id) : null,
+        parentCategoryId: categoryResponse.parentCategory ? String(categoryResponse.parentCategory._id) : null,
         status: String(categoryResponse.status),
       };
       form.setValues(formValues);
@@ -40,9 +40,9 @@ function useCategoryUpdateViewModel(id: number) {
     { all: 1 },
     (categoryListResponse) => {
       const selectList: SelectOption[] = categoryListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.parentCategory ? item.name + ' ← ' + item.parentCategory.name : item.name,
-        disabled: (item.id === id) || (item.parentCategory ? item.parentCategory.id === id : false),
+        disabled: (item._id === id) || (item.parentCategory ? item.parentCategory._id === id : false),
       }));
       setCategorySelectList(selectList);
     }

@@ -10,6 +10,7 @@ export const getAll = async (req, res, next) => {
       .limit(size * 1)
       .skip((page - 1) * size)
       .populate("province district ward")
+      .lean()
 
     const total = await Address.countDocuments(query)
 

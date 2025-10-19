@@ -17,6 +17,7 @@ export const getAll = async (req, res, next) => {
       .limit(size * 1)
       .skip((page - 1) * size)
       .populate("province")
+      .lean()
 
     const total = await District.countDocuments(query)
 

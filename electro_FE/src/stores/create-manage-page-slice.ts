@@ -13,8 +13,8 @@ export interface ManagePageState {
   setActiveFilter: Dispatch<SetStateAction<Filter | null>>;
   searchToken: string;
   setSearchToken: Dispatch<SetStateAction<string>>;
-  selection: number[];
-  setSelection: Dispatch<SetStateAction<number[]>>;
+  selection: string[];
+  setSelection: Dispatch<SetStateAction<string[]>>;
   filters: Filter[];
   setFilters: Dispatch<SetStateAction<Filter[]>>;
   activeFilterPanel: boolean;

@@ -13,16 +13,19 @@ export const getAllCategories = async (req, res) => {
     const skip = (page - 1) * size
     const limit = Number.parseInt(size)
 
-    const categories = await Category.find(query).sort(sort).skip(skip).limit(limit)
+    const categories = await Category.find(query).sort(sort).skip(skip).limit(limit).lean()
 
     const total = await Category.countDocuments(query)
+    const totalPages = Math.ceil(total / size)
 
+    // 2. SỬA LẠI CẤU TRÚC JSON CHO ĐÚNG CHUẨN
     res.json({
       content: categories,
       totalElements: total,
-      totalPages: Math.ceil(total / size),
+      totalPages: totalPages,
       size: limit,
-      number: Number.parseInt(page) - 1,
+      page: Number.parseInt(page), // <-- Sửa 'number' thành 'page' (1-based)
+      last: page >= totalPages,  // <-- Thêm 'last'
     })
   } catch (error) {
     res.status(500).json({ message: error.message })

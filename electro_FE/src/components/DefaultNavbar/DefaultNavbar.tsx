@@ -18,7 +18,7 @@ import {
 import { Link } from 'react-router-dom';
 import useAppStore from 'stores/use-app-store';
 import useDefaultNavbarStyles from 'components/DefaultNavbar/DefaultNavbar.styles';
-import {useAdminAuthStore} from 'stores/use-admin-auth-store';
+import { useAdminAuthStore } from 'stores/use-admin-auth-store';
 
 interface NavbarLink {
   link: string;
@@ -38,26 +38,6 @@ const navbarLinks: NavbarLink[] = [
     link: '/admin',
     label: 'Trang chủ',
     icon: Home,
-  },
-  {
-    link: '/admin/address',
-    label: 'Địa chỉ',
-    icon: AddressBook,
-    childLinks: [
-      {
-        link: '/admin/address/province',
-        label: 'Tỉnh thành',
-      },
-      {
-        link: '/admin/address/district',
-        label: 'Quận huyện',
-      },
-      {
-        link: '/admin/address/ward',
-        label: 'Phường xã',
-      },
-    ],
-    disableForEmployee: true,
   },
   {
     link: '/admin/user',
@@ -268,7 +248,7 @@ export function DefaultNavbar() {
         })}
         onClick={() => setActive(navbarLink.label)}
       >
-        <navbarLink.icon className={classes.linkIcon}/>
+        <navbarLink.icon className={classes.linkIcon} />
         <span>{navbarLink.label}</span>
       </Link>
       {navbarLink.label === active && (navbarLink.childLinks || []).map(childLink => (
@@ -278,7 +258,7 @@ export function DefaultNavbar() {
           className={cx(classes.link, { [classes.childLinkActive]: navbarLink.label === active })}
         >
           <Center sx={{ width: 24, marginRight: theme.spacing.sm }}>
-            <div className={classes.childLinkDot}/>
+            <div className={classes.childLinkDot} />
           </Center>
           <span>{childLink.label}</span>
         </Link>

@@ -7,12 +7,15 @@ import useTagUpdateViewModel from 'pages/tag/TagUpdate.vm';
 
 function TagUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     tag,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useTagUpdateViewModel(Number(id));
+  } = useTagUpdateViewModel(id);
 
   if (!tag) {
     return null;
@@ -26,7 +29,7 @@ function TagUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={tag.id}
+        id={tag._id}
         createdAt={tag.createdAt}
         updatedAt={tag.updatedAt}
         createdBy="1"
@@ -62,7 +65,7 @@ function TagUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

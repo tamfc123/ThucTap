@@ -46,19 +46,19 @@ function ManageTable<T extends BaseResponse>(props: ManageTableProps<T>) {
   );
 
   const entitiesTableRowsFragment = listResponse.content.map((entity) => {
-    const selected = selection.includes(entity.id);
+    const selected = selection.includes(entity._id);
 
     return (
       <tr
-        key={entity.id}
+        key={entity._id}
         className={cx({
           [classes.rowSelected]: selected,
         })}
       >
         <td>
           <Checkbox
-            checked={selection.includes(entity.id)}
-            onChange={() => handleToggleRowCheckbox(entity.id)}
+            checked={selection.includes(entity._id)}
+            onChange={() => handleToggleRowCheckbox(entity._id)}
             transitionDuration={0}
           />
         </td>
@@ -70,28 +70,28 @@ function ManageTable<T extends BaseResponse>(props: ManageTableProps<T>) {
               variant="outline"
               size={24}
               title="Xem"
-              onClick={() => handleViewEntityButton(entity.id)}
+              onClick={() => handleViewEntityButton(entity._id)}
             >
-              <Eye size={16}/>
+              <Eye size={16} />
             </ActionIcon>
             <ActionIcon
               component={Link}
-              to={'update/' + entity.id}
+              to={'update/' + entity._id}
               color="teal"
               variant="outline"
               size={24}
               title="Cập nhật"
             >
-              <Edit size={16}/>
+              <Edit size={16} />
             </ActionIcon>
             <ActionIcon
               color="red"
               variant="outline"
               size={24}
               title="Xóa"
-              onClick={() => handleDeleteEntityButton(entity.id)}
+              onClick={() => handleDeleteEntityButton(entity._id)}
             >
-              <Trash size={16}/>
+              <Trash size={16} />
             </ActionIcon>
           </Group>
         </td>

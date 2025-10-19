@@ -7,12 +7,15 @@ import useSpecificationUpdateViewModel from 'pages/specification/SpecificationUp
 
 function SpecificationUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     specification,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useSpecificationUpdateViewModel(Number(id));
+  } = useSpecificationUpdateViewModel(id);
 
   if (!specification) {
     return null;
@@ -26,7 +29,7 @@ function SpecificationUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={specification.id}
+        id={specification._id}
         createdAt={specification.createdAt}
         updatedAt={specification.updatedAt}
         createdBy="1"
@@ -68,7 +71,7 @@ function SpecificationUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

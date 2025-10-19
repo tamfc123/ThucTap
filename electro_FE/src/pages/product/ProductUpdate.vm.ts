@@ -34,7 +34,7 @@ import { PropertyResponse } from 'models/Property';
 import PropertyConfigs from 'pages/property/PropertyConfigs';
 import { VariantRequest } from 'models/Variant';
 
-function useProductUpdateViewModel(id: number) {
+function useProductUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: ProductConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(ProductConfigs.createUpdateFormSchema),
@@ -72,18 +72,18 @@ function useProductUpdateViewModel(id: number) {
         description: productResponse.description || '',
         images: productResponse.images,
         status: String(productResponse.status),
-        categoryId: productResponse.category ? String(productResponse.category.id) : null,
-        brandId: productResponse.brand ? String(productResponse.brand.id) : null,
-        supplierId: productResponse.supplier ? String(productResponse.supplier.id) : null,
-        unitId: productResponse.unit ? String(productResponse.unit.id) : null,
+        categoryId: productResponse.category ? String(productResponse.category._id) : null,
+        brandId: productResponse.brand ? String(productResponse.brand._id) : null,
+        supplierId: productResponse.supplier ? String(productResponse.supplier._id) : null,
+        unitId: productResponse.unit ? String(productResponse.unit._id) : null,
         tags: productResponse.tags
           .sort((a, b) => a.name.localeCompare(b.name))
-          .map((tag) => String(tag.id) + '#ORIGINAL'),
+          .map((tag) => String(tag._id) + '#ORIGINAL'),
         specifications: productResponse.specifications,
         properties: productResponse.properties,
         variants: productResponse.variants,
         weight: productResponse.weight || 0.00,
-        guaranteeId: productResponse.guarantee ? String(productResponse.guarantee.id) : null,
+        guaranteeId: productResponse.guarantee ? String(productResponse.guarantee._id) : null,
       };
       form.setValues(formValues);
       setPrevFormValues(formValues);
@@ -96,7 +96,7 @@ function useProductUpdateViewModel(id: number) {
     { all: 1 },
     (categoryListResponse) => {
       const selectList: SelectOption[] = categoryListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.parentCategory ? item.name + ' ← ' + item.parentCategory.name : item.name,
       }));
       setCategorySelectList(selectList);
@@ -106,7 +106,7 @@ function useProductUpdateViewModel(id: number) {
     { all: 1 },
     (brandListResponse) => {
       const selectList: SelectOption[] = brandListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setBrandSelectList(selectList);
@@ -116,7 +116,7 @@ function useProductUpdateViewModel(id: number) {
     { all: 1 },
     (supplierListResponse) => {
       const selectList: SelectOption[] = supplierListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.displayName,
       }));
       setSupplierSelectList(selectList);
@@ -126,7 +126,7 @@ function useProductUpdateViewModel(id: number) {
     { all: 1 },
     (unitListResponse) => {
       const selectList: SelectOption[] = unitListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setUnitSelectList(selectList);
@@ -138,7 +138,7 @@ function useProductUpdateViewModel(id: number) {
       const selectList: SelectOption[] = tagListResponse.content
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((item) => ({
-          value: String(item.id) + '#ORIGINAL',
+          value: String(item._id) + '#ORIGINAL',
           label: item.name,
         }));
       setTagSelectList(selectList);
@@ -148,7 +148,7 @@ function useProductUpdateViewModel(id: number) {
     { all: 1 },
     (guaranteeListResponse) => {
       const selectList: SelectOption[] = guaranteeListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setGuaranteeSelectList(selectList);
@@ -160,10 +160,10 @@ function useProductUpdateViewModel(id: number) {
       const productSpecificationsIds = form.values.specifications?.content.map(item => item.id) || [];
       const selectList: SelectOption[] = specificationListResponse.content.map((item) => {
         const option: SelectOption = {
-          value: JSON.stringify({ id: item.id, name: item.name, code: item.code }),
+          value: JSON.stringify({ id: item._id, name: item.name, code: item.code }),
           label: item.name,
         };
-        if (productSpecificationsIds.includes(item.id)) {
+        if (productSpecificationsIds.includes(item._id)) {
           option.disabled = true;
         }
         return option;
@@ -177,10 +177,10 @@ function useProductUpdateViewModel(id: number) {
       const productPropertiesIds = form.values.properties?.content.map(item => item.id) || [];
       const selectList: SelectOption[] = propertyListResponse.content.map((item) => {
         const option: SelectOption = {
-          value: JSON.stringify({ id: item.id, name: item.name, code: item.code }),
+          value: JSON.stringify({ id: item._id, name: item.name, code: item.code }),
           label: item.name,
         };
-        if (productPropertiesIds.includes(item.id)) {
+        if (productPropertiesIds.includes(item._id)) {
           option.disabled = true;
         }
         return option;
@@ -191,7 +191,7 @@ function useProductUpdateViewModel(id: number) {
 
   const transformTags = (tags: string[]): ProductRequest_TagRequest[] => tags.map((tagIdOrName) => {
     if (tagIdOrName.includes('#ORIGINAL')) {
-      return { id: Number(tagIdOrName.split('#')[0]) };
+      return { id: tagIdOrName.split('#')[0] };
     }
     return {
       name: tagIdOrName.trim(),
@@ -223,7 +223,7 @@ function useProductUpdateViewModel(id: number) {
     if (specifications === null) {
       return null;
     }
-    const filteredSpecifications = specifications.content.filter((specification) => specification.id !== 0);
+    const filteredSpecifications = specifications.content.filter((specification) => specification.id !== '');
     return filteredSpecifications.length === 0 ? null : new CollectionWrapper(filteredSpecifications);
   };
 
@@ -252,17 +252,17 @@ function useProductUpdateViewModel(id: number) {
           shortDescription: formValues.shortDescription || null,
           description: formValues.description || null,
           images: [...formValues.images, ...(uploadedImageResponses ? transformImages(uploadedImageResponses) : [])],
-          status: Number(formValues.status),
-          categoryId: Number(formValues.categoryId) || null,
-          brandId: Number(formValues.brandId) || null,
-          supplierId: Number(formValues.supplierId) || null,
-          unitId: Number(formValues.unitId) || null,
+          status: formValues.status,
+          categoryId: formValues.categoryId || null,
+          brandId: formValues.brandId || null,
+          supplierId: formValues.supplierId || null,
+          unitId: formValues.unitId || null,
           tags: transformTags(formValues.tags),
           specifications: filterSpecifications(formValues.specifications),
           properties: filterProperties(formValues.properties),
           variants: filterVariants(formValues.variants),
           weight: formValues.weight || null,
-          guaranteeId: Number(formValues.guaranteeId) || null,
+          guaranteeId: formValues.guaranteeId || null,
         };
         updateApi.mutate(requestBody);
         setImageFiles([]);

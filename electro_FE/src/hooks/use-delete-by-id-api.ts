@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from 'react-query';
 import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
 import NotifyUtils from 'utils/NotifyUtils';
 
-function useDeleteByIdApi<T = number>(resourceUrl: string, resourceKey: string) {
+function useDeleteByIdApi(resourceUrl: string, resourceKey: string) {
   const queryClient = useQueryClient();
 
-  return useMutation<void, ErrorMessage, T>(
+  return useMutation<void, ErrorMessage, string>(
     (entityId) => FetchUtils.deleteById(resourceUrl, entityId),
     {
       onSuccess: () => {

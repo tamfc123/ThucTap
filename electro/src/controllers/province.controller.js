@@ -19,6 +19,7 @@ export const getAll = async (req, res, next) => {
         .sort(sort)
         .skip((page - 1) * size)
         .limit(Number(size))
+        .lean()
       total = await Province.countDocuments(query)
     }
 

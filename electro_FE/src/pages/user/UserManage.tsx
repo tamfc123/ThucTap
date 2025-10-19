@@ -41,7 +41,7 @@ function UserManage() {
 
   const showedPropertiesFragment = (entity: UserResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.username}
@@ -59,7 +59,7 @@ function UserManage() {
       </td>
       <td>{entity.gender === 'M' ? 'Nam' : 'Nữ'}</td>
       <td>
-        <Avatar src={entity.avatar} alt={entity.fullname} radius="xl" size="sm"/>
+        <Avatar src={entity.avatar} alt={entity.fullname} radius="xl" size="sm" />
       </td>
       <td>{userStatusBadgeFragment(entity.status)}</td>
       <td>
@@ -74,7 +74,7 @@ function UserManage() {
     <>
       <tr>
         <td>{UserConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{UserConfigs.properties.createdAt.label}</td>
@@ -127,7 +127,7 @@ function UserManage() {
       <tr>
         <td>{UserConfigs.properties.avatar.label}</td>
         <td>
-          <Avatar src={entity.avatar} alt={entity.fullname} radius="xl" size="sm"/>
+          <Avatar src={entity.avatar} alt={entity.fullname} radius="xl" size="sm" />
         </td>
       </tr>
       <tr>
@@ -159,9 +159,9 @@ function UserManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -177,7 +177,7 @@ function UserManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

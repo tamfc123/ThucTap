@@ -41,7 +41,7 @@ function SupplierManage() {
 
   const showedPropertiesFragment = (entity: SupplierResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.displayName}
@@ -75,7 +75,7 @@ function SupplierManage() {
     <>
       <tr>
         <td>{SupplierConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{SupplierConfigs.properties.createdAt.label}</td>
@@ -135,11 +135,11 @@ function SupplierManage() {
       </tr>
       <tr>
         <td>{SupplierConfigs.properties['address.province.name'].label}</td>
-        <td>{entity.address?.province?.name}</td>
+        <td>{entity.address?.provinceId?.name}</td>
       </tr>
       <tr>
         <td>{SupplierConfigs.properties['address.district.name'].label}</td>
-        <td>{entity.address?.district?.name}</td>
+        <td>{entity.address?.districtId?.name}</td>
       </tr>
       <tr>
         <td>{SupplierConfigs.properties.description.label}</td>
@@ -170,9 +170,9 @@ function SupplierManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -188,7 +188,7 @@ function SupplierManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

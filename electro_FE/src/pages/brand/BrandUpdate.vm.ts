@@ -7,7 +7,7 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 
-function useBrandUpdateViewModel(id: number) {
+function useBrandUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: BrandConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(BrandConfigs.createUpdateFormSchema),

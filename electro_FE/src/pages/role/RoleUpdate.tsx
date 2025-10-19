@@ -7,12 +7,15 @@ import useRoleUpdateViewModel from 'pages/role/RoleUpdate.vm';
 
 function RoleUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     role,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useRoleUpdateViewModel(Number(id));
+  } = useRoleUpdateViewModel(id);
 
   if (!role) {
     return null;
@@ -26,7 +29,7 @@ function RoleUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={role.id}
+        id={role._id}
         createdAt={role.createdAt}
         updatedAt={role.updatedAt}
         createdBy="1"
@@ -62,7 +65,7 @@ function RoleUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

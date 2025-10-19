@@ -6,7 +6,7 @@ interface EntityDetailTableProps<T> {
   entityDetailTableRowsFragment: (entity: T) => React.ReactNode;
   resourceUrl: string;
   resourceKey: string;
-  entityId: number;
+  entityId: string;
 }
 
 function EntityDetailTable<T>({

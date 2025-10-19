@@ -1,7 +1,7 @@
 import ApplicationConstants from 'constants/ApplicationConstants';
 import { CollectionWrapper } from 'types';
 import { UploadedImageResponse } from 'models/Image';
-import {useAdminAuthStore} from 'stores/use-admin-auth-store';
+import { useAdminAuthStore } from 'stores/use-admin-auth-store';
 
 /**
  * RequestParams dùng để chứa các query param
@@ -43,7 +43,7 @@ type BasicRequestParams = Record<string, string | number | null | boolean>;
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 
-class   FetchUtils {
+class FetchUtils {
   /**
    * Hàm get cho các trường hợp truy vấn dữ liệu bên client
    * @param resourceUrl
@@ -68,7 +68,7 @@ class   FetchUtils {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        
+
       },
       body: JSON.stringify(requestBody),
     });
@@ -217,13 +217,11 @@ class   FetchUtils {
    * Hàm getById dùng để lấy entity có id cho trước
    * @param resourceUrl
    * @param entityId
+   * @param isAdmin
    */
-  static async getById<O>(resourceUrl: string, entityId: number): Promise<O> {
-    const response = await fetch(resourceUrl + '/' + entityId);
-    if (!response.ok) {
-      throw await response.json();
-    }
-    return await response.json();
+  static async getById<O>(resourceUrl: string, entityId: string, isAdmin: boolean = true): Promise<O> {
+    // Đổi logic: Dùng 'getWithToken' để tự động gửi token
+    return FetchUtils.getWithToken<O>(resourceUrl + '/' + entityId, undefined, isAdmin);
   }
 
   /**
@@ -254,15 +252,25 @@ class   FetchUtils {
    * @param entityId
    * @param requestBody
    */
-  static async update<I, O>(resourceUrl: string, entityId: number, requestBody: I): Promise<O> {
-    const response = await fetch(resourceUrl + '/' + entityId, {
+  static async update<I, O>(
+    resourceUrl: string,
+    entityId: string,
+    requestBody: I,
+  ): Promise<O> {
+    const { jwtToken } = useAdminAuthStore.getState();
+    // 2. THÊM HOME_PATH (Sửa lỗi 404)
+    const fullUrl = API_BASE_URL + resourceUrl + '/' + entityId;
+
+    const response = await fetch(fullUrl, { // <-- Dùng fullUrl
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        ...(jwtToken ? { 'Authorization': `Bearer ${jwtToken}` } : {}),
       },
       body: JSON.stringify(requestBody),
     });
+
     if (!response.ok) {
       throw await response.json();
     }
@@ -274,8 +282,18 @@ class   FetchUtils {
    * @param resourceUrl
    * @param entityId
    */
-  static async deleteById<T>(resourceUrl: string, entityId: T) {
-    const response = await fetch(resourceUrl + '/' + entityId, { method: 'DELETE' });
+  static async deleteById<T>(resourceUrl: string, entityId: string) {
+    const { jwtToken } = useAdminAuthStore.getState();
+    const fullUrl = API_BASE_URL + resourceUrl + '/' + entityId;
+    const response = await fetch(fullUrl, { // <-- Dùng fullUrl
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        // 3. GỬI TOKEN (Giống hàm create)
+        ...(jwtToken ? { 'Authorization': `Bearer ${jwtToken}` } : {}),
+      },
+    });
     if (!response.ok) {
       throw await response.json();
     }

@@ -41,7 +41,7 @@ function RoleManage() {
 
   const showedPropertiesFragment = (entity: RoleResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -58,11 +58,12 @@ function RoleManage() {
     </>
   );
 
+
   const entityDetailTableRowsFragment = (entity: RoleResponse) => (
     <>
       <tr>
         <td>{RoleConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{RoleConfigs.properties.createdAt.label}</td>
@@ -101,9 +102,9 @@ function RoleManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -119,7 +120,7 @@ function RoleManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

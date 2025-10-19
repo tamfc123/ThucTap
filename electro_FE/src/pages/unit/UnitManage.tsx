@@ -41,7 +41,7 @@ function UnitManage() {
 
   const showedPropertiesFragment = (entity: UnitResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -57,7 +57,7 @@ function UnitManage() {
     <>
       <tr>
         <td>{UnitConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{UnitConfigs.properties.createdAt.label}</td>
@@ -78,6 +78,7 @@ function UnitManage() {
     </>
   );
 
+
   return (
     <Stack>
       <ManageHeader>
@@ -92,9 +93,9 @@ function UnitManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -110,7 +111,7 @@ function UnitManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

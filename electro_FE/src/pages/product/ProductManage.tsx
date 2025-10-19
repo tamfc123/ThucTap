@@ -45,7 +45,7 @@ function ProductManage() {
 
   const showedPropertiesFragment = (entity: ProductResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.name}
@@ -64,7 +64,7 @@ function ProductManage() {
           size="lg"
           color="grape"
         >
-          <QuestionMark size={30}/>
+          <QuestionMark size={30} />
         </Avatar>
       </td>
       <td>{productStatusBadgeFragment(entity.status)}</td>
@@ -100,16 +100,18 @@ function ProductManage() {
         </Stack>
       </td>
       <td>
-        <VariantTablePopover variants={entity.variants} productProperties={entity.properties}/>
+        <VariantTablePopover variants={entity.variants} productProperties={entity.properties} />
       </td>
     </>
   );
+
+  // (Bên trong file ProductManage.tsx)
 
   const entityDetailTableRowsFragment = (entity: ProductResponse) => (
     <>
       <tr>
         <td>{ProductConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{ProductConfigs.properties.createdAt.label}</td>
@@ -143,13 +145,14 @@ function ProductManage() {
         <td>{ProductConfigs.properties.thumbnail.label}</td>
         <td>
           <Avatar
-            src={(entity.images.find((image) => image.isThumbnail) || {}).path}
+            // SỬA 1: Thêm (entity.images || [])
+            src={((entity.images || []).find((image) => image.isThumbnail) || {}).path}
             alt={entity.name}
             radius="lg"
             size="lg"
             color="grape"
           >
-            <QuestionMark size={30}/>
+            <QuestionMark size={30} />
           </Avatar>
         </td>
       </tr>
@@ -157,7 +160,8 @@ function ProductManage() {
         <td>{ProductConfigs.properties.images.label}</td>
         <td style={{ maxWidth: 300 }}>
           <Group spacing="xs">
-            {entity.images.filter((image) => !image.isEliminated).map((image) => (
+            {/* SỬA 2: Thêm (entity.images || []) */}
+            {(entity.images || []).filter((image) => !image.isEliminated).map((image) => (
               <Avatar
                 key={image.name}
                 src={image.path}
@@ -167,7 +171,7 @@ function ProductManage() {
                 color="grape"
                 sx={{ boxShadow: image.isThumbnail ? '0 0 0 2px ' + theme.colors.teal[theme.colorScheme === 'dark' ? 4 : 6] : 'none' }}
               >
-                <QuestionMark size={30}/>
+                <QuestionMark size={30} />
               </Avatar>
             ))}
           </Group>
@@ -197,8 +201,9 @@ function ProductManage() {
         <td>{ProductConfigs.properties.tags.label}</td>
         <td style={{ maxWidth: 300 }}>
           <Group spacing="xs">
-            {entity.tags
-              .sort((a, b) => a.name.localeCompare(b.name))
+            {/* SỬA 3: Thêm (entity.tags || []) */}
+            {(entity.tags || [])
+              .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
               .map((tag, index) => (
                 <Badge
                   key={index}
@@ -215,7 +220,8 @@ function ProductManage() {
       <tr>
         <td>{ProductConfigs.properties.specifications.label}</td>
         <td style={{ maxWidth: 300 }}>
-          {entity.specifications && (
+          {/* SỬA 4: Thêm 'entity.specifications.content &&' */}
+          {entity.specifications && entity.specifications.content && (
             <Grid gutter="xs">
               <Grid.Col span={6}><strong>Thông số</strong></Grid.Col>
               <Grid.Col span={6}><strong>Giá trị</strong></Grid.Col>
@@ -232,7 +238,8 @@ function ProductManage() {
       <tr>
         <td>{ProductConfigs.properties.properties.label}</td>
         <td style={{ maxWidth: 300 }}>
-          {entity.properties && (
+          {/* SỬA 5: Thêm 'entity.properties.content &&' */}
+          {entity.properties && entity.properties.content && (
             <Grid gutter="xs">
               <Grid.Col span={6}><strong>Thuộc tính</strong></Grid.Col>
               <Grid.Col span={6}><strong>Giá trị</strong></Grid.Col>
@@ -241,7 +248,8 @@ function ProductManage() {
                   <Grid.Col span={6}>{property.name}</Grid.Col>
                   <Grid.Col span={6}>
                     <Group spacing="xs">
-                      {property.value.map((value, index) => (
+                      {/* SỬA 6: Thêm (property.value || []) */}
+                      {(property.value || []).map((value, index) => (
                         <Badge
                           key={index}
                           size="sm"
@@ -263,7 +271,8 @@ function ProductManage() {
       </tr>
       <tr>
         <td>{ProductConfigs.properties.variants.label}</td>
-        <td>{entity.variants.length === 0 ? <em>không có</em> : entity.variants.length + ' phiên bản'}</td>
+        {/* SỬA 7: Thêm (!entity.variants || ...) */}
+        <td>{(!entity.variants || entity.variants.length === 0) ? <em>không có</em> : entity.variants.length + ' phiên bản'}</td>
       </tr>
       <tr>
         <td>{ProductConfigs.properties.weight.label}</td>
@@ -290,9 +299,9 @@ function ProductManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -308,7 +317,7 @@ function ProductManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

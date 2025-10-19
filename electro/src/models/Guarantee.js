@@ -6,16 +6,7 @@ const guaranteeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    code: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     description: String,
-    months: {
-      type: Number,
-      default: 12,
-    },
     status: {
       type: Number,
       default: 1,

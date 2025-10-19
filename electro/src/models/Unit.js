@@ -6,11 +6,14 @@ const unitSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    code: {
+    // Đã xóa (hoặc comment) khối 'code'
+    /*
+    code: { 
       type: String,
       required: true,
       unique: true,
     },
+    */
     status: {
       type: Number,
       default: 1,

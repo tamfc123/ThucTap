@@ -7,7 +7,7 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 
-function useRoleUpdateViewModel(id: number) {
+function useRoleUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: RoleConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(RoleConfigs.createUpdateFormSchema),

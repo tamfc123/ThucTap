@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
 import NotifyUtils from 'utils/NotifyUtils';
 
-function useUpdateApi<I, O>(resourceUrl: string, resourceKey: string, entityId: number) {
+function useUpdateApi<I, O>(resourceUrl: string, resourceKey: string, entityId: string) {
   const queryClient = useQueryClient();
 
   return useMutation<O, ErrorMessage, I>(

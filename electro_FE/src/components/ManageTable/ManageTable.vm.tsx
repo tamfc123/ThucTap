@@ -29,17 +29,17 @@ function useManageTableViewModel<T extends BaseResponse>({
 
   const handleToggleAllRowsCheckbox = () => {
     setSelection((current) => {
-      return current.length === listResponse.content.length ? [] : listResponse.content.map(entity => entity.id);
+      return current.length === listResponse.content.length ? [] : listResponse.content.map(entity => entity._id);
     });
   };
 
-  const handleToggleRowCheckbox = (entityId: number) => {
+  const handleToggleRowCheckbox = (entityId: string) => {
     setSelection((current) => {
       return current.includes(entityId) ? current.filter(item => item !== entityId) : [...current, entityId];
     });
   };
 
-  const handleViewEntityButton = (entityId: number) => {
+  const handleViewEntityButton = (entityId: string) => {
     modals.openModal({
       size: 'lg',
       overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
@@ -57,7 +57,7 @@ function useManageTableViewModel<T extends BaseResponse>({
     });
   };
 
-  const handleDeleteEntityButton = (entityId: number) => {
+  const handleDeleteEntityButton = (entityId: string) => {
     modals.openConfirmModal({
       size: 'xs',
       overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
@@ -75,7 +75,7 @@ function useManageTableViewModel<T extends BaseResponse>({
     });
   };
 
-  const handleConfirmedDeleteEntityButton = (entityId: number) => {
+  const handleConfirmedDeleteEntityButton = (entityId: string) => {
     deleteByIdApi.mutate(entityId, {
       onSuccess: () => {
         if (listResponse.content.length === 1) {

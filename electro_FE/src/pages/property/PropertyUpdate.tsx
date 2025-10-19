@@ -7,12 +7,15 @@ import usePropertyUpdateViewModel from 'pages/property/PropertyUpdate.vm';
 
 function PropertyUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     property,
     form,
     handleFormSubmit,
     statusSelectList,
-  } = usePropertyUpdateViewModel(Number(id));
+  } = usePropertyUpdateViewModel(id);
 
   if (!property) {
     return null;
@@ -26,7 +29,7 @@ function PropertyUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={property.id}
+        id={property._id}
         createdAt={property.createdAt}
         updatedAt={property.updatedAt}
         createdBy="1"
@@ -68,7 +71,7 @@ function PropertyUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

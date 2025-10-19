@@ -41,7 +41,7 @@ function PropertyManage() {
 
   const showedPropertiesFragment = (entity: PropertyResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -62,7 +62,7 @@ function PropertyManage() {
     <>
       <tr>
         <td>{PropertyConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{PropertyConfigs.properties.createdAt.label}</td>
@@ -105,9 +105,9 @@ function PropertyManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -123,7 +123,7 @@ function PropertyManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

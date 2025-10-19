@@ -317,6 +317,7 @@ export const getAllUsers = async (req, res) => {
       .limit(size * 1)
       .skip((page - 1) * size)
       .sort({ createdAt: -1 })
+      .lean()
 
     const total = await User.countDocuments(query)
 
@@ -336,6 +337,15 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
+      .populate('roles', 'name code') // <-- Lấy chi tiết 'roles' (chỉ lấy name và code)
+      .populate({ // 2. Populate 'address' (dùng cú pháp object)
+        path: 'address', // <-- Đường dẫn là 'address'
+        populate: [ // <-- BÊN TRONG 'address', populate tiếp:
+          { path: 'province', select: 'name code' }, // Lấy chi tiết 'province'
+          { path: 'district', select: 'name code' }, // Lấy chi tiết 'district'
+          { path: 'ward', select: 'name code' }      // Lấy chi tiết 'ward'
+        ]
+      });
     if (!user) {
       return res.status(404).json({ message: "Không tìm thấy người dùng" })
     }
