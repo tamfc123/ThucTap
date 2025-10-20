@@ -40,7 +40,6 @@ export interface ErrorMessage {
 }
 
 type BasicRequestParams = Record<string, string | number | null | boolean>;
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 
 class FetchUtils {
@@ -50,7 +49,7 @@ class FetchUtils {
    * @param requestParams
    */
   static async get<O>(resourceUrl: string, requestParams?: BasicRequestParams): Promise<O> {
-    const response = await fetch(FetchUtils.concatParams(API_BASE_URL + resourceUrl, requestParams));
+    const response = await fetch(FetchUtils.concatParams(resourceUrl, requestParams));
     if (!response.ok) {
       throw await response.json();
     }
@@ -63,7 +62,7 @@ class FetchUtils {
    * @param requestBody
    */
   static async post<I, O>(resourceUrl: string, requestBody: I): Promise<O> {
-    const response = await fetch(API_BASE_URL + resourceUrl, {
+    const response = await fetch(resourceUrl, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -85,7 +84,7 @@ class FetchUtils {
    * @param requestParams
    */
   static async put<I, O>(resourceUrl: string, requestBody: I, requestParams?: BasicRequestParams): Promise<O> {
-    const response = await fetch(FetchUtils.concatParams(API_BASE_URL + resourceUrl, requestParams), {
+    const response = await fetch(FetchUtils.concatParams(resourceUrl, requestParams), {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -110,7 +109,7 @@ class FetchUtils {
       .getItem(isAdmin ? 'electro-admin-auth-store' : 'electro-auth-store') || '{}').state?.jwtToken;
 
     // Source: https://stackoverflow.com/a/70426220
-    const response = await fetch(FetchUtils.concatParams(API_BASE_URL + resourceUrl, requestParams), {
+    const response = await fetch(FetchUtils.concatParams(resourceUrl, requestParams), {
       method: 'GET',
       headers: {
         'Content-type': 'application/json',
@@ -134,7 +133,7 @@ class FetchUtils {
     const token = JSON.parse(localStorage
       .getItem(isAdmin ? 'electro-admin-auth-store' : 'electro-auth-store') || '{}').state?.jwtToken;
 
-    const response = await fetch(API_BASE_URL + resourceUrl, {
+    const response = await fetch(resourceUrl, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -160,7 +159,7 @@ class FetchUtils {
     const token = JSON.parse(localStorage
       .getItem(isAdmin ? 'electro-admin-auth-store' : 'electro-auth-store') || '{}').state?.jwtToken;
 
-    const response = await fetch(API_BASE_URL + resourceUrl, {
+    const response = await fetch(resourceUrl, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -186,7 +185,7 @@ class FetchUtils {
     const token = JSON.parse(localStorage
       .getItem(isAdmin ? 'electro-admin-auth-store' : 'electro-auth-store') || '{}').state?.jwtToken;
 
-    const response = await fetch(API_BASE_URL + resourceUrl, {
+    const response = await fetch(resourceUrl, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -206,7 +205,7 @@ class FetchUtils {
    * @param requestParams
    */
   static async getAll<O>(resourceUrl: string, requestParams?: RequestParams): Promise<ListResponse<O>> {
-    const response = await fetch(FetchUtils.concatParams(API_BASE_URL + resourceUrl, { ...requestParams }));
+    const response = await fetch(FetchUtils.concatParams(resourceUrl, { ...requestParams }));
     if (!response.ok) {
       throw await response.json();
     }
@@ -231,7 +230,7 @@ class FetchUtils {
    */
   static async create<I, O>(resourceUrl: string, requestBody: I): Promise<O> {
     const { jwtToken } = useAdminAuthStore.getState();
-    const response = await fetch(API_BASE_URL + resourceUrl, {
+    const response = await fetch(resourceUrl, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -259,7 +258,7 @@ class FetchUtils {
   ): Promise<O> {
     const { jwtToken } = useAdminAuthStore.getState();
     // 2. THÊM HOME_PATH (Sửa lỗi 404)
-    const fullUrl = API_BASE_URL + resourceUrl + '/' + entityId;
+    const fullUrl = resourceUrl + '/' + entityId;
 
     const response = await fetch(fullUrl, { // <-- Dùng fullUrl
       method: 'PUT',
@@ -284,7 +283,7 @@ class FetchUtils {
    */
   static async deleteById<T>(resourceUrl: string, entityId: string) {
     const { jwtToken } = useAdminAuthStore.getState();
-    const fullUrl = API_BASE_URL + resourceUrl + '/' + entityId;
+    const fullUrl = resourceUrl + '/' + entityId;
     const response = await fetch(fullUrl, { // <-- Dùng fullUrl
       method: 'DELETE',
       headers: {
@@ -305,7 +304,7 @@ class FetchUtils {
    * @param entityIds
    */
   static async deleteByIds<T>(resourceUrl: string, entityIds: T[]) {
-    const response = await fetch(API_BASE_URL + resourceUrl, {
+    const response = await fetch(resourceUrl, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entityIds),

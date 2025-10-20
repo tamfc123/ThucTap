@@ -182,19 +182,19 @@ function ProductManage() {
         <td>{productStatusBadgeFragment(entity.status)}</td>
       </tr>
       <tr>
-        <td>{ProductConfigs.properties['category.name'].label}</td>
+        <td>{ProductConfigs.properties['categoryId.name'].label}</td>
         <td>{entity.category?.name}</td>
       </tr>
       <tr>
-        <td>{ProductConfigs.properties['brand.name'].label}</td>
+        <td>{ProductConfigs.properties['brandId.name'].label}</td>
         <td>{entity.brand?.name}</td>
       </tr>
       <tr>
-        <td>{ProductConfigs.properties['supplier.displayName'].label}</td>
+        <td>{ProductConfigs.properties['supplierId.displayName'].label}</td>
         <td>{entity.supplier?.displayName}</td>
       </tr>
       <tr>
-        <td>{ProductConfigs.properties['unit.name'].label}</td>
+        <td>{ProductConfigs.properties['unitId.name'].label}</td>
         <td>{entity.unit?.name}</td>
       </tr>
       <tr>
@@ -279,7 +279,7 @@ function ProductManage() {
         <td>{entity.weight ? entity.weight + ' g' : ''}</td>
       </tr>
       <tr>
-        <td>{ProductConfigs.properties['guarantee.name'].label}</td>
+        <td>{ProductConfigs.properties['guaranteeId.name'].label}</td>
         <td>{entity.guarantee?.name}</td>
       </tr>
     </>

@@ -48,24 +48,29 @@ class MiscUtils {
     return [...MiscUtils.makeCategoryBreadcrumbs(category.categoryParent), category];
   };
 
-  static generatePriceOptions = (filterPriceQuartiles: [number, number]) => {
-    const start = filterPriceQuartiles[0];
-    const end = filterPriceQuartiles[1];
+  static generatePriceOptions = (filterPriceQuartiles?: [number, number]) => {
+    // nếu không có dữ liệu hoặc không hợp lệ
+    if (
+      !filterPriceQuartiles ||
+      !Array.isArray(filterPriceQuartiles) ||
+      filterPriceQuartiles.length < 2
+    ) {
+      return [];
+    }
 
+    const [start, end] = filterPriceQuartiles;
     let step = 100_000;
 
     if (end - start >= 10_000_000) {
       step = 10_000_000;
     }
 
-    const prices = [];
-
+    const prices: number[] = [];
     for (let i = start; i <= end; i += step) {
       prices.push(i);
     }
 
     const priceOptions: string[][] = [];
-
     for (let i = 0; i <= prices.length; i++) {
       if (i === 0) {
         priceOptions.push(['0', String(prices[0])]);
@@ -78,6 +83,7 @@ class MiscUtils {
 
     return priceOptions;
   };
+
 
   static readablePriceOption = (priceOption: string[]) => {
     const replaceMillion = (price: string) => price.replace(/000000$/, ' tr');

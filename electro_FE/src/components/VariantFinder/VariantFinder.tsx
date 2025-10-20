@@ -81,7 +81,7 @@ function VariantFinder({ selectedVariants, onClickItem, errorSearchInput }: Vari
     { size: 7, search: debouncedKeyword }
   );
 
-  const selectedVariantIds = selectedVariants.map(variant => variant.id);
+  const selectedVariantIds = selectedVariants.map(variant => variant._id);
 
   return (
     <Box ref={refBox}>
@@ -117,12 +117,12 @@ function VariantFinder({ selectedVariants, onClickItem, errorSearchInput }: Vari
                   onClickItem(variant);
                   setPopoverOpened(false);
                 }}
-                disabled={selectedVariantIds.includes(variant.id)}
+                disabled={selectedVariantIds.includes(variant._id)}
               >
                 <VariantResult
                   variant={variant}
                   keyword={debouncedKeyword}
-                  disabled={selectedVariantIds.includes(variant.id)}
+                  disabled={selectedVariantIds.includes(variant._id)}
                 />
               </UnstyledButton>
             ))}

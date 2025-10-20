@@ -9,24 +9,15 @@ const productSchema = new mongoose.Schema(
     code: {
       type: String,
       required: true,
-      unique: true,
     },
     slug: {
       type: String,
       required: true,
-      unique: true,
     },
-    shortDescription: {
-      type: String,
-      default: null,
-    },
-    description: {
-      type: String,
-      default: null,
-    },
+    // ... (shortDescription, description giữ nguyên)
     images: [
       {
-        id: Number,
+        // id: Number, // <-- XÓA DÒNG NÀY
         name: String,
         path: String,
         contentType: String,
@@ -34,32 +25,44 @@ const productSchema = new mongoose.Schema(
         group: String,
         isThumbnail: Boolean,
         isEliminated: Boolean,
+        // (Mongoose sẽ tự động thêm _id: ObjectId)
       },
     ],
     status: {
       type: Number,
       default: 1,
     },
-    category: {
+
+    // =======================================================
+    // SỬA LẠI TÊN CÁC TRƯỜNG CHO KHỚP VỚI FRONTEND
+    // =======================================================
+    categoryId: { // SỬA TÊN (từ 'category')
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       default: null,
     },
-    brand: {
+    brandId: { // SỬA TÊN (từ 'brand')
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
       default: null,
     },
-    supplier: {
+    supplierId: { // SỬA TÊN (từ 'supplier')
       type: mongoose.Schema.Types.ObjectId,
       ref: "Supplier",
       default: null,
     },
-    unit: {
+    unitId: { // SỬA TÊN (từ 'unit')
       type: mongoose.Schema.Types.ObjectId,
       ref: "Unit",
       default: null,
     },
+    guaranteeId: { // SỬA TÊN (từ 'guarantee')
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Guarantee",
+      default: null,
+    },
+    // =======================================================
+
     tags: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -84,11 +87,6 @@ const productSchema = new mongoose.Schema(
     ],
     weight: {
       type: Number,
-      default: null,
-    },
-    guarantee: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Guarantee",
       default: null,
     },
   },

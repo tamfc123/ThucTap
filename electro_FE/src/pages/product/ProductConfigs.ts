@@ -97,20 +97,20 @@ class ProductConfigs extends Configs {
       type: EntityPropertyType.NUMBER,
       isShowInTable: true,
     },
-    'category.name': {
+    'categoryId.name': {
       label: 'Tên danh mục sản phẩm',
       type: EntityPropertyType.STRING,
       isShowInTable: true,
     },
-    'brand.name': {
+    'brandId.name': {
       label: 'Tên nhãn hiệu',
       type: EntityPropertyType.STRING,
     },
-    'supplier.displayName': {
+    'supplierId.displayName': {
       label: 'Tên nhà cung cấp',
       type: EntityPropertyType.STRING,
     },
-    'unit.name': {
+    'unitId.name': {
       label: 'Tên đơn vị tính',
       type: EntityPropertyType.STRING,
     },
@@ -144,7 +144,7 @@ class ProductConfigs extends Configs {
       label: 'Khối lượng sản phẩm',
       type: EntityPropertyType.NUMBER,
     },
-    'guarantee.name': {
+    'guaranteeId.name': {
       label: 'Tên bảo hành sản phẩm',
       type: EntityPropertyType.STRING,
     },
@@ -218,7 +218,7 @@ class ProductConfigs extends Configs {
     shortDescription: z.string(),
     description: z.string(),
     images: z.array(z.object({
-      id: z.number(),
+      id: z.string(),
       name: z.string(),
       path: z.string(),
       contentType: z.string(),
@@ -257,7 +257,7 @@ class ProductConfigs extends Configs {
       price: z.number(),
       properties: z.object({
         content: z.array(z.object({
-          id: z.number(),
+          id: z.string(),
           name: z.string(),
           code: z.string(),
           value: z.string(),

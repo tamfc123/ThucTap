@@ -244,9 +244,9 @@ function useProductCreateViewModel() {
       label: 'Vô hiệu lực',
     },
   ];
+
   // =======================================================
-  // THÊM DÒNG NÀY ĐỂ XEM LỖI VALIDATION
-  // Nó sẽ hiển thị lỗi ngay khi bạn bấm nút (nếu Zod thất bại)
+  // THÊM LẠI DÒNG NÀY ĐỂ XEM LỖI VALIDATION
   console.log("Lỗi Form Hiện tại (Zod):", form.errors);
   // =======================================================
 

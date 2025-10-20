@@ -26,7 +26,7 @@ function ProductProperties({
       currentProductPropertyItems = [...productProperties.content];
     }
 
-    currentProductPropertyItems.push({ id: 0, name: '', code: '', value: [] });
+    currentProductPropertyItems.push({ id: '', name: '', code: '', value: [] });
     setProductProperties(new CollectionWrapper(currentProductPropertyItems));
   };
 

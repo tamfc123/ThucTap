@@ -66,7 +66,7 @@ function VariantTable({
       </thead>
       <tbody>
         {variants.map((variant, index) => (
-          <tr key={variant.id}>
+          <tr key={variant._id}>
             <td style={{ textAlign: 'center' }}>{index + 1}</td>
             <td>
               <Stack spacing={2}>

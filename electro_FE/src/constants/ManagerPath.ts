@@ -57,4 +57,5 @@ class ManagerPath {
   static ACCOUNT = '/admin/account';
 }
 
+
 export default ManagerPath;

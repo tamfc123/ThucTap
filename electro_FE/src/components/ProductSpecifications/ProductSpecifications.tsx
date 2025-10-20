@@ -26,7 +26,7 @@ function ProductSpecifications({
       currentSpecificationItems = [...specifications.content];
     }
 
-    currentSpecificationItems.push({ id: 0, name: '', code: '', value: '' });
+    currentSpecificationItems.push({ id: '', name: '', code: '', value: '' });
     setSpecifications(new CollectionWrapper(currentSpecificationItems));
   };
 

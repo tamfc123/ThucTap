@@ -14,7 +14,7 @@ import Reward from "../models/Reward.js"
 // Categories
 export const getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({ status: "ACTIVE" })
+    const categories = await Category.find({ status: 1 })
       .select("name slug description image parentCategory")
       .populate("parentCategory", "name slug")
     res.json(categories)
@@ -25,7 +25,7 @@ export const getCategories = async (req, res, next) => {
 
 export const getCategoryBySlug = async (req, res, next) => {
   try {
-    const category = await Category.findOne({ slug: req.params.slug, status: "ACTIVE" }).populate(
+    const category = await Category.findOne({ slug: req.params.slug, status: 1 }).populate(
       "parentCategory",
       "name slug",
     )
@@ -42,7 +42,7 @@ export const getCategoryBySlug = async (req, res, next) => {
 export const getProducts = async (req, res, next) => {
   try {
     const { page = 1, size = 12, sort = "-createdAt", category, brand, minPrice, maxPrice, search } = req.query
-    const query = { status: "ACTIVE" }
+    const query = { status: 1 }
 
     if (category) query.category = category
     if (brand) query.brand = brand
@@ -57,7 +57,7 @@ export const getProducts = async (req, res, next) => {
       .sort(sort)
       .limit(size * 1)
       .skip((page - 1) * size)
-      .populate("category brand")
+      .populate("categoryId brandId")
       .select("-__v")
 
     const total = await Product.countDocuments(query)
@@ -75,8 +75,8 @@ export const getProducts = async (req, res, next) => {
 
 export const getProductBySlug = async (req, res, next) => {
   try {
-    const product = await Product.findOne({ slug: req.params.slug, status: "ACTIVE" }).populate(
-      "category brand variants specifications",
+    const product = await Product.findOne({ slug: req.params.slug, status: 1 }).populate(
+      "categoryId brandId variants specifications",
     )
 
     if (!product) {
@@ -536,7 +536,7 @@ export const cancelOrder = async (req, res, next) => {
 // Payment Methods
 export const getPaymentMethods = async (req, res, next) => {
   try {
-    const paymentMethods = await PaymentMethod.find({ status: "ACTIVE" })
+    const paymentMethods = await PaymentMethod.find({ status: 1 })
     res.json(paymentMethods)
   } catch (error) {
     next(error)

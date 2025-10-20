@@ -17,14 +17,14 @@ interface ProductResponse extends BaseResponse {
 }
 
 export interface VariantPropertyItem {
-  id: number;
+  id: string;
   name: string;
   code: string;
   value: string;
 }
 
 export interface VariantRequest {
-  id?: number;
+  id?: string;
   sku: string;
   cost: number;
   price: number;

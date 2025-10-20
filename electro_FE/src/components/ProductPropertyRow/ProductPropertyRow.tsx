@@ -22,10 +22,10 @@ function ProductPropertyRow({
   productPropertySelectList,
   setProductPropertySelectList,
 }: ProductPropertyRowProps) {
-  const isDisabledProductPropertyValueInput = productProperty.id === 0;
+  const isDisabledProductPropertyValueInput = productProperty.id === '';
 
   const handleProductPropertySelect = (productPropertyInfos: string | null, productPropertyIndex: number) => {
-    const productProperty: ProductPropertyItem = { id: 0, name: '', code: '', value: [] };
+    const productProperty: ProductPropertyItem = { id: '', name: '', code: '', value: [] };
 
     if (productPropertyInfos) {
       const parsedProductPropertyInfos = JSON.parse(productPropertyInfos);

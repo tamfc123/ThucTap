@@ -22,10 +22,10 @@ function ProductSpecificationRow({
   specificationSelectList,
   setSpecificationSelectList,
 }: ProductSpecificationRowProps) {
-  const isDisabledProductSpecificationValueInput = specification.id === 0;
+  const isDisabledProductSpecificationValueInput = specification.id === '';
 
   const handleProductSpecificationSelect = (specificationInfos: string | null, specificationIndex: number) => {
-    const specification: SpecificationItem = { id: 0, name: '', code: '', value: '' };
+    const specification: SpecificationItem = { id: '', name: '', code: '', value: '' };
 
     if (specificationInfos) {
       const parsedSpecificationInfos = JSON.parse(specificationInfos);

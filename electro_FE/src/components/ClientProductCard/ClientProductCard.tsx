@@ -51,7 +51,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
       NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
     } else {
       const clientWishRequest: ClientWishRequest = {
-        userId: user.id,
+        userId: user._id,
         productId: product.productId,
       };
       createWishApi.mutate(clientWishRequest);
@@ -64,7 +64,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
       NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
     } else {
       const clientPreorderRequest: ClientPreorderRequest = {
-        userId: user.id,
+        userId: user._id,
         productId: product.productId,
         status: 1,
       };
@@ -79,7 +79,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
     } else {
       const cartRequest: ClientCartRequest = {
         cartId: currentCartId,
-        userId: user.id,
+        userId: user._id,
         cartItems: [
           {
             variantId: product.productVariants[0].variantId,
@@ -146,7 +146,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
               title="Thêm vào danh sách yêu thích"
               onClick={handleCreateWishButton}
             >
-              <HeartPlus size={18}/>
+              <HeartPlus size={18} />
             </ActionIcon>
             {product.productSaleable
               ? (
@@ -158,7 +158,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
                   title="Thêm vào giỏ hàng"
                   onClick={handleAddToCartButton}
                 >
-                  <ShoppingCartPlus size={18}/>
+                  <ShoppingCartPlus size={18} />
                 </ActionIcon>
               )
               : (
@@ -170,7 +170,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
                   title="Thông báo khi có hàng"
                   onClick={handleCreatePreorderButton}
                 >
-                  <BellPlus size={18}/>
+                  <BellPlus size={18} />
                 </ActionIcon>
               )}
           </Group>
@@ -185,7 +185,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
             {!product.productSaleable && <Badge size="xs" color="red" variant="filled">Hết hàng</Badge>}
           </Group>
           <Text weight={500} color="pink">
-            {product.productPriceRange
+            {(product.productPriceRange || [])
               .map(price => product.productPromotion
                 ? MiscUtils.calculateDiscountedPrice(price, product.productPromotion.promotionPercent)
                 : price)
@@ -194,7 +194,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
           {product.productPromotion && (
             <Group spacing="xs">
               <Text size="sm" sx={{ textDecoration: 'line-through' }}>
-                {product.productPriceRange.map(MiscUtils.formatPrice).join('–') + '\u00A0₫'}
+                {(product.productPriceRange || []).map(MiscUtils.formatPrice).join('–') + '\u00A0₫'}
               </Text>
               <Badge color="pink" variant="filled">
                 -{product.productPromotion.promotionPercent}%
@@ -202,7 +202,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
             </Group>
           )}
           <Text size="sm" color="dimmed">
-            {product.productVariants.length} phiên bản
+            {(product.productVariants || []).length} phiên bản
           </Text>
         </Stack>
       </Stack>

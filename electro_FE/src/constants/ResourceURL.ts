@@ -5,77 +5,77 @@ const clientApiPath = ApplicationConstants.CLIENT_API_PATH;
 
 class ResourceURL {
   // ADMIN
-  static ADDRESS = '/addresses';
-  static PROVINCE = '/provinces';
-  static DISTRICT = '/districts';
-  static WARD = '/wards';
+  static ADDRESS = apiPath + '/addresses';
+  static PROVINCE = apiPath + '/provinces';
+  static DISTRICT = apiPath + '/districts';
+  static WARD = apiPath + '/wards';
 
-  static USER = '/users';
-  static ROLE = '/roles';
+  static USER = apiPath + '/users';
+  static ROLE = apiPath + '/roles';
 
-  static EMPLOYEE = '/employees';
-  static OFFICE ='/offices';
-  static DEPARTMENT ='/departments';
-  static JOB_TYPE ='/job-types';
-  static JOB_LEVEL ='/job-levels';
-  static JOB_TITLE ='/job-titles';
+  static EMPLOYEE = apiPath + '/employees';
+  static OFFICE = apiPath + '/offices';
+  static DEPARTMENT = apiPath + '/departments';
+  static JOB_TYPE = apiPath + '/job-types';
+  static JOB_LEVEL = apiPath + '/job-levels';
+  static JOB_TITLE = apiPath + '/job-titles';
 
-  static CUSTOMER ='/customers';
-  static CUSTOMER_GROUP ='/customer-groups';
-  static CUSTOMER_STATUS ='/customer-status';
-  static CUSTOMER_RESOURCE ='/customer-resources';
+  static CUSTOMER = apiPath + '/customers';
+  static CUSTOMER_GROUP = apiPath + '/customer-groups';
+  static CUSTOMER_STATUS = apiPath + '/customer-status';
+  static CUSTOMER_RESOURCE = apiPath + '/customer-resources';
 
-  static PRODUCT ='/products';
-  static CATEGORY ='/categories';
-  static BRAND ='/brands';
-  static SUPPLIER ='/suppliers';
-  static UNIT ='/units';
-  static TAG ='/tags';
-  static GUARANTEE ='/guarantees';
-  static PROPERTY ='/properties';
-  static SPECIFICATION ='/specifications';
-  static VARIANT ='/variants';
+  static PRODUCT = apiPath + '/products';
+  static CATEGORY = apiPath + '/categories';
+  static BRAND = apiPath + '/brands';
+  static SUPPLIER = apiPath + '/suppliers';
+  static UNIT = apiPath + '/units';
+  static TAG = apiPath + '/tags';
+  static GUARANTEE = apiPath + '/guarantees';
+  static PROPERTY = apiPath + '/properties';
+  static SPECIFICATION = apiPath + '/specifications';
+  static VARIANT = apiPath + '/variants';
 
-  static PRODUCT_INVENTORY ='/product-inventories';
-  static VARIANT_INVENTORY ='/variant-inventories';
-  static WAREHOUSE ='/warehouses';
-  static PURCHASE_ORDER ='/purchase-orders';
-  static PURCHASE_ORDER_VARIANT ='/purchase-order-variants';
-  static DESTINATION ='/destinations';
-  static DOCKET ='/dockets';
-  static DOCKET_VARIANT ='/docket-variants';
-  static DOCKET_REASON ='/docket-reasons';
-  static COUNT ='/counts';
-  static COUNT_VARIANT ='/count-variants';
-  static TRANSFER ='/transfers';
-  static TRANSFER_VARIANT ='/transfer-variants';
+  static PRODUCT_INVENTORY = apiPath + '/product-inventories';
+  static VARIANT_INVENTORY = apiPath + '/variant-inventories';
+  static WAREHOUSE = apiPath + '/warehouses';
+  static PURCHASE_ORDER = apiPath + '/purchase-orders';
+  static PURCHASE_ORDER_VARIANT = apiPath + '/purchase-order-variants';
+  static DESTINATION = apiPath + '/destinations';
+  static DOCKET = apiPath + '/dockets';
+  static DOCKET_VARIANT = apiPath + '/docket-variants';
+  static DOCKET_REASON = apiPath + '/docket-reasons';
+  static COUNT = apiPath + '/counts';
+  static COUNT_VARIANT = apiPath + '/count-variants';
+  static TRANSFER = apiPath + '/transfers';
+  static TRANSFER_VARIANT = apiPath + '/transfer-variants';
 
-  static ORDER ='/orders';
-  static ORDER_VARIANT ='/order-variants';
-  static ORDER_RESOURCE ='/order-resources';
-  static ORDER_CANCELLATION_REASON ='/order-cancellation-reasons';
+  static ORDER = apiPath + '/orders';
+  static ORDER_VARIANT = apiPath + '/order-variants';
+  static ORDER_RESOURCE = apiPath + '/order-resources';
+  static ORDER_CANCELLATION_REASON = apiPath + '/order-cancellation-reasons';
 
-  static WAYBILL ='/waybills';
+  static WAYBILL = apiPath + '/waybills';
 
-  static REVIEW ='/reviews';
+  static REVIEW = apiPath + '/reviews';
 
-  static REWARD_STRATEGY ='/reward-strategies';
+  static REWARD_STRATEGY = apiPath + '/reward-strategies';
 
-  static VOUCHER ='/vouchers';
-  static PAYMENT_METHOD ='/payment-methods';
-  static PROMOTION ='/promotions';
+  static VOUCHER = apiPath + '/vouchers';
+  static PAYMENT_METHOD = apiPath + '/payment-methods';
+  static PROMOTION = apiPath + '/promotions';
 
-  static ROOM ='/rooms';
-  static MESSAGE ='/messages';
+  static ROOM = apiPath + '/rooms';
+  static MESSAGE = apiPath + '/messages';
 
-  static STATISTIC ='/stats';
+  static STATISTIC = apiPath + '/stats';
 
   // CLIENT
-  static CLIENT_CATEGORY =  '/categories';
-  static CLIENT_PRODUCT = '/products';
+  static CLIENT_CATEGORY = clientApiPath + '/categories';
+  static CLIENT_PRODUCT = clientApiPath + '/products';
   static CLIENT_FILTER_CATEGORY = clientApiPath + '/filters/category';
   static CLIENT_FILTER_SEARCH = clientApiPath + '/filters/search';
-  static CLIENT_USER_INFO = '/auth/info';
+  static CLIENT_USER_INFO = clientApiPath + '/users/info';
   static CLIENT_USER_PERSONAL_SETTING = clientApiPath + '/users/personal';
   static CLIENT_USER_PHONE_SETTING = clientApiPath + '/users/phone';
   static CLIENT_USER_EMAIL_SETTING = clientApiPath + '/users/email';
@@ -97,14 +97,14 @@ class ResourceURL {
   static CLIENT_REWARD = clientApiPath + '/rewards';
 
   // AUTHENTICATION
-  static LOGIN ='/auth/login';
-  static ADMIN_USER_INFO ='/auth/info';
-  static CLIENT_REGISTRATION = '/auth/registration';
-  static CLIENT_REGISTRATION_RESEND_TOKEN = (userId: number) =>`/auth/registration/${userId}/resend-token`;
-  static CLIENT_REGISTRATION_CONFIRM ='/auth/registration/confirm';
-  static CLIENT_REGISTRATION_CHANGE_EMAIL = (userId: number) =>`/auth/registration/${userId}/change-email`;
-  static CLIENT_FORGOT_PASSWORD ='/auth/forgot-password';
-  static CLIENT_RESET_PASSWORD ='/auth/reset-password';
+  static LOGIN = apiPath + '/auth/login';
+  static ADMIN_USER_INFO = apiPath + '/auth/info';
+  static CLIENT_REGISTRATION = apiPath + '/auth/registration';
+  static CLIENT_REGISTRATION_RESEND_TOKEN = (userId: number) => apiPath + `/auth/registration/${userId}/resend-token`;
+  static CLIENT_REGISTRATION_CONFIRM = apiPath + '/auth/registration/confirm';
+  static CLIENT_REGISTRATION_CHANGE_EMAIL = (userId: number) => apiPath + `/auth/registration/${userId}/change-email`;
+  static CLIENT_FORGOT_PASSWORD = apiPath + '/auth/forgot-password';
+  static CLIENT_RESET_PASSWORD = apiPath + '/auth/reset-password';
 }
 
 export default ResourceURL;
