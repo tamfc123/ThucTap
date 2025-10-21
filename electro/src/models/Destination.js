@@ -1,25 +1,18 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const destinationSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
+    contactFullname: { type: String, default: null },
+    contactEmail: { type: String, default: null },
+    contactPhone: { type: String, default: null },
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
       required: true,
     },
-    code: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    address: String,
-    status: {
-      type: Number,
-      default: 1,
-    },
+    status: { type: Number, default: 1 },
   },
-  {
-    timestamps: true,
-  },
-)
+  { timestamps: true }
+);
 
-export default mongoose.model("Destination", destinationSchema)
+export default mongoose.model("Destination", destinationSchema);

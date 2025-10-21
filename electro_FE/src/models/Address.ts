@@ -5,8 +5,8 @@ import { WardResponse } from 'models/Ward';
 
 export interface AddressResponse extends BaseResponse {
   line: string | null;
-  province: ProvinceResponse | null;
-  district: AddressResponse_DistrictResponse | null;
+  provinceId: ProvinceResponse | null;
+  districtId: AddressResponse_DistrictResponse | null;
   ward: AddressResponse_WardResponse | null;
 }
 
