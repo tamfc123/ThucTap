@@ -13,6 +13,6 @@ export interface DestinationRequest {
   contactFullname: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
-  address: AddressRequest;
+  address: AddressRequest | null;
   status: number;
 }

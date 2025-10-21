@@ -7,6 +7,9 @@ import useDestinationUpdateViewModel from 'pages/destination/DestinationUpdate.v
 
 function DestinationUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không tìm thấy ID của danh mục.</div>;
+  }
   const {
     destination,
     form,
@@ -14,7 +17,7 @@ function DestinationUpdate() {
     provinceSelectList,
     districtSelectList,
     statusSelectList,
-  } = useDestinationUpdateViewModel(Number(id));
+  } = useDestinationUpdateViewModel(id);
 
   if (!destination) {
     return null;
@@ -28,7 +31,7 @@ function DestinationUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={destination.id}
+        id={destination._id}
         createdAt={destination.createdAt}
         updatedAt={destination.updatedAt}
         createdBy="1"

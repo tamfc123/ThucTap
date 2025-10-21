@@ -205,7 +205,19 @@ class FetchUtils {
    * @param requestParams
    */
   static async getAll<O>(resourceUrl: string, requestParams?: RequestParams): Promise<ListResponse<O>> {
-    const response = await fetch(FetchUtils.concatParams(resourceUrl, { ...requestParams }));
+    const { jwtToken } = useAdminAuthStore.getState();
+    const response = await fetch(
+      FetchUtils.concatParams(resourceUrl, { ...requestParams }),
+      {
+        method: 'GET', // Thêm method 'GET' cho rõ ràng
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // Thêm token vào header
+          ...(jwtToken ? { 'Authorization': `Bearer ${jwtToken}` } : {}),
+        },
+      }
+    );
     if (!response.ok) {
       throw await response.json();
     }

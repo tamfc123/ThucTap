@@ -22,14 +22,9 @@ export const getAll = async (req, res, next) => {
       .sort(sort)
       .skip((page - 1) * size)
       .limit(Number(size))
-      .populate({
-        path: "address",
-        populate: [
-          { path: "provinceId", model: "Province" },
-          { path: "districtId", model: "District" },
-          { path: "wardId", model: "Ward" },
-        ],
-      });
+      .populate('address.provinceId', 'name code')
+      .populate('address.districtId', 'name code')
+      .populate('address.wardId', 'name code')
 
     res.json({
       content: items,
@@ -47,14 +42,9 @@ export const getAll = async (req, res, next) => {
  */
 export const getById = async (req, res, next) => {
   try {
-    const item = await Destination.findById(req.params.id).populate({
-      path: "address",
-      populate: [
-        { path: "provinceId", model: "Province" },
-        { path: "districtId", model: "District" },
-        { path: "wardId", model: "Ward" },
-      ],
-    });
+    const item = await Destination.findById(req.params.id)
+      .populate('address.provinceId', 'name code') // Populate lồng nhau
+      .populate('address.districtId', 'name code');
 
     if (!item) {
       return res.status(404).json({ message: "Destination not found" });
@@ -71,33 +61,12 @@ export const getById = async (req, res, next) => {
  */
 export const create = async (req, res, next) => {
   try {
-    const { contactFullname, contactEmail, contactPhone, address, status } =
-      req.body;
+    const destination = await Destination.create(req.body);
 
-    // Tạo Address trước
-    const newAddress = new Address(address);
-    const savedAddress = await newAddress.save();
-
-    // Gắn addressId vào Destination
-    const newDestination = new Destination({
-      contactFullname,
-      contactEmail,
-      contactPhone,
-      address: savedAddress._id,
-      status,
-    });
-
-    const savedDestination = await newDestination.save();
-
-    // Populate lại để trả về đúng cấu trúc
-    const populated = await savedDestination.populate({
-      path: "address",
-      populate: [
-        { path: "provinceId", model: "Province" },
-        { path: "districtId", model: "District" },
-        { path: "wardId", model: "Ward" },
-      ],
-    });
+    const populated = await Destination.findById(destination._id)
+      .populate("address.provinceId", "name code")
+      .populate("address.districtId", "name code")
+      .populate("address.wardId", "name code");
 
     res.status(201).json(populated);
   } catch (error) {
@@ -110,34 +79,11 @@ export const create = async (req, res, next) => {
  */
 export const update = async (req, res, next) => {
   try {
-    const { address, ...destinationData } = req.body;
-
-    const destination = await Destination.findById(req.params.id);
-    if (!destination) {
+    const item = await Destination.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!item) {
       return res.status(404).json({ message: "Destination not found" });
     }
-
-    // Nếu có địa chỉ gửi kèm, update luôn
-    if (address && destination.address) {
-      await Address.findByIdAndUpdate(destination.address, address, {
-        new: true,
-      });
-    }
-
-    // Cập nhật các trường khác
-    Object.assign(destination, destinationData);
-    const updated = await destination.save();
-
-    const populated = await updated.populate({
-      path: "address",
-      populate: [
-        { path: "provinceId", model: "Province" },
-        { path: "districtId", model: "District" },
-        { path: "wardId", model: "Ward" },
-      ],
-    });
-
-    res.json(populated);
+    res.json(item);
   } catch (error) {
     next(error);
   }

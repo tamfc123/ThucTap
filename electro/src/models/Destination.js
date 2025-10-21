@@ -6,10 +6,11 @@ const destinationSchema = new mongoose.Schema(
     contactEmail: { type: String, default: null },
     contactPhone: { type: String, default: null },
     address: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Address",
-      required: true,
-    },
+          line: String,
+          provinceId: { type: mongoose.Schema.Types.ObjectId, ref: "Province" },
+          districtId: { type: mongoose.Schema.Types.ObjectId, ref: "District" },
+          wardId: { type: mongoose.Schema.Types.ObjectId, ref: "Ward" },
+        },
     status: { type: Number, default: 1 },
   },
   { timestamps: true }

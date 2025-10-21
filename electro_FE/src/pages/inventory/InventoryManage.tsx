@@ -53,32 +53,33 @@ function InventoryManage() {
   );
 
   const entitiesTableRowsFragment = listResponse.content.map((entity) => (
-    <tr key={entity.product.id}>
-      <td>{entity.product.code}</td>
-      <td>{entity.product.name}</td>
-      <td>{entity.product.brand?.name}</td>
-      <td>{entity.product.supplier?.displayName}</td>
-      <td>{entity.inventory}</td>
-      <td>{entity.waitingForDelivery}</td>
-      <td>{entity.canBeSold}</td>
-      <td>{entity.areComing}</td>
-      <td>
-        <ActionIcon
-          color="blue"
-          variant="hover"
-          size={24}
-          title="Thiết lập định mức tồn kho cho sản phẩm"
-        >
-          <Plus/>
-        </ActionIcon>
-      </td>
-      <td>
-        <Anchor inherit onClick={() => handleTransactionsAnchor(entity.product.name, entity.transactions)}>
-          Giao dịch
-        </Anchor>
-      </td>
-    </tr>
-  ));
+  <tr key={entity?.product?._id || "unknown"}>
+    <td>{entity?.product?.code || "—"}</td>
+    <td>{entity?.product?.name || "—"}</td>
+    <td>{entity?.product?.brand?.name || "—"}</td>
+    <td>{entity?.product?.supplier?.displayName || "—"}</td>
+    <td>{entity?.inventory ?? 0}</td>
+    <td>{entity?.waitingForDelivery ?? 0}</td>
+    <td>{entity?.canBeSold ?? 0}</td>
+    <td>{entity?.areComing ?? 0}</td>
+    <td>
+      <ActionIcon
+        color="blue"
+        variant="hover"
+        size={24}
+        title="Thiết lập định mức tồn kho cho sản phẩm"
+      >
+        <Plus />
+      </ActionIcon>
+    </td>
+    <td>
+      <Anchor inherit onClick={() => handleTransactionsAnchor(entity?.product?.name, entity?.transactions)}>
+        Giao dịch
+      </Anchor>
+    </td>
+  </tr>
+));
+
 
   return (
     <Stack>

@@ -41,7 +41,7 @@ function DestinationManage() {
 
   const showedPropertiesFragment = (entity: DestinationResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -51,12 +51,12 @@ function DestinationManage() {
       </td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
-          {entity.address.province?.name || ''}
+          {entity.address.provinceId?.name || ''}
         </Highlight>
       </td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
-          {entity.address.district?.name || ''}
+          {entity.address.districtId?.name || ''}
         </Highlight>
       </td>
       <td>{destinationStatusBadgeFragment(entity.status)}</td>
@@ -67,7 +67,7 @@ function DestinationManage() {
     <>
       <tr>
         <td>{DestinationConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{DestinationConfigs.properties.createdAt.label}</td>
@@ -95,11 +95,11 @@ function DestinationManage() {
       </tr>
       <tr>
         <td>{DestinationConfigs.properties['address.province.name'].label}</td>
-        <td>{entity.address.province?.name}</td>
+        <td>{entity.address.provinceId?.name}</td>
       </tr>
       <tr>
         <td>{DestinationConfigs.properties['address.district.name'].label}</td>
-        <td>{entity.address.district?.name}</td>
+        <td>{entity.address.districtId?.name}</td>
       </tr>
       <tr>
         <td>{DestinationConfigs.properties.status.label}</td>
