@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import {
   Anchor,
-  Grid,
+  // Grid, // (1) Xóa import không dùng
   Group,
-  ScrollArea,
+  // ScrollArea, // (2) Xóa import không dùng
   Skeleton,
   Stack,
   Tabs,
@@ -14,22 +14,24 @@ import {
 import { useNavigate } from 'react-router-dom';
 import PageConfigs from 'pages/PageConfigs';
 import { useQuery } from 'react-query';
-import { ClientCategoryResponse, CollectionWrapper } from 'types';
+// (3) Xóa CollectionWrapper (không dùng)
+import { ClientCategoryResponse } from 'types';
 import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
 import ResourceURL from 'constants/ResourceURL';
 import NotifyUtils from 'utils/NotifyUtils';
-import { AlertTriangle } from 'tabler-icons-react';
+// (4) Thêm 'List' vào import
+import { AlertTriangle, List } from 'tabler-icons-react';
 
 function CategoryMenu({ setOpenedCategoryMenu }: { setOpenedCategoryMenu: Dispatch<SetStateAction<boolean>> }) {
   const theme = useMantineTheme();
-
   const navigate = useNavigate();
 
+  // (5) Dòng useQuery này của bạn đã SỬA ĐÚNG
   const {
     data: categoryResponses,
     isLoading: isLoadingCategoryResponses,
     isError: isErrorCategoryResponses,
-  } = useQuery<CollectionWrapper<ClientCategoryResponse>, ErrorMessage>(
+  } = useQuery<ClientCategoryResponse[], ErrorMessage>( // <-- Đã đúng (là Mảng)
     ['client-api', 'categories', 'getAllCategories'],
     () => FetchUtils.get(ResourceURL.CLIENT_CATEGORY),
     {
@@ -39,6 +41,7 @@ function CategoryMenu({ setOpenedCategoryMenu }: { setOpenedCategoryMenu: Dispat
     }
   );
 
+  // (6) Hai khối if (isLoading, isError) này đã ĐÚNG
   if (isLoadingCategoryResponses) {
     return (
       <Stack>
@@ -63,12 +66,13 @@ function CategoryMenu({ setOpenedCategoryMenu }: { setOpenedCategoryMenu: Dispat
     setTimeout(() => navigate(path), 200);
   };
 
+  // (7) Sửa lại TOÀN BỘ khối return
   return (
     <Tabs
       variant="pills"
       tabPadding="md"
       styles={{
-        // TODO: Refactor !important
+        // ... styles của bạn
         tabActive: {
           color: (theme.colorScheme === 'dark' ? theme.colors.blue[2] : theme.colors.blue[6]) + '!important',
           backgroundColor: (theme.colorScheme === 'dark'
@@ -76,76 +80,43 @@ function CategoryMenu({ setOpenedCategoryMenu }: { setOpenedCategoryMenu: Dispat
         },
       }}
     >
-      {categoryResponses?.content.map((firstCategory, index) => {
-        const FirstCategoryIcon = PageConfigs.categorySlugIconMap[firstCategory.categorySlug];
+      {/* - Chỉ dùng 1 vòng lặp
+        - Dùng biến "categoryResponses" (đã có)
+        - Dùng (categoryResponses || []) cho an toàn
+      */}
+      {(categoryResponses || []).map((firstCategory, index) => {
+        const FirstCategoryIcon = PageConfigs.categorySlugIconMap[firstCategory.slug];
+
+        // (8) Dùng biến 'List' đã import
+        const IconComponent = FirstCategoryIcon || List; // Icon mặc định
 
         return (
-          <Tabs
-            variant="pills"
-            tabPadding="md"
-            styles={{
-              tabActive: {
-                color: (theme.colorScheme === 'dark' ? theme.colors.blue[2] : theme.colors.blue[6]) + '!important',
-                backgroundColor: (theme.colorScheme === 'dark'
-                  ? theme.fn.rgba(theme.colors.blue[8], 0.35) : theme.colors.blue[0]) + '!important',
-              },
-            }}
+          <Tabs.Tab
+            key={index}
+            label={firstCategory.name}
+            icon={<IconComponent size={14} />}
           >
-            {(categoryResponses?.content ?? []).map((firstCategory, index) => {
-              const FirstCategoryIcon = PageConfigs.categorySlugIconMap[firstCategory.categorySlug];
-
-              return (
-                <Tabs.Tab
-                  key={index}
-                  label={firstCategory.categoryName}
-                  icon={FirstCategoryIcon ? <FirstCategoryIcon size={14} /> : undefined}
+            {/* Đây là nội dung của Tab (Panel) */}
+            <Stack>
+              {/* === Bạn chỉ muốn giữ lại phần này === */}
+              <Group>
+                <ThemeIcon variant="light" size={42}>
+                  <IconComponent />
+                </ThemeIcon>
+                <Anchor
+                  sx={{ fontSize: theme.fontSizes.sm * 2 }}
+                  weight={500}
+                  onClick={() => handleAnchor('/category/' + firstCategory.slug)}
                 >
-                  <Stack>
-                    <Group>
-                      <ThemeIcon variant="light" size={42}>
-                        {FirstCategoryIcon && <FirstCategoryIcon />}
-                      </ThemeIcon>
-                      <Anchor
-                        sx={{ fontSize: theme.fontSizes.sm * 2 }}
-                        weight={500}
-                        onClick={() => handleAnchor('/category/' + firstCategory.categorySlug)}
-                      >
-                        {firstCategory.categoryName}
-                      </Anchor>
-                    </Group>
+                  {firstCategory.name}
+                </Anchor>
+              </Group>
 
-                    <ScrollArea style={{ height: 325 }}>
-                      <Grid sx={{ width: '100%' }}>
-                        {(firstCategory.categoryChildren ?? []).map((secondCategory, index) => (
-                          <Grid.Col span={6} xs={4} sm={3} md={2.4} mb="sm" key={index}>
-                            <Stack spacing="xs">
-                              <Anchor
-                                weight={500}
-                                color="pink"
-                                onClick={() => handleAnchor('/category/' + secondCategory.categorySlug)}
-                              >
-                                {secondCategory.categoryName}
-                              </Anchor>
-                              {(secondCategory.categoryChildren ?? []).map((thirdCategory, index) => (
-                                <Anchor
-                                  key={index}
-                                  onClick={() => handleAnchor('/category/' + thirdCategory.categorySlug)}
-                                >
-                                  {thirdCategory.categoryName}
-                                </Anchor>
-                              ))}
-                            </Stack>
-                          </Grid.Col>
-                        ))}
-                      </Grid>
-                    </ScrollArea>
-                  </Stack>
-                </Tabs.Tab>
-              );
-            })}
-          </Tabs>
+              {/* === PHẦN <ScrollArea> ĐÃ BỊ XÓA (theo ý bạn) === */}
+
+            </Stack>
+          </Tabs.Tab>
         );
-
       })}
     </Tabs>
   );

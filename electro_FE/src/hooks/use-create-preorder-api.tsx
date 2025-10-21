@@ -14,7 +14,7 @@ function useCreatePreorderApi() {
       onSuccess: (response) =>
         NotifyUtils.simpleSuccess(
           <Text inherit>
-            <span>Đã thêm sản phẩm {response.preorderProduct.productName} vào </span>
+            <span>Đã thêm sản phẩm {response.preorderProduct.name} vào </span>
             <Anchor component={Link} to="/user/preorder" inherit>danh sách đặt trước</Anchor>
           </Text>
         ),

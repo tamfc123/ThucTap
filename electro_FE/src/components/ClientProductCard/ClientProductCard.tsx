@@ -42,10 +42,10 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
   const createWishApi = useCreateWishApi();
   const createPreorderApi = useCreatePreorderApi();
   const saveCartApi = useSaveCartApi();
-  console.log('product in card:', product);
+  //console.log('PRODUCT in card:', product);
 
   const { user, currentCartId } = useAuthStore();
-  const thumbnail = product.productThumbnail || product.images?.find((img: { isThumbnail: any; }) => img.isThumbnail)?.path;
+  const thumbnail = product.images?.find((img: { isThumbnail: any; }) => img.isThumbnail)?.path;
 
 
   const handleCreateWishButton = (event: React.MouseEvent<HTMLElement>) => {

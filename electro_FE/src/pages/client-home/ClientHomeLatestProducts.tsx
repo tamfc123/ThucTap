@@ -16,44 +16,29 @@ function ClientHomeLatestProducts() {
     data: productResponses,
     isLoading: isLoadingProductResponses,
     isError: isErrorProductResponses,
-  } = useQuery<any, ErrorMessage>(
+  } = useQuery<ListResponse<ClientListedProductResponse>, ErrorMessage>(
     ['client-api', 'products', 'getAllProducts', requestParams],
     () => FetchUtils.get(ResourceURL.CLIENT_PRODUCT, requestParams),
     {
       onError: () => NotifyUtils.simpleFailed('Lấy dữ liệu không thành công'),
       refetchOnWindowFocus: false,
       keepPreviousData: true,
+
+      // (2) XÓA TOÀN BỘ KHỐI 'select' NÀY ĐI
+      /*
       select: (data) => {
         console.log('RAW API DATA:', data);
-        
-        // Transform dữ liệu - THÊM TRƯỜNG images
-        const transformedContent = (data.content || []).map((item: any) => {
-          const transformedProduct = {
-            productId: item._id || item.productId,
-            productName: item.name || item.productName,
-            productSlug: item.slug || item.productSlug,
-            productThumbnail: item.thumbnail || item.productThumbnail || null,
-            // THÊM DÒNG NÀY - lấy images từ API response
-            images: item.images || item.productImages || [],
-            productPriceRange: item.priceRange || item.productPriceRange || [0, 0],
-            productVariants: item.variants || item.productVariants || [],
-            productSaleable: item.saleable !== undefined ? item.saleable : true,
-            productPromotion: item.promotion || item.productPromotion || null,
-          };
-
-          console.log('Transformed product:', transformedProduct);
-          return transformedProduct;
-        });
-
+        // ... (Tất cả code biến đổi này đã được backend làm)
         return {
           ...data,
           content: transformedContent,
         };
       },
+      */
     }
   );
 
-  const products = productResponses as ListResponse<ClientListedProductResponse>;
+  const products = productResponses
 
   let resultFragment;
 
@@ -61,7 +46,7 @@ function ClientHomeLatestProducts() {
     resultFragment = (
       <Stack>
         {Array(5).fill(0).map((_, index) => (
-          <Skeleton key={index} height={50} radius="md"/>
+          <Skeleton key={index} height={50} radius="md" />
         ))}
       </Stack>
     );
@@ -70,7 +55,7 @@ function ClientHomeLatestProducts() {
   if (isErrorProductResponses) {
     resultFragment = (
       <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.pink[6] }}>
-        <AlertTriangle size={125} strokeWidth={1}/>
+        <AlertTriangle size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Đã có lỗi xảy ra</Text>
       </Stack>
     );
@@ -78,8 +63,8 @@ function ClientHomeLatestProducts() {
 
   if (products && products.totalElements === 0) {
     resultFragment = (
-<Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
-        <Marquee size={125} strokeWidth={1}/>
+      <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
+        <Marquee size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Không có sản phẩm</Text>
       </Stack>
     );
@@ -88,9 +73,10 @@ function ClientHomeLatestProducts() {
   if (products && products.totalElements > 0) {
     resultFragment = (
       <Grid>
+        {/* (4) Dòng này giờ đã an toàn và đúng */}
         {products.content.map((product, index) => (
           <Grid.Col key={product._id || index} span={6} sm={4} md={3}>
-            <ClientProductCard product={product}/>
+            <ClientProductCard product={product} />
           </Grid.Col>
         ))}
       </Grid>
@@ -105,7 +91,7 @@ function ClientHomeLatestProducts() {
             Sản phẩm mới nhất
           </Text>
         </Title>
-        <Button variant="light" leftIcon={<List size={16}/>} radius="md">
+        <Button variant="light" leftIcon={<List size={16} />} radius="md">
           Xem tất cả
         </Button>
       </Group>

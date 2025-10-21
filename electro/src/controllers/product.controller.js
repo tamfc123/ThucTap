@@ -135,6 +135,7 @@ const getAllProducts = async (req, res) => {
     // Dùng hàm transform đã sửa
     const products = productsFromDB.map(transformProductResponse);
 
+
     res.json({
       content: products,
       totalElements: total,
@@ -159,10 +160,10 @@ const getProductById = async (req, res) => {
       .populate("supplierId", "displayName")
       .populate("unitId", "name")
       .populate("guaranteeId", "name")
-      .populate("variants")
+      .populate("variants", "price")
       .populate("tags", "name slug")
       .lean(); // <-- THÊM .lean() ĐỂ TIÊU CHUẨN HÓA
-      console.log("--- PRODUCT FROM DB ---", product);
+    console.log("--- PRODUCT FROM DB ---", product);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" })
@@ -188,7 +189,7 @@ const getProductBySlug = async (req, res) => {
       .populate("supplierId", "displayName")
       .populate("unitId", "name")
       .populate("guaranteeId", "name")
-      .populate("variants")
+      .populate("variants", "price")
       .populate("tags", "name slug")
       .lean(); // <-- THÊM .lean() ĐỂ TIÊU CHUẨN HÓA
 

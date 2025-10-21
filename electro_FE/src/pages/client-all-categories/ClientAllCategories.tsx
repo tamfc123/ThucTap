@@ -32,7 +32,7 @@ function ClientAllCategories() {
     data: categoryResponses,
     isLoading: isLoadingCategoryResponses,
     isError: isErrorCategoryResponses,
-  } = useQuery<CollectionWrapper<ClientCategoryResponse>, ErrorMessage>(
+  } = useQuery<ClientCategoryResponse[], ErrorMessage>(
     ['client-api', 'categories', 'getAllCategories'],
     () => FetchUtils.get(ResourceURL.CLIENT_CATEGORY),
     {
@@ -48,7 +48,7 @@ function ClientAllCategories() {
     resultFragment = (
       <Stack>
         {Array(5).fill(0).map((_, index) => (
-          <Skeleton key={index} height={50} radius="md"/>
+          <Skeleton key={index} height={50} radius="md" />
         ))}
       </Stack>
     );
@@ -57,46 +57,46 @@ function ClientAllCategories() {
   if (isErrorCategoryResponses) {
     resultFragment = (
       <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.pink[6] }}>
-        <AlertTriangle size={125} strokeWidth={1}/>
+        <AlertTriangle size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Đã có lỗi xảy ra</Text>
       </Stack>
     );
   }
 
   if (categoryResponses) {
-    resultFragment = categoryResponses.content.map((firstCategory, index) => {
-      const FirstCategoryIcon = PageConfigs.categorySlugIconMap[firstCategory.categorySlug];
+    resultFragment = categoryResponses.map((firstCategory, index) => {
+      const FirstCategoryIcon = PageConfigs.categorySlugIconMap[firstCategory.slug];
 
       return (
         <Stack key={index}>
           <Group>
             <ThemeIcon variant="light" size={42}>
-              <FirstCategoryIcon/>
+              <FirstCategoryIcon />
             </ThemeIcon>
             <Anchor
               component={Link}
-              to={'/category/' + firstCategory.categorySlug}
+              to={'/category/' + firstCategory.slug}
               sx={{ fontSize: theme.fontSizes.sm * 2 }}
               weight={500}
             >
-              {firstCategory.categoryName}
+              {firstCategory.name}
             </Anchor>
           </Group>
           <Grid>
-            {firstCategory.categoryChildren.map((secondCategory, index) => (
+            {(firstCategory.categoryChildren || []).map((secondCategory, index) => (
               <Grid.Col span={6} xs={4} sm={3} md={2.4} mb="sm" key={index}>
                 <Stack spacing="xs">
                   <Anchor
                     component={Link}
-                    to={'/category/' + secondCategory.categorySlug}
+                    to={'/category/' + secondCategory.slug}
                     weight={500}
                     color="pink"
                   >
-                    {secondCategory.categoryName}
+                    {secondCategory.name}
                   </Anchor>
-                  {secondCategory.categoryChildren.map((thirdCategory, index) => (
-                    <Anchor key={index} component={Link} to={'/category/' + thirdCategory.categorySlug}>
-                      {thirdCategory.categoryName}
+                  {(secondCategory.categoryChildren || []).map((thirdCategory, index) => (
+                    <Anchor key={index} component={Link} to={'/category/' + thirdCategory.slug}>
+                      {thirdCategory.name}
                     </Anchor>
                   ))}
                 </Stack>

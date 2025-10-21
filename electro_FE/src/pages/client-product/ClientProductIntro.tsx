@@ -92,7 +92,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
         userId: user._id,
         cartItems: [
           {
-            variantId: product.productVariants[selectedVariantIndex].variantId,
+            variantId: (product.productVariants || [])[selectedVariantIndex]?.variantId,
             quantity: quantity,
           },
         ],
@@ -117,8 +117,8 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
             Trang chủ
           </Anchor>
           {product.productCategory && MiscUtils.makeCategoryBreadcrumbs(product.productCategory).map(c => (
-            <Anchor key={c.categorySlug} component={Link} to={'/category/' + c.categorySlug}>
-              {c.categoryName}
+            <Anchor key={c.slug} component={Link} to={'/category/' + c.slug}>
+              {c.name}
             </Anchor>
           ))}
           <Text color="dimmed">
@@ -128,7 +128,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
 
         <Grid gutter="lg">
           <Grid.Col md={6}>
-            {product.productImages.length > 0
+            {(product.productImages && product.productImages.length > 0)
               ? (
                 <ClientCarousel>
                   {product.productImages.map(image => (
@@ -200,7 +200,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   <Text sx={{ fontSize: 24 }} weight={700} color="pink">
                     {MiscUtils.formatPrice(
                       MiscUtils.calculateDiscountedPrice(
-                        product.productVariants[selectedVariantIndex]?.variantPrice,
+                        (product.productVariants || [])[selectedVariantIndex]?.variantPrice,
                         product.productPromotion ? product.productPromotion.promotionPercent : 0
                       )
                     )} ₫
@@ -208,7 +208,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   {product.productPromotion && (
                     <>
                       <Text sx={{ textDecoration: 'line-through' }}>
-                        {MiscUtils.formatPrice(product.productVariants[selectedVariantIndex]?.variantPrice)} ₫
+                        {MiscUtils.formatPrice((product.productVariants || [])[selectedVariantIndex]?.variantPrice)} ₫
                       </Text>
                       <Badge color="pink" size="lg" variant="filled">
                         -{product.productPromotion.promotionPercent}%
@@ -286,7 +286,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                       value={quantity}
                       onChange={(value) => setQuantity(value || 1)}
                       handlersRef={quantityInputHandlers}
-                      max={product.productVariants[selectedVariantIndex].variantInventory}
+                      max={product.productVariants?.[selectedVariantIndex]?.variantInventory || 1}
                       min={1}
                       styles={{ input: { width: 54, textAlign: 'center' } }}
                     />

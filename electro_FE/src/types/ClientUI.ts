@@ -19,12 +19,12 @@ export interface ClientCategoryResponse {
   categoryParent?: ClientCategoryResponse;
 }
 
+
 export interface ClientListedProductResponse {
   _id: string;
   name: string;
   slug: string;
   images?: any;
-  productThumbnail: string | null;
   productPriceRange: number[];
   variants: ClientListedVariantResponse[];
   productSaleable: boolean;
@@ -33,7 +33,7 @@ export interface ClientListedProductResponse {
 
 interface ClientListedVariantResponse {
   variantId: string;
-  variantPrice: number;
+  price: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
 }
 

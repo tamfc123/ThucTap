@@ -44,7 +44,7 @@ function ClientProduct() {
 
           <ClientProductReviews productSlug={slug as string} />
 
-          {product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product} />}
+          {product.productRelatedProducts && product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product} />}
         </Stack>
       </Container>
     </main>

@@ -25,15 +25,15 @@ const variantSchema = new mongoose.Schema(
       of: mongoose.Schema.Types.Mixed,
       default: null,
     },
-    images: [
-      {
-        id: Number,
-        name: String,
-        path: String,
-        contentType: String,
-        size: Number,
-      },
-    ],
+    // images: [
+    //   {
+    //     id: Number,
+    //     name: String,
+    //     path: String,
+    //     contentType: String,
+    //     size: Number,
+    //   },
+    // ],
     status: {
       type: Number,
       default: 1,
@@ -48,14 +48,5 @@ const variantSchema = new mongoose.Schema(
   },
 )
 
-variantSchema.set("toJSON", {
-  virtuals: true,
-  transform: (doc, ret) => {
-    ret.id = ret._id
-    delete ret._id
-    delete ret.__v
-    return ret
-  },
-})
 
 export default mongoose.model("Variant", variantSchema)

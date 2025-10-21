@@ -14,7 +14,7 @@ function useCreateWishApi() {
       onSuccess: (response) =>
         NotifyUtils.simpleSuccess(
           <Text inherit>
-            <span>Đã thêm sản phẩm {response.wishProduct.productName} vào </span>
+            <span>Đã thêm sản phẩm {response.wishProduct.name} vào </span>
             <Anchor component={Link} to="/user/wishlist" inherit>danh sách yêu thích</Anchor>
           </Text>
         ),

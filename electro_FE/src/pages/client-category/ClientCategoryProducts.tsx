@@ -94,11 +94,23 @@ function useGetAllCategoryProductsApi(categorySlug: string) {
   const requestParams = {
     page: activePage,
     size: ApplicationConstants.DEFAULT_CLIENT_CATEGORY_PAGE_SIZE,
-    filter: [`category.slug==${categorySlug}`, activeBrandFilter, activePriceFilter].filter(Boolean).join(';'),
+
+    // SỬA LẠI: Gửi 'category' (giống tên API) thay vì 'filter'
+    category: categorySlug,
+
     sort: activeSort,
     search: activeSearch,
-    newable: true,
+
+    // SỬA LẠI: Backend của bạn cũng không đọc 'saleable'
+    // (Bạn phải sửa backend để nó hiểu tham số 'saleable' như tôi đã nói)
     saleable: activeSaleable,
+
+    // CẢNH BÁO: Những filter này (brand, price) cũng sẽ KHÔNG hoạt động
+    // vì API 'getProducts' của bạn không hiểu cú pháp RSQL ('brand.slug==...')
+    // Bạn cần sửa backend API để hiểu RSQL
+    // HOẶC sửa store để gửi 'brand=dell' thay vì 'brand.slug==dell'
+    // brand: activeBrandFilter, // (Tạm thời tắt đi)
+    // minPrice: ..., // (Tạm thời tắt đi)
   };
 
   const {
