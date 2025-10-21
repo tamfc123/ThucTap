@@ -45,6 +45,8 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
   console.log('product in card:', product);
 
   const { user, currentCartId } = useAuthStore();
+  const thumbnail = product.productThumbnail || product.images?.find((img: { isThumbnail: any; }) => img.isThumbnail)?.path;
+
 
   const handleCreateWishButton = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
@@ -123,7 +125,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
         <Box sx={{ position: 'relative' }}>
           <Image
             radius="md"
-            src={product.productThumbnail || undefined}
+            src={thumbnail || undefined}
             alt={product.name}
             styles={{ image: { aspectRatio: '1 / 1' } }}
           />

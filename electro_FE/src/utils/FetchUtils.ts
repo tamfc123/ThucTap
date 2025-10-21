@@ -326,23 +326,40 @@ class FetchUtils {
     }
   }
 
-  /**
-   * Hàm uploadMultipleImages dùng để tải lên nhiều tệp hình
-   * @param images
+ /**
+   * Upload nhiều hình lên Cloudinary, trả về mảng UploadedImageResponse để lưu DB
    */
-  static async uploadMultipleImages(images: File[]): Promise<CollectionWrapper<UploadedImageResponse>> {
+  static async uploadMultipleImages(
+    images: File[]
+  ): Promise<UploadedImageResponse[]> {
     const formData = new FormData();
-    images.forEach((image) => formData.append('images', image));
+    images.forEach((image) => formData.append("images", image));
 
-    const response = await fetch(ApplicationConstants.HOME_PATH + '/images/upload-multiple', {
-      method: 'POST',
-      body: formData,
-    });
+    const { jwtToken } = useAdminAuthStore.getState();
+
+    const response = await fetch(
+      ApplicationConstants.HOME_PATH + "/images/upload-multiple",
+      {
+        method: "POST",
+        headers: {
+          ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
+        },
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
       throw await response.json();
     }
-    return await response.json();
+
+    const data = await response.json();
+
+    // Luôn trả về mảng UploadedImageResponse[]
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.images)) return data.images;
+
+    console.error("UploadMultipleImages trả về không đúng format:", data);
+    return [];
   }
 
   /**
@@ -361,6 +378,8 @@ class FetchUtils {
     }
     return url;
   };
+
+  
 }
 
 export default FetchUtils;

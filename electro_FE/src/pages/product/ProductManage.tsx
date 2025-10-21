@@ -43,8 +43,10 @@ function ProductManage() {
     return <Badge color="red" variant="outline" size="sm">Vô hiệu lực</Badge>;
   };
 
-  const showedPropertiesFragment = (entity: ProductResponse) => (
-    <>
+  const showedPropertiesFragment = (entity: ProductResponse) => {
+    console.log('render product row fragment', entity);
+    return (
+      <>
       <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
@@ -70,7 +72,7 @@ function ProductManage() {
       <td>{productStatusBadgeFragment(entity.status)}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
-          {entity.category?.name || ''}
+          {entity.categoryId?.name || ''}
         </Highlight>
       </td>
       <td>
@@ -103,12 +105,16 @@ function ProductManage() {
         <VariantTablePopover variants={entity.variants} productProperties={entity.properties} />
       </td>
     </>
-  );
+    );
+    
+};
 
   // (Bên trong file ProductManage.tsx)
 
-  const entityDetailTableRowsFragment = (entity: ProductResponse) => (
-    <>
+  const entityDetailTableRowsFragment = (entity: ProductResponse) => {
+    console.log('render product row fragment FONTEND', entity);
+    return (
+      <>
       <tr>
         <td>{ProductConfigs.properties.id.label}</td>
         <td>{entity._id}</td>
@@ -183,19 +189,19 @@ function ProductManage() {
       </tr>
       <tr>
         <td>{ProductConfigs.properties['categoryId.name'].label}</td>
-        <td>{entity.category?.name}</td>
+        <td>{entity.categoryId?.name}</td>
       </tr>
       <tr>
         <td>{ProductConfigs.properties['brandId.name'].label}</td>
-        <td>{entity.brand?.name}</td>
+        <td>{entity.brandId?.name}</td>
       </tr>
       <tr>
         <td>{ProductConfigs.properties['supplierId.displayName'].label}</td>
-        <td>{entity.supplier?.displayName}</td>
+        <td>{entity.supplierId?.displayName}</td>
       </tr>
       <tr>
         <td>{ProductConfigs.properties['unitId.name'].label}</td>
-        <td>{entity.unit?.name}</td>
+        <td>{entity.unitId?.name}</td>
       </tr>
       <tr>
         <td>{ProductConfigs.properties.tags.label}</td>
@@ -280,10 +286,11 @@ function ProductManage() {
       </tr>
       <tr>
         <td>{ProductConfigs.properties['guaranteeId.name'].label}</td>
-        <td>{entity.guarantee?.name}</td>
+        <td>{entity.guaranteeId?.name}</td>
       </tr>
     </>
-  );
+    );
+};
 
   return (
     <Stack>

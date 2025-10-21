@@ -16,16 +16,16 @@ export interface ProductResponse extends BaseResponse {
   description: string | null;
   images: ImageResponse[];
   status: number;
-  category: CategoryResponse | null;
-  brand: BrandResponse | null;
-  supplier: SupplierResponse | null;
-  unit: UnitResponse | null;
+  categoryId: CategoryResponse | null;
+  brandId: BrandResponse | null;
+  supplierId: SupplierResponse | null;
+  unitId: UnitResponse | null;
   tags: TagResponse[];
   specifications: CollectionWrapper<SpecificationItem> | null;
   properties: CollectionWrapper<ProductPropertyItem> | null;
   variants: ProductResponse_VariantResponse[];
   weight: number | null;
-  guarantee: GuaranteeResponse | null;
+  guaranteeId: GuaranteeResponse | null;
 }
 
 interface CategoryResponse extends BaseResponse {

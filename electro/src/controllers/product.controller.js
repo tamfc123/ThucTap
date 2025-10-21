@@ -78,6 +78,7 @@ const transformProductResponse = (productObject) => {
 // =======================================================
 const getAllProducts = async (req, res) => {
   try {
+    console.log("--- REQ QUERY getAllProducts ---", req.query);
     const {
       page = 1, size = 10, sort = "-createdAt",
       search, categoryId, brandId, supplierId, unitId, guaranteeId,
@@ -161,6 +162,7 @@ const getProductById = async (req, res) => {
       .populate("variants")
       .populate("tags", "name slug")
       .lean(); // <-- THÊM .lean() ĐỂ TIÊU CHUẨN HÓA
+      console.log("--- PRODUCT FROM DB ---", product);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" })
@@ -236,7 +238,7 @@ const createProduct = async (req, res) => {
     // 2. Biến đổi Maps (Dùng HELPER 1)
     productData.specifications = transformCollectionToMap_Request(specifications);
     productData.properties = transformCollectionToMap_Request(properties);
-
+    productData.images = productData.images || [];
     // 3. Tạo Cha (lần 1)
     const newProduct = new Product(productData);
     await newProduct.save();

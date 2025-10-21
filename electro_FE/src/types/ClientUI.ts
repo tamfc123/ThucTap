@@ -23,6 +23,7 @@ export interface ClientListedProductResponse {
   _id: string;
   name: string;
   slug: string;
+  images?: any;
   productThumbnail: string | null;
   productPriceRange: number[];
   variants: ClientListedVariantResponse[];
@@ -89,7 +90,7 @@ export interface ClientProductResponse {
 }
 
 interface ClientProductResponse_ClientBrandResponse {
-  brandId: number;
+  brandId: string;
   brandName: string;
 }
 
@@ -143,7 +144,7 @@ export interface ClientSimpleReviewResponse {
 }
 
 interface ClientSimpleReviewResponse_UserResponse {
-  userId: number;
+  userId: string;
   userUsername: string;
   userFullname: string;
 }
@@ -160,8 +161,8 @@ export interface ClientReviewResponse {
 }
 
 export interface ClientReviewRequest {
-  userId: number;
-  productId: number;
+  userId: string;
+  productId: string;
   ratingScore: number;
   content: string;
   status: number;

@@ -10,22 +10,49 @@ import NotifyUtils from 'utils/NotifyUtils';
 
 function ClientHomeLatestProducts() {
   const theme = useMantineTheme();
-
   const requestParams = { size: 12, newable: true, saleable: true };
 
   const {
     data: productResponses,
     isLoading: isLoadingProductResponses,
     isError: isErrorProductResponses,
-  } = useQuery<ListResponse<ClientListedProductResponse>, ErrorMessage>(
+  } = useQuery<any, ErrorMessage>(
     ['client-api', 'products', 'getAllProducts', requestParams],
     () => FetchUtils.get(ResourceURL.CLIENT_PRODUCT, requestParams),
     {
       onError: () => NotifyUtils.simpleFailed('Lấy dữ liệu không thành công'),
       refetchOnWindowFocus: false,
       keepPreviousData: true,
+      select: (data) => {
+        console.log('RAW API DATA:', data);
+        
+        // Transform dữ liệu - THÊM TRƯỜNG images
+        const transformedContent = (data.content || []).map((item: any) => {
+          const transformedProduct = {
+            productId: item._id || item.productId,
+            productName: item.name || item.productName,
+            productSlug: item.slug || item.productSlug,
+            productThumbnail: item.thumbnail || item.productThumbnail || null,
+            // THÊM DÒNG NÀY - lấy images từ API response
+            images: item.images || item.productImages || [],
+            productPriceRange: item.priceRange || item.productPriceRange || [0, 0],
+            productVariants: item.variants || item.productVariants || [],
+            productSaleable: item.saleable !== undefined ? item.saleable : true,
+            productPromotion: item.promotion || item.productPromotion || null,
+          };
+
+          console.log('Transformed product:', transformedProduct);
+          return transformedProduct;
+        });
+
+        return {
+          ...data,
+          content: transformedContent,
+        };
+      },
     }
   );
+
   const products = productResponses as ListResponse<ClientListedProductResponse>;
 
   let resultFragment;
@@ -51,7 +78,7 @@ function ClientHomeLatestProducts() {
 
   if (products && products.totalElements === 0) {
     resultFragment = (
-      <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
+<Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
         <Marquee size={125} strokeWidth={1}/>
         <Text size="xl" weight={500}>Không có sản phẩm</Text>
       </Stack>
@@ -62,7 +89,7 @@ function ClientHomeLatestProducts() {
     resultFragment = (
       <Grid>
         {products.content.map((product, index) => (
-          <Grid.Col key={index} span={6} sm={4} md={3}>
+          <Grid.Col key={product._id || index} span={6} sm={4} md={3}>
             <ClientProductCard product={product}/>
           </Grid.Col>
         ))}

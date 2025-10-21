@@ -14,6 +14,14 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    shortDescription: {
+      type: String,
+      default: null,
+    },
+    description: {
+      type: String,
+      default: null,
+    },
     // ... (shortDescription, description giữ nguyên)
     images: [
       {
