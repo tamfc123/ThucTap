@@ -63,7 +63,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
       NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
     } else {
       const clientWishRequest: ClientWishRequest = {
-        userId: user.id,
+        userId: user._id,
         productId: product.productId,
       };
       createWishApi.mutate(clientWishRequest);
@@ -75,7 +75,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
       NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
     } else {
       const clientPreorderRequest: ClientPreorderRequest = {
-        userId: user.id,
+        userId: user._id,
         productId: product.productId,
         status: 1,
       };
@@ -89,7 +89,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
     } else {
       const cartRequest: ClientCartRequest = {
         cartId: currentCartId,
-        userId: user.id,
+        userId: user._id,
         cartItems: [
           {
             variantId: product.productVariants[selectedVariantIndex].variantId,
@@ -153,7 +153,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   }}
                 >
                   <Stack align="center" justify="center" sx={{ height: '100%' }}>
-                    <PhotoOff size={100} strokeWidth={1}/>
+                    <PhotoOff size={100} strokeWidth={1} />
                     <Text>Không có hình cho sản phẩm này</Text>
                   </Stack>
                 </Box>
@@ -176,7 +176,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                 </Text>
                 <Group mt={7.5} spacing="lg">
                   <Group spacing="xs">
-                    <ReviewStarGroup ratingScore={product.productAverageRatingScore}/>
+                    <ReviewStarGroup ratingScore={product.productAverageRatingScore} />
                     <Text size="sm">{product.productCountReviews} đánh giá</Text>
                   </Group>
                   {/* TODO: Doanh số sản phẩm */}
@@ -305,7 +305,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                       radius="md"
                       size="lg"
                       color="teal"
-                      leftIcon={<BellPlus/>}
+                      leftIcon={<BellPlus />}
                       onClick={handleCreatePreorderButton}
                     >
                       Đặt trước
@@ -316,7 +316,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                       radius="md"
                       size="lg"
                       color="pink"
-                      leftIcon={<ShoppingCart/>}
+                      leftIcon={<ShoppingCart />}
                       onClick={handleAddToCartButton}
                     >
                       Chọn mua
@@ -327,7 +327,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   size="lg"
                   color="pink"
                   variant="outline"
-                  leftIcon={<Heart/>}
+                  leftIcon={<Heart />}
                   onClick={handleCreateWishButton}
                 >
                   Yêu thích

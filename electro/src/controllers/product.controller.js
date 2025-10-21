@@ -116,10 +116,7 @@ const getAllProducts = async (req, res) => {
     const productsFromDB = await Product.find(query)
       .populate("categoryId", "name slug")
       .populate("brandId", "name slug")
-      .populate({
-        path: "variants",
-        // Populate luôn properties bên trong variant nếu cần
-      })
+      .populate("variants")
       .populate("supplierId", "displayName")
       .populate("unitId", "name")
       .populate("tags", "name slug")

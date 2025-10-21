@@ -198,6 +198,25 @@ export const updatePassword = async (req, res, next) => {
     next(error)
   }
 }
+export const getProductById = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id)
+      .populate("categoryId brandId variants specifications");
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Optional: tăng view
+    product.views = (product.views || 0) + 1;
+    await product.save();
+
+    res.json(product);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 // Wishlist
 export const getWishlist = async (req, res, next) => {
@@ -615,4 +634,5 @@ export default {
   getChatRoom,
   createChatRoom,
   getRewards,
+  getProductById
 }

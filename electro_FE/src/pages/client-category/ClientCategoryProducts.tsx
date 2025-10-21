@@ -30,7 +30,7 @@ function ClientCategoryProducts({ categorySlug }: ClientCategoryProductsProps) {
     return (
       <Stack>
         {Array(5).fill(0).map((_, index) => (
-          <Skeleton key={index} height={50} radius="md"/>
+          <Skeleton key={index} height={50} radius="md" />
         ))}
       </Stack>
     );
@@ -39,7 +39,7 @@ function ClientCategoryProducts({ categorySlug }: ClientCategoryProductsProps) {
   if (isErrorProductResponses) {
     return (
       <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.pink[6] }}>
-        <AlertTriangle size={125} strokeWidth={1}/>
+        <AlertTriangle size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Đã có lỗi xảy ra</Text>
       </Stack>
     );
@@ -48,7 +48,7 @@ function ClientCategoryProducts({ categorySlug }: ClientCategoryProductsProps) {
   if (products.totalElements === 0) {
     return (
       <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
-        <Marquee size={125} strokeWidth={1}/>
+        <Marquee size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Không có sản phẩm</Text>
       </Stack>
     );
@@ -59,7 +59,7 @@ function ClientCategoryProducts({ categorySlug }: ClientCategoryProductsProps) {
       <Grid>
         {products.content.map((product, index) => (
           <Grid.Col key={index} span={6} sm={4}>
-            <ClientProductCard product={product} search={activeSearch || ''}/>
+            <ClientProductCard product={product} search={activeSearch || ''} />
           </Grid.Col>
         ))}
       </Grid>

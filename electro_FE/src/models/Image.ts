@@ -9,7 +9,7 @@ export interface UploadedImageResponse {
  * Cân nhắc đổi kiểu của id sang optional number
  */
 export interface ImageRequest {
-  id: number | null;
+  id: string | null;
   name: string;
   path: string;
   contentType: string;
@@ -20,7 +20,7 @@ export interface ImageRequest {
 }
 
 export interface ImageResponse {
-  id: number;
+  id: string;
   name: string;
   path: string;
   contentType: string;

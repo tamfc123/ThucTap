@@ -18,32 +18,33 @@ function ClientProduct() {
   const theme = useMantineTheme();
 
   const { slug } = useParams();
+  console.log("🧩 Đang mở trang chi tiết sản phẩm:", slug);
 
   const { productResponse, isLoadingProductResponse, isErrorProductResponse } = useGetProductApi(slug as string);
   const product = productResponse as ClientProductResponse;
   useTitle(product?.productName);
 
   if (isLoadingProductResponse) {
-    return <ClientProductSkeleton/>;
+    return <ClientProductSkeleton />;
   }
 
   if (isErrorProductResponse) {
-    return <ClientError/>;
+    return <ClientError />;
   }
 
   return (
     <main>
       <Container size="xl">
         <Stack spacing={theme.spacing.xl * 2}>
-          <ClientProductIntro product={product}/>
+          <ClientProductIntro product={product} />
 
-          {product.productSpecifications && <ClientProductSpecification product={product}/>}
+          {product.productSpecifications && <ClientProductSpecification product={product} />}
 
-          {product.productDescription && <ClientProductDescription product={product}/>}
+          {product.productDescription && <ClientProductDescription product={product} />}
 
-          <ClientProductReviews productSlug={slug as string}/>
+          <ClientProductReviews productSlug={slug as string} />
 
-          {product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product}/>}
+          {product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product} />}
         </Stack>
       </Container>
     </main>
@@ -56,7 +57,7 @@ function ClientProductSkeleton() {
       <Container size="xl">
         <Stack>
           {Array(5).fill(0).map((_, index) => (
-            <Skeleton key={index} height={50} radius="md"/>
+            <Skeleton key={index} height={50} radius="md" />
           ))}
         </Stack>
       </Container>

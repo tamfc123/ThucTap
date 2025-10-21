@@ -37,6 +37,7 @@ function ClientCategory() {
   const theme = useMantineTheme();
 
   const { slug } = useParams();
+  console.log("🧩 Đang mở trang danh mục sản phẩm:", slug);
 
   const {
     totalProducts,
@@ -80,11 +81,16 @@ function ClientCategory() {
   // Fetch category
   const { categoryResponse, isLoadingCategoryResponse, isErrorCategoryResponse } = useGetCategoryApi(slug as string);
   const category = categoryResponse as ClientCategoryResponse;
-  useTitle(category?.categoryName);
+  useTitle(category?.name);
+  console.log("🧭 [slug hiện tại]:", slug);
+  console.log("📦 [categoryResponse]:", categoryResponse);
 
   // Fetch filter
   const { filterResponse, isLoadingFilterResponse, isErrorFilterResponse } = useGetFilterApi(slug as string);
   const filter = filterResponse as ClientFilterResponse;
+
+  console.log("🎯 [filterResponse]:", filterResponse);
+
 
   // Composition
   const isLoading = isLoadingCategoryResponse || isLoadingFilterResponse;
@@ -145,17 +151,17 @@ function ClientCategory() {
                   Trang chủ
                 </Anchor>
                 {MiscUtils.makeCategoryBreadcrumbs(category).slice(0, -1).map(c => (
-                  <Anchor key={c.categorySlug} component={Link} to={'/category/' + c.categorySlug}>
-                    {c.categoryName}
+                  <Anchor key={c.slug} component={Link} to={'/category/' + c.slug}>
+                    {c.name}
                   </Anchor>
                 ))}
                 <Text color="dimmed">
-                  {category.categoryName}
+                  {category.name}
                 </Text>
               </Breadcrumbs>
 
               <Group spacing="xs" sx={{ alignItems: 'baseline' }}>
-                <Title order={2}>{category.categoryName}</Title>
+                <Title order={2}>{category.name}</Title>
                 {Array.isArray(category?.categoryChildren) && category.categoryChildren.length > 0 && (
                   <>
                     <Text color="dimmed">
@@ -163,8 +169,8 @@ function ClientCategory() {
                     </Text>
                     <Breadcrumbs separator="·">
                       {category.categoryChildren.map(c => (
-                        <Anchor key={c.categorySlug} component={Link} to={'/category/' + c.categorySlug} size="sm">
-                          {c.categoryName}
+                        <Anchor key={c.slug} component={Link} to={'/category/' + c.slug} size="sm">
+                          {c.name}
                         </Anchor>
                       ))}
                     </Breadcrumbs>
@@ -202,7 +208,7 @@ function ClientCategory() {
                   <Text weight={500}>Tìm kiếm</Text>
                   <TextInput
                     radius="md"
-                    placeholder={'Tìm kiếm trong ' + category.categoryName}
+                    placeholder={'Tìm kiếm trong ' + category.name}
                     icon={<Search size={16} />}
                     value={searchQuery || ''}
                     onChange={(event) => setSearchQuery(event.currentTarget.value || null)}
@@ -261,7 +267,7 @@ function ClientCategory() {
                   <Text>{totalProducts} sản phẩm</Text>
                 </Group>
 
-                <ClientCategoryProducts categorySlug={category.categorySlug} />
+                <ClientCategoryProducts categorySlug={category.slug} />
               </Stack>
             </Grid.Col>
           </Grid>

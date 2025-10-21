@@ -11,25 +11,27 @@ import { RewardType } from 'models/RewardStrategy';
 // CATEGORY
 
 export interface ClientCategoryResponse {
-  categoryName: string;
-  categorySlug: string;
+  name: string;
+  slug: string;
+  description?: string;
+  thumbnail?: string;
   categoryChildren: ClientCategoryResponse[];
   categoryParent?: ClientCategoryResponse;
 }
 
 export interface ClientListedProductResponse {
-  productId: number;
-  productName: string;
-  productSlug: string;
+  _id: string;
+  name: string;
+  slug: string;
   productThumbnail: string | null;
   productPriceRange: number[];
-  productVariants: ClientListedVariantResponse[];
+  variants: ClientListedVariantResponse[];
   productSaleable: boolean;
   productPromotion: ClientPromotionResponse | null;
 }
 
 interface ClientListedVariantResponse {
-  variantId: number;
+  variantId: string;
   variantPrice: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
 }
@@ -40,7 +42,7 @@ export interface ClientFilterResponse {
 }
 
 interface ClientBrandResponse {
-  brandId: number;
+  brandId: string;
   brandName: string;
 }
 
@@ -69,7 +71,7 @@ export interface ClientPasswordSettingUserRequest {
 // PRODUCT
 
 export interface ClientProductResponse {
-  productId: number;
+  productId: string;
   productName: string;
   productSlug: string;
   productShortDescription: string | null;
@@ -92,7 +94,7 @@ interface ClientProductResponse_ClientBrandResponse {
 }
 
 interface ClientProductResponse_ClientVariantResponse {
-  variantId: number;
+  variantId: string;
   variantPrice: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
   variantInventory: number;
@@ -108,7 +110,7 @@ export interface ClientWishResponse {
 
 export interface ClientWishRequest {
   userId: string;
-  productId: number;
+  productId: string;
 }
 
 // PREORDER
@@ -123,7 +125,7 @@ export interface ClientPreorderResponse {
 
 export interface ClientPreorderRequest {
   userId: string;
-  productId: number;
+  productId: string;
   status: number;
 }
 
@@ -202,7 +204,7 @@ export interface ClientCartRequest {
 }
 
 interface ClientCartVariantRequest {
-  variantId: number;
+  variantId: string;
   quantity: number;
 }
 

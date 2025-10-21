@@ -42,6 +42,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
   const createWishApi = useCreateWishApi();
   const createPreorderApi = useCreatePreorderApi();
   const saveCartApi = useSaveCartApi();
+  console.log('product in card:', product);
 
   const { user, currentCartId } = useAuthStore();
 
@@ -52,7 +53,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
     } else {
       const clientWishRequest: ClientWishRequest = {
         userId: user._id,
-        productId: product.productId,
+        productId: product._id,
       };
       createWishApi.mutate(clientWishRequest);
     }
@@ -65,7 +66,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
     } else {
       const clientPreorderRequest: ClientPreorderRequest = {
         userId: user._id,
-        productId: product.productId,
+        productId: product._id,
         status: 1,
       };
       createPreorderApi.mutate(clientPreorderRequest);
@@ -82,7 +83,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
         userId: user._id,
         cartItems: [
           {
-            variantId: product.productVariants[0].variantId,
+            variantId: product.variants[0].variantId,
             quantity: 1,
           },
         ],
@@ -92,7 +93,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
       saveCartApi.mutate(cartRequest, {
         onSuccess: () => NotifyUtils.simpleSuccess(
           <Text inherit>
-            <span>Đã thêm 1 sản phẩm {product.productName} (phiên bản mặc định) vào </span>
+            <span>Đã thêm 1 sản phẩm {product.name} (phiên bản mặc định) vào </span>
             <Anchor component={Link} to="/cart" inherit>giỏ hàng</Anchor>
           </Text>
         ),
@@ -106,7 +107,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
       shadow="sm"
       p="lg"
       component={Link}
-      to={'/product/' + product.productSlug}
+      to={'/product/' + product.slug}
       sx={{
         height: '100%',
         transition: 'box-shadow .2s ease-in',
@@ -123,7 +124,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
           <Image
             radius="md"
             src={product.productThumbnail || undefined}
-            alt={product.productName}
+            alt={product.name}
             styles={{ image: { aspectRatio: '1 / 1' } }}
           />
           <Group
@@ -179,7 +180,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
           <Group spacing="xs">
             <Text weight={500}>
               <Highlight highlight={search || ''}>
-                {product.productName}
+                {product.name}
               </Highlight>
             </Text>
             {!product.productSaleable && <Badge size="xs" color="red" variant="filled">Hết hàng</Badge>}
@@ -202,7 +203,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
             </Group>
           )}
           <Text size="sm" color="dimmed">
-            {(product.productVariants || []).length} phiên bản
+            {(product.variants || []).length} phiên bản
           </Text>
         </Stack>
       </Stack>

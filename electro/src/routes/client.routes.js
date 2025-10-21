@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import  clientController from "../controllers/client.controller.js"
+import clientController from "../controllers/client.controller.js"
 import { authenticate } from "../middleware/auth.js"
 
 // Public routes
@@ -8,6 +8,7 @@ router.get("/categories", clientController.getCategories)
 router.get("/categories/:slug", clientController.getCategoryBySlug)
 router.get("/products", clientController.getProducts)
 router.get("/products/:slug", clientController.getProductBySlug)
+router.get("/products/id/:id", clientController.getProductById);
 router.get("/filters/category", clientController.getFiltersByCategory)
 router.get("/filters/search", clientController.getFiltersBySearch)
 router.get("/payment-methods", clientController.getPaymentMethods)
