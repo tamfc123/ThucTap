@@ -10,6 +10,6 @@ router.get("/", warehouseController.getAll)
 router.get("/:id", warehouseController.getById)
 router.post("/", warehouseController.create)
 router.put("/:id", warehouseController.update)
-router.delete("/", warehouseController.deleteMany)
+router.delete("/:id", warehouseController.deleteById)
 
 export default router
