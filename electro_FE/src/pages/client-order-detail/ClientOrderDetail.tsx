@@ -399,17 +399,17 @@ function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVar
   const theme = useMantineTheme();
   const modals = useModals();
 
-  const handleOpenReviewModalButton = () => {
-    modals.openModal({
-      size: 'lg',
-      overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
-      overlayOpacity: 0.55,
-      overlayBlur: 3,
-      closeOnClickOutside: false,
-      title: <strong>Đánh giá sản phẩm</strong>,
-      children: <ReviewProductModal orderItem={orderItem}/>,
-    });
-  };
+  // const handleOpenReviewModalButton = () => {
+  //   modals.openModal({
+  //     size: 'lg',
+  //     overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+  //     overlayOpacity: 0.55,
+  //     overlayBlur: 3,
+  //     closeOnClickOutside: false,
+  //     title: <strong>Đánh giá sản phẩm</strong>,
+  //     children: <ReviewProductModal orderItem={orderItem}/>,
+  //   });
+  // };
 
   return (
     <tr key={orderItem.orderItemVariant.variantId}>
@@ -446,7 +446,7 @@ function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVar
                 variant="outline"
                 mt={5}
                 sx={{ width: 'fit-content' }}
-                onClick={handleOpenReviewModalButton}
+                // onClick={handleOpenReviewModalButton}
                 disabled={orderItem.orderItemVariant.variantProduct.productIsReviewed}
                 title={orderItem.orderItemVariant.variantProduct.productIsReviewed ? 'Sản phẩm đã được bạn đánh giá' : ''}
               >
@@ -505,21 +505,21 @@ function ReviewProductModal({ orderItem }: { orderItem: ClientOrderVariantRespon
     })),
   });
 
-  const createReviewApi = useCreateReviewApi();
+  // const createReviewApi = useCreateReviewApi();
 
-  const handleFormSubmit = form.onSubmit((formValues) => {
-    if (user) {
-      const reviewRequest: ClientReviewRequest = {
-        userId: user.id,
-        productId: orderItem.orderItemVariant.variantProduct.productId,
-        ratingScore: formValues.rating,
-        content: formValues.review,
-        status: 1,
-      };
-      createReviewApi.mutate(reviewRequest);
-      modals.closeAll();
-    }
-  });
+  // const handleFormSubmit = form.onSubmit((formValues) => {
+  //   if (user) {
+  //     const reviewRequest: ClientReviewRequest = {
+  //       userId: user.id,
+  //       productId: orderItem.orderItemVariant.variantProduct.productId,
+  //       ratingScore: formValues.rating,
+  //       content: formValues.review,
+  //       status: 1,
+  //     };
+  //     createReviewApi.mutate(reviewRequest);
+  //     modals.closeAll();
+  //   }
+  // });
 
   return (
     <Stack>
@@ -560,9 +560,9 @@ function ReviewProductModal({ orderItem }: { orderItem: ClientOrderVariantRespon
         <Button variant="default" radius="md" onClick={modals.closeAll}>
           Đóng
         </Button>
-        <Button type="submit" radius="md" onClick={handleFormSubmit}>
+        {/* <Button type="submit" radius="md" onClick={handleFormSubmit}>
           Gửi đánh giá
-        </Button>
+        </Button> */}
       </Group>
     </Stack>
   );
@@ -600,27 +600,27 @@ function useCancelOrderApi(orderCode: string) {
   );
 }
 
-function useCreateReviewApi() {
-  const queryClient = useQueryClient();
+// function useCreateReviewApi() {
+//   const queryClient = useQueryClient();
 
-  return useMutation<ClientReviewResponse, ErrorMessage, ClientReviewRequest>(
-    (requestBody) => FetchUtils.postWithToken(ResourceURL.CLIENT_REVIEW, requestBody),
-    {
-      onSuccess: (response) => {
-        NotifyUtils.simpleSuccess(
-          <Text inherit>
-            <span>Đã thêm đánh giá cho sản phẩm </span>
-            <Anchor component={Link} to={'/product/' + response.reviewProduct.productSlug} inherit>
-              {response.reviewProduct.productName}
-            </Anchor>
-            <span>. Vui lòng đợi duyệt để hiển thị.</span>
-          </Text>
-        );
-        void queryClient.invalidateQueries(['client-api', 'orders', 'getOrder']);
-      },
-      onError: () => NotifyUtils.simpleFailed('Không thêm được đánh giá cho sản phẩm'),
-    }
-  );
-}
+//   return useMutation<ClientReviewResponse, ErrorMessage, ClientReviewRequest>(
+//     (requestBody) => FetchUtils.postWithToken(ResourceURL.CLIENT_REVIEW, requestBody),
+//     {
+//       onSuccess: (response) => {
+//         NotifyUtils.simpleSuccess(
+//           <Text inherit>
+//             <span>Đã thêm đánh giá cho sản phẩm </span>
+//             <Anchor component={Link} to={'/product/' + response.reviewProduct.productSlug} inherit>
+//               {response.reviewProduct.productName}
+//             </Anchor>
+//             <span>. Vui lòng đợi duyệt để hiển thị.</span>
+//           </Text>
+//         );
+//         void queryClient.invalidateQueries(['client-api', 'orders', 'getOrder']);
+//       },
+//       onError: () => NotifyUtils.simpleFailed('Không thêm được đánh giá cho sản phẩm'),
+//     }
+//   );
+// }
 
 export default ClientOrderDetail;

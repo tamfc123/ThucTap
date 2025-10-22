@@ -56,7 +56,7 @@ function EntityFinder<T extends BaseResponse>({
     { size: options.resultListSize, search: debouncedKeyword }
   );
 
-  const selectionIds = selections.map(selection => selection.id);
+  const selectionIds = selections.map(selection => selection._id);
 
   return (
     <Stack>
@@ -87,11 +87,11 @@ function EntityFinder<T extends BaseResponse>({
             {(!entityResponses || entityResponses.totalElements === 0)
               ? <Text size="sm" p="sm" color="dimmed" sx={{ fontStyle: 'italic' }}>Không có kết quả</Text>
               : entityResponses.content.map(entityResponse => {
-                const disabled = selectionIds.includes(entityResponse.id);
+                const disabled = selectionIds.includes(entityResponse._id);
 
                 return (
                   <UnstyledButton
-                    key={entityResponse.id}
+                    key={entityResponse._id}
                     onClick={() => {
                       onClickItem(entityResponse);
                       setPopoverOpened(false);
@@ -130,7 +130,7 @@ function EntityFinder<T extends BaseResponse>({
         <Stack spacing="xs">
           {selections.map(selectedEntityResponse => (
             <Group
-              key={selectedEntityResponse.id}
+              key={selectedEntityResponse._id}
               position="apart"
               sx={{
                 padding: theme.spacing.sm,

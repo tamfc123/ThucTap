@@ -21,25 +21,41 @@ function ClientHomeBanner() {
         <ClientCarousel>
           <Box
             sx={{
-              height: '100%',
+              height: 'auto',
               minHeight: 315,
-              backgroundImage: theme.fn.linearGradient(105, theme.colors.teal[3], theme.colors.lime[3]),
+              backgroundImage: 'url("https://lh3.googleusercontent.com/fQe5S9rfCCTrBikICp0IiPRNOIq0GCp1omYLCS08haKO0tSE3rEioKhFnTgvcPIFqUMfdPpewATi_zEL1INFJU7IEa-wM0iM=w1920-rw")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           >
           </Box>
           <Box
             sx={{
-              height: '100%',
+              height: 'auto',
               minHeight: 315,
-              backgroundImage: theme.fn.linearGradient(0, theme.colors.orange[3], theme.colors.red[3]),
+              backgroundImage: 'url("https://lh3.googleusercontent.com/O028963v5H1jPm1rv3xa5bwSzsncc86JNlXB5yNEskDGtrGN_RtCOlxciyzQFSS-Dhgm2lu7HrqQkxUAEttjqlwKw6_-5PakFw=w1920-rw")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           >
           </Box>
           <Box
             sx={{
-              height: '100%',
+              height: 'auto',
               minHeight: 315,
-              backgroundImage: theme.fn.linearGradient(0, theme.colors.indigo[3], theme.colors.cyan[3]),
+              backgroundImage: 'url("https://img.pikbest.com/templates/20240520/purple-sale-banner-decorates-a-shop-selling-electronics_10575062.jpg!w700wp")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+          </Box>
+          <Box
+            sx={{
+              height: 'auto',
+              minHeight: 315,
+              backgroundImage: 'url("https://balotuixachsaigon.com/wp-content/uploads/2016/04/banner-19-2.jpg")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
             }}
           >
           </Box>
