@@ -293,9 +293,9 @@ class FetchUtils {
    * @param resourceUrl
    * @param entityId
    */
-  static async deleteById<T>(resourceUrl: string, entityId: string) {
+  static async deleteById(resourceUrl: string, entityId: string) {
     const { jwtToken } = useAdminAuthStore.getState();
-    const fullUrl = resourceUrl + '/' + entityId;
+    const fullUrl = `${resourceUrl}/${entityId}`; 
     const response = await fetch(fullUrl, { // <-- Dùng fullUrl
       method: 'DELETE',
       headers: {

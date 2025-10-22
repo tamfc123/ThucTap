@@ -25,28 +25,35 @@ function useWarehouseCreateViewModel() {
     { all: 1 },
     (provinceListResponse) => {
       const selectList: SelectOption[] = provinceListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setProvinceSelectList(selectList);
     }
   );
   useGetAllApi<DistrictResponse>(DistrictConfigs.resourceUrl, DistrictConfigs.resourceKey,
-    { all: 1 },
+    {
+      provinceId: form.values['address.provinceId'] || undefined,
+      size: 999
+    },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!form.values['address.provinceId'] 
     }
   );
 
   const handleFormSubmit = form.onSubmit((formValues) => {
     const addressRequest: AddressRequest = {
       line: formValues['address.line'] || null,
-      provinceId: Number(formValues['address.provinceId']) || null,
-      districtId: Number(formValues['address.districtId']) || null,
+      provinceId: formValues['address.provinceId'] || null,
+      districtId: formValues['address.districtId'] || null,
       wardId: null,
     };
     const requestBody: WarehouseRequest = {

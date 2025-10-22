@@ -41,7 +41,7 @@ function WarehouseManage() {
 
   const showedPropertiesFragment = (entity: WarehouseResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -62,7 +62,7 @@ function WarehouseManage() {
     <>
       <tr>
         <td>{WarehouseConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{WarehouseConfigs.properties.createdAt.label}</td>

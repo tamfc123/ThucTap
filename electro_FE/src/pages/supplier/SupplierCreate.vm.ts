@@ -53,7 +53,7 @@ function useSupplierCreateViewModel() {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: !!form.values['address.provinceId'] // <-- Dòng này vẫn RẤT QUAN TRỌNG
+      enabled: !!form.values['address.provinceId'] 
     }
   );
 
