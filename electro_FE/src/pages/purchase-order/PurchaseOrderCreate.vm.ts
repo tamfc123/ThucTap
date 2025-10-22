@@ -71,6 +71,7 @@ function usePurchaseOrderCreateViewModel() {
         return;
       }
 
+
       try {
         const requestBody: PurchaseOrderRequest = {
           code: formValues.code!,
@@ -183,7 +184,7 @@ function usePurchaseOrderCreateViewModel() {
     console.log('🔄 Resetting form...');
     setVariants([]);
     form.reset();
-    
+
   };
 
   const statusSelectList: SelectOption[] = [

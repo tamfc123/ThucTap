@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActionIcon, Anchor, Badge, Stack, Table, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Stack, Table, useMantineTheme } from '@mantine/core'; // Xóa Anchor, Badge
 import { ManageHeader, ManageHeaderTitle, ManageMain, ManagePagination } from 'components';
 import InventoryConfigs from 'pages/inventory/InventoryConfigs';
 import PageConfigs from 'pages/PageConfigs';
@@ -8,15 +8,15 @@ import useGetAllApi from 'hooks/use-get-all-api';
 import { ProductInventoryResponse } from 'models/ProductInventory';
 import useResetManagePageState from 'hooks/use-reset-manage-page-state';
 import { Plus } from 'tabler-icons-react';
-import { DocketVariantExtendedResponse } from 'models/DocketVariantExtended';
-import { useModals } from '@mantine/modals';
-import DateUtils from 'utils/DateUtils';
+// ❌ XÓA import { DocketVariantExtendedResponse } from 'models/DocketVariantExtended';
+// ❌ XÓA import { useModals } from '@mantine/modals';
+// ❌ XÓA import DateUtils from 'utils/DateUtils';
 
 function InventoryManage() {
   useResetManagePageState();
 
-  const theme = useMantineTheme();
-  const modals = useModals();
+  // ❌ XÓA const theme = useMantineTheme();
+  // ❌ XÓA const modals = useModals();
 
   const {
     isLoading,
@@ -26,16 +26,7 @@ function InventoryManage() {
     InventoryConfigs.productInventoryResourceKey
   );
 
-  const handleTransactionsAnchor = (productName: string, transactions: DocketVariantExtendedResponse[]) => {
-    modals.openModal({
-      size: 1200,
-      overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
-      overlayOpacity: 0.55,
-      overlayBlur: 3,
-      title: <strong>Lịch sử nhập xuất của sản phẩm &quot;{productName}&quot;</strong>,
-      children: <ProductInventoryTransactionsModal transactions={transactions}/>,
-    });
-  };
+  // ❌ XÓA hàm handleTransactionsAnchor
 
   const entitiesTableHeadsFragment = (
     <tr>
@@ -44,41 +35,31 @@ function InventoryManage() {
       <th>Nhãn hiệu</th>
       <th>Nhà cung cấp</th>
       <th>Tồn thực tế</th>
-      <th>Chờ xuất</th>
-      <th>Có thể bán</th>
-      <th>Sắp về</th>
       <th>Theo dõi</th>
-      <th>Lịch sử</th>
+      {/* Cột Lịch sử (nếu có) đã bị xóa */}
     </tr>
   );
 
   const entitiesTableRowsFragment = listResponse.content.map((entity) => (
-  <tr key={entity?.product?._id || "unknown"}>
-    <td>{entity?.product?.code || "—"}</td>
-    <td>{entity?.product?.name || "—"}</td>
-    <td>{entity?.product?.brand?.name || "—"}</td>
-    <td>{entity?.product?.supplier?.displayName || "—"}</td>
-    <td>{entity?.inventory ?? 0}</td>
-    <td>{entity?.waitingForDelivery ?? 0}</td>
-    <td>{entity?.canBeSold ?? 0}</td>
-    <td>{entity?.areComing ?? 0}</td>
-    <td>
-      <ActionIcon
-        color="blue"
-        variant="hover"
-        size={24}
-        title="Thiết lập định mức tồn kho cho sản phẩm"
-      >
-        <Plus />
-      </ActionIcon>
-    </td>
-    <td>
-      <Anchor inherit onClick={() => handleTransactionsAnchor(entity?.product?.name, entity?.transactions)}>
-        Giao dịch
-      </Anchor>
-    </td>
-  </tr>
-));
+    <tr key={entity?.product?._id || "unknown"}>
+      <td>{entity?.product?.code || "—"}</td>
+      <td>{entity?.product?.name || "—"}</td>
+      <td>{entity?.product?.brand?.name || "—"}</td>
+      <td>{entity?.product?.supplier?.displayName || "—"}</td>
+      <td>{entity?.inventory ?? 0}</td>
+      <td>
+        <ActionIcon
+          color="blue"
+          variant="hover"
+          size={24}
+          title="Thiết lập định mức tồn kho cho sản phẩm"
+        >
+          <Plus />
+        </ActionIcon>
+      </td>
+      {/* Cột Giao dịch (nếu có) đã bị xóa */}
+    </tr>
+  ));
 
 
   return (
@@ -109,71 +90,11 @@ function InventoryManage() {
         </Table>
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }
 
-function ProductInventoryTransactionsModal({ transactions }: { transactions: DocketVariantExtendedResponse[] }) {
-  const docketTypeBadgeFragment = (type: number) => {
-    switch (type) {
-    case 1:
-      return <Badge color="blue" variant="filled" size="sm">Nhập</Badge>;
-    case 2:
-      return <Badge color="orange" variant="filled" size="sm">Xuất</Badge>;
-    }
-  };
-
-  const docketStatusBadgeFragment = (status: number) => {
-    switch (status) {
-    case 1:
-      return <Badge color="gray" variant="outline" size="sm">Mới</Badge>;
-    case 2:
-      return <Badge color="blue" variant="outline" size="sm">Đang xử lý</Badge>;
-    case 3:
-      return <Badge color="green" variant="outline" size="sm">Hoàn thành</Badge>;
-    case 4:
-      return <Badge color="red" variant="outline" size="sm">Hủy bỏ</Badge>;
-    }
-  };
-
-  return (
-    <Table
-      horizontalSpacing="xs"
-      verticalSpacing="xs"
-      highlightOnHover
-      striped
-    >
-      <thead>
-        <tr>
-          <th>Phiếu</th>
-          <th>Ngày tạo</th>
-          <th>Lý do</th>
-          <th>Mã đơn nhập hàng</th>
-          <th>Mã đơn hàng</th>
-          <th>Số lượng</th>
-          <th>SKU</th>
-          <th>Kho</th>
-          <th>Trạng thái</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map(transaction => (
-          <tr key={transaction.docket.code}>
-            <td>{docketTypeBadgeFragment(transaction.docket.type)}</td>
-            <td>{DateUtils.isoDateToString(transaction.docket.createdAt)}</td>
-            <td>{transaction.docket.reason.name}</td>
-            <td>{transaction.docket.purchaseOrder?.code}</td>
-            <td>{transaction.docket.order?.code}</td>
-            <td>{transaction.quantity}</td>
-            <td>{transaction.variant.sku}</td>
-            <td>{transaction.docket.warehouse.name}</td>
-            <td>{docketStatusBadgeFragment(transaction.docket.status)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  );
-}
+// ❌ XÓA component ProductInventoryTransactionsModal
 
 export default InventoryManage;

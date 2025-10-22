@@ -1,6 +1,6 @@
 import PurchaseOrder from "../models/PurchaseOrder.js";
 import mongoose from "mongoose";
-
+import Variant from "../models/Variant.js"; // Cần import model Variant
 // Helper function để biến đổi response (đã bỏ dockets)
 const transformPurchaseOrder = (po) => {
     if (!po) return null;
@@ -126,21 +126,23 @@ export const getById = async (req, res, next) => {
     }
 };
 
+
 export const create = async (req, res, next) => {
     try {
-        const code = "PO" + Date.now(); // Tạo code
+        const code = "PO" + Date.now();
         const requestData = req.body;
 
-        // Chuyển đổi ID sang ObjectId
+        // ... (Chuyển đổi ID và chuẩn bị variantsForDB) ...
         const supplierObjectId = requestData.supplierId ? new mongoose.Types.ObjectId(requestData.supplierId) : null;
         const destinationObjectId = requestData.destinationId ? new mongoose.Types.ObjectId(requestData.destinationId) : null;
         const variantsForDB = (requestData.purchaseOrderVariants || []).map(v => ({
             variant: v.variantId ? new mongoose.Types.ObjectId(v.variantId) : null,
-            quantity: v.quantity,
+            quantity: v.quantity, // Lấy số lượng mua
             cost: v.cost,
         }));
+
         const newItemData = {
-            code: code, // Thêm code
+            code: code,
             supplier: supplierObjectId,
             destination: destinationObjectId,
             purchaseOrderVariants: variantsForDB,
@@ -150,7 +152,32 @@ export const create = async (req, res, next) => {
         };
 
         const item = new PurchaseOrder(newItemData);
-        await item.save();
+        await item.save(); // Lưu đơn mua hàng
+
+        // =======================================================
+        // 🚨 BƯỚC MỚI: CẬP NHẬT TỒN KHO BIẾN THỂ NGAY LẬP TỨC 🚨
+        // =======================================================
+
+        // Chỉ cập nhật tồn kho nếu trạng thái là "Hoàn thành" (ví dụ: status = 3) hoặc "Đã nhập"
+        // Tạm giả định đơn hàng được tạo ra là nhập kho luôn nếu status = 1 (hoặc tùy config của bạn)
+        if (item.status === 1 || item.status === 3) {
+
+            const updatePromises = variantsForDB.map(v => {
+                // Tăng tồn kho (inventory) của Variant lên số lượng đã mua (quantity)
+                return Variant.findByIdAndUpdate(
+                    v.variant,
+                    { $inc: { inventory: v.quantity } },
+                    { new: true }
+                ).exec();
+            });
+
+            await Promise.all(updatePromises);
+            console.log(`✅ Đã cập nhật tồn kho cho ${updatePromises.length} biến thể.`);
+        }
+
+        // =======================================================
+
+        // ... (Populate và trả về kết quả) ...
         const populatedItem = await PurchaseOrder.findById(item._id)
             .populate("supplier", "name")
             .populate("destination", "name")
@@ -168,22 +195,18 @@ export const create = async (req, res, next) => {
         res.status(201).json(transformPurchaseOrder(populatedItem));
 
     } catch (error) {
+        // ... (Xử lý lỗi) ...
+        // ... (đã bỏ qua phần xử lý lỗi để code ngắn gọn)
         if (error instanceof mongoose.Error.ValidationError) {
             console.error('❌ Mongoose Validation Error:', JSON.stringify(error.errors, null, 2));
-            // Trả về lỗi chi tiết hơn cho frontend (tùy chọn)
-            return res.status(400).json({
-                message: "Validation failed. Please check your input.",
-                errors: error.errors // Gửi chi tiết lỗi validation
-            });
+            return res.status(400).json({ message: "Validation failed. Please check your input.", errors: error.errors });
         }
-        // 2. Bắt lỗi CastError (ID không hợp lệ)
         if (error instanceof mongoose.Error.CastError) {
             console.error('❌ Mongoose Cast Error:', error);
             return res.status(400).json({ message: `Invalid ID format for field: ${error.path}` });
         }
-        // 3. Bắt các lỗi khác
         console.error('❌ Error in Create PO:', error);
-        next(error); // Chuyển lỗi cho middleware xử lý lỗi chung
+        next(error);
     }
 };
 
@@ -264,7 +287,6 @@ export const update = async (req, res, next) => {
         if (error instanceof mongoose.Error.CastError) {
             console.error('❌ Mongoose Cast Error:', error);
             return res.status(400).json({ message: `Invalid ID format for field: ${error.path}` });
-            T
         }
         console.error('❌ Error in Update PO:', error);
         next(error);
