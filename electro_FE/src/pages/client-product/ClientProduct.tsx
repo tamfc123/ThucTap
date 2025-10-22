@@ -22,7 +22,7 @@ function ClientProduct() {
 
   const { productResponse, isLoadingProductResponse, isErrorProductResponse } = useGetProductApi(slug as string);
   const product = productResponse as ClientProductResponse;
-  useTitle(product?.productName);
+  useTitle(product?.name);
 
   if (isLoadingProductResponse) {
     return <ClientProductSkeleton />;
@@ -38,9 +38,9 @@ function ClientProduct() {
         <Stack spacing={theme.spacing.xl * 2}>
           <ClientProductIntro product={product} />
 
-          {product.productSpecifications && <ClientProductSpecification product={product} />}
+          {product.specifications && <ClientProductSpecification product={product} />}
 
-          {product.productDescription && <ClientProductDescription product={product} />}
+          {product.description && <ClientProductDescription product={product} />}
 
           <ClientProductReviews productSlug={slug as string} />
 

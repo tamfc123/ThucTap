@@ -52,6 +52,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
   const createWishApi = useCreateWishApi();
   const createPreorderApi = useCreatePreorderApi();
   const saveCartApi = useSaveCartApi();
+  console.log('PRODUCT in intro:', product);
 
   const handleSelectVariantButton = (variantIndex: number) => {
     setSelectedVariantIndex(variantIndex);
@@ -64,7 +65,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
     } else {
       const clientWishRequest: ClientWishRequest = {
         userId: user._id,
-        productId: product.productId,
+        productId: product._id,
       };
       createWishApi.mutate(clientWishRequest);
     }
@@ -76,7 +77,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
     } else {
       const clientPreorderRequest: ClientPreorderRequest = {
         userId: user._id,
-        productId: product.productId,
+        productId: product._id,
         status: 1,
       };
       createPreorderApi.mutate(clientPreorderRequest);
@@ -92,7 +93,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
         userId: user._id,
         cartItems: [
           {
-            variantId: (product.productVariants || [])[selectedVariantIndex]?.variantId,
+            variantId: (product.variants || [])[selectedVariantIndex]?.variantId,
             quantity: quantity,
           },
         ],
@@ -116,22 +117,22 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
           <Anchor component={Link} to="/">
             Trang chủ
           </Anchor>
-          {product.productCategory && MiscUtils.makeCategoryBreadcrumbs(product.productCategory).map(c => (
+          {product.categoryId && MiscUtils.makeCategoryBreadcrumbs(product.categoryId).map(c => (
             <Anchor key={c.slug} component={Link} to={'/category/' + c.slug}>
               {c.name}
             </Anchor>
           ))}
           <Text color="dimmed">
-            {product.productName}
+            {product.name}
           </Text>
         </Breadcrumbs>
 
         <Grid gutter="lg">
           <Grid.Col md={6}>
-            {(product.productImages && product.productImages.length > 0)
+            {(product.images && product.images.length > 0)
               ? (
                 <ClientCarousel>
-                  {product.productImages.map(image => (
+                  {product.images.map(image => (
                     <Image
                       key={image.id}
                       radius="md"
@@ -163,16 +164,16 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
             <Stack spacing="lg">
               <Stack spacing={2} sx={{ alignItems: 'start' }}>
                 {!product.productSaleable && <Badge color="red" variant="filled" mb={5}>Hết hàng</Badge>}
-                {product.productBrand && (
+                {product.brandId && (
                   <Group spacing={5}>
                     <Text size="sm">Thương hiệu:</Text>
-                    <Anchor component={Link} to={'/brand/' + product.productBrand.brandId} size="sm">
-                      {product.productBrand.brandName}
+                    <Anchor component={Link} to={'/brand/' + product.brandId.brandId} size="sm">
+                      {product.brandId.brandName}
                     </Anchor>
                   </Group>
                 )}
                 <Text sx={{ fontSize: 26 }} weight={500}>
-                  {product.productName}
+                  {product.name}
                 </Text>
                 <Group mt={7.5} spacing="lg">
                   <Group spacing="xs">
@@ -187,7 +188,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                 </Group>
               </Stack>
 
-              {product.productShortDescription && <Text color="dimmed">{product.productShortDescription}</Text>}
+              {product.shortDescription && <Text color="dimmed">{product.shortDescription}</Text>}
 
               <Box
                 sx={{
@@ -200,7 +201,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   <Text sx={{ fontSize: 24 }} weight={700} color="pink">
                     {MiscUtils.formatPrice(
                       MiscUtils.calculateDiscountedPrice(
-                        (product.productVariants || [])[selectedVariantIndex]?.variantPrice,
+                        (product.variants || [])[selectedVariantIndex]?.price,
                         product.productPromotion ? product.productPromotion.promotionPercent : 0
                       )
                     )} ₫
@@ -208,7 +209,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                   {product.productPromotion && (
                     <>
                       <Text sx={{ textDecoration: 'line-through' }}>
-                        {MiscUtils.formatPrice((product.productVariants || [])[selectedVariantIndex]?.variantPrice)} ₫
+                        {MiscUtils.formatPrice((product.variants || [])[selectedVariantIndex]?.price)} ₫
                       </Text>
                       <Badge color="pink" size="lg" variant="filled">
                         -{product.productPromotion.promotionPercent}%
@@ -220,11 +221,11 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
 
               <Stack spacing="xs">
                 <Text weight={500}>Phiên bản</Text>
-                {product.productVariants.length > 0
-                  ? product.productVariants.some(variant => variant.variantProperties)
+                {product.variants.length > 0
+                  ? product.variants.some(variant => variant.properties)
                     ? (
                       <Group>
-                        {product.productVariants.map((variant, index) => (
+                        {product.variants.map((variant, index) => (
                           <UnstyledButton
                             key={variant.variantId}
                             sx={{
@@ -238,14 +239,14 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                                   ? theme.fn.rgba(theme.colors.blue[9], 0.25)
                                   : theme.colors.blue[0])
                                 : 'unset',
-                              opacity: variant.variantInventory === 0 ? 0.5 : 'unset',
+                              opacity: variant.inventory === 0 ? 0.5 : 'unset',
                             }}
                             onClick={() => handleSelectVariantButton(index)}
-                            disabled={selectedVariantIndex === index || variant.variantInventory === 0}
+                            disabled={selectedVariantIndex === index || variant.inventory === 0}
                           >
                             <Stack spacing={2.5}>
                               <SimpleGrid cols={2} spacing={2.5}>
-                                {variant.variantProperties?.content.map(property => (
+                                {variant.properties?.content.map(property => (
                                   <React.Fragment key={property.id}>
                                     <Text size="sm">{property.name}</Text>
                                     <Text
@@ -257,10 +258,10 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                                   </React.Fragment>
                                 ))}
                               </SimpleGrid>
-                              <Text size="xs" color="dimmed">Tồn kho: {variant.variantInventory}</Text>
+                              <Text size="xs" color="dimmed">Tồn kho: {variant.inventory}</Text>
                               <Text size="xs" color="dimmed">Giá: {MiscUtils.formatPrice(
                                 MiscUtils.calculateDiscountedPrice(
-                                  variant.variantPrice,
+                                  variant.price,
                                   product.productPromotion ? product.productPromotion.promotionPercent : 0
                                 )
                               )} ₫</Text>
@@ -286,7 +287,7 @@ function ClientProductIntro({ product }: ClientProductIntroProps) {
                       value={quantity}
                       onChange={(value) => setQuantity(value || 1)}
                       handlersRef={quantityInputHandlers}
-                      max={product.productVariants?.[selectedVariantIndex]?.variantInventory || 1}
+                      max={product.variants?.[selectedVariantIndex]?.inventory || 1}
                       min={1}
                       styles={{ input: { width: 54, textAlign: 'center' } }}
                     />

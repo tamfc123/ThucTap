@@ -23,6 +23,7 @@ function ClientHomeLatestProducts() {
       onError: () => NotifyUtils.simpleFailed('Lấy dữ liệu không thành công'),
       refetchOnWindowFocus: false,
       keepPreviousData: true,
+      
 
       // (2) XÓA TOÀN BỘ KHỐI 'select' NÀY ĐI
       /*
@@ -39,6 +40,7 @@ function ClientHomeLatestProducts() {
   );
 
   const products = productResponses
+  console.log('Latest Products:', products);
 
   let resultFragment;
 

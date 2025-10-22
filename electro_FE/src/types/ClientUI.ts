@@ -72,16 +72,16 @@ export interface ClientPasswordSettingUserRequest {
 // PRODUCT
 
 export interface ClientProductResponse {
-  productId: string;
-  productName: string;
-  productSlug: string;
-  productShortDescription: string | null;
-  productDescription: string | null;
-  productImages: ImageResponse[];
-  productCategory: ClientCategoryResponse | null;
-  productBrand: ClientProductResponse_ClientBrandResponse | null;
-  productSpecifications: CollectionWrapper<SpecificationItem> | null;
-  productVariants: ClientProductResponse_ClientVariantResponse[];
+  _id: string;
+  name: string;
+  slug: string;
+  shortDescription: string | null;
+  description: string | null;
+  images: ImageResponse[];
+  categoryId: ClientCategoryResponse | null;
+  brandId: ClientProductResponse_ClientBrandResponse | null;
+  specifications: CollectionWrapper<SpecificationItem> | null;
+  variants: ClientProductResponse_ClientVariantResponse[];
   productSaleable: boolean;
   productAverageRatingScore: number;
   productCountReviews: number;
@@ -96,9 +96,9 @@ interface ClientProductResponse_ClientBrandResponse {
 
 interface ClientProductResponse_ClientVariantResponse {
   variantId: string;
-  variantPrice: number;
-  variantProperties: CollectionWrapper<VariantPropertyItem> | null;
-  variantInventory: number;
+  price: number;
+  properties: CollectionWrapper<VariantPropertyItem> | null;
+  inventory: number;
 }
 
 // WISH

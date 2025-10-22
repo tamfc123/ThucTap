@@ -90,10 +90,10 @@ export const getProducts = async (req, res, next) => {
     if (search) query.$text = { $search: search };
 
     // 6. Lọc 'saleable' (Đã thêm)
-    if (saleable === 'true') {
-      // (Bạn phải có trường 'productSaleable' trong Product Model)
-      query.productSaleable = true;
-    }
+    // if (saleable === 'true') {
+    //   // (Bạn phải có trường 'productSaleable' trong Product Model)
+    //   query.productSaleable = true;
+    // }
 
     // === KẾT THÚC SỬA LOGIC LỌC ===
 
@@ -136,6 +136,7 @@ export const getProducts = async (req, res, next) => {
         productPromotion: null, // (Tự thêm logic khuyến mãi)
       };
     });
+    console.log('Transformed Products:', transformedProducts);
 
     res.json({
       content: transformedProducts, // <-- Gửi dữ liệu đã biến đổi

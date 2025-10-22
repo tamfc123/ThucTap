@@ -31,7 +31,7 @@ function ClientProductSpecification({ product }: ClientProductSpecificationProps
             </tr>
           </thead>
           <tbody>
-            {product.productSpecifications?.content.map(specification => (
+            {product.specifications?.content.map(specification => (
               <tr key={specification.id}>
                 <td>{specification.name}</td>
                 <td>{specification.value}</td>
