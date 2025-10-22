@@ -38,7 +38,9 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import CategoryMenu from 'components/ClientHeader/CategoryMenu';
 import { useElementSize } from '@mantine/hooks';
+import { UserResponse } from 'models/User';
 import useAuthStore from 'stores/use-auth-store';
+import { useAdminAuthStore, useTrackedAdminAuthStore } from 'stores/use-admin-auth-store';
 import NotifyUtils from 'utils/NotifyUtils';
 import { useQuery } from 'react-query';
 import FetchUtils, { ErrorMessage } from 'utils/FetchUtils';
@@ -70,6 +72,9 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+// KHAI BÁO ID CỦA VAI TRÒ ADMIN
+const ADMIN_ROLE_ID = '68ef3cef22b03c647eb89830';
+
 function ClientHeader() {
   const theme = useMantineTheme();
   const { classes } = useStyles();
@@ -79,8 +84,23 @@ function ClientHeader() {
   const { ref: refHeaderStack, width: widthHeaderStack } = useElementSize();
 
   const { user, resetAuthState, currentTotalCartItems } = useAuthStore();
+  const { user: adminUser } = useTrackedAdminAuthStore();
+  const { resetAdminAuthState } = useAdminAuthStore();
 
-  // Search state & function
+  // SỬA LỖI: Cập nhật hàm để kiểm tra cả object và string ID
+  const checkAdminRole = (u: UserResponse | null | undefined): boolean => {
+    if (!u?.roles) {
+      return false;
+    }
+    // `role` có thể là object (chuẩn) hoặc string (thực tế từ API)
+    return u.roles.some((role: any) =>
+      (typeof role === 'object' && role.code?.toUpperCase() === 'ADMIN') || // Kiểm tra object
+      (typeof role === 'string' && role === ADMIN_ROLE_ID) // Kiểm tra string ID
+    );
+  };
+
+  const isAdmin = checkAdminRole(user) || checkAdminRole(adminUser);
+
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
 
@@ -105,6 +125,7 @@ function ClientHeader() {
   const handleSignoutMenu = () => {
     if (user) {
       resetAuthState();
+      resetAdminAuthState();
       NotifyUtils.simpleSuccess('Đăng xuất thành công');
     }
   };
@@ -192,23 +213,21 @@ function ClientHeader() {
                     <Menu.Item icon={<User size={14}/>} component={Link} to="/user">
                       Tài khoản
                     </Menu.Item>
+                    
+                    {isAdmin && (
+                      <Menu.Item icon={<Award size={14}/>} component={Link} to="/admin">
+                        Quản lý website
+                      </Menu.Item>
+                    )}
+                    
                     <Menu.Item icon={<Settings size={14}/>} component={Link} to="/user/setting">
                       Thiết đặt
-                    </Menu.Item>
-                    <Menu.Item icon={<Star size={14}/>} component={Link} to="/user/review">
-                      Đánh giá sản phẩm
                     </Menu.Item>
                     <Menu.Item icon={<Heart size={14}/>} component={Link} to="/user/wishlist">
                       Sản phẩm yêu thích
                     </Menu.Item>
-                    <Menu.Item icon={<Award size={14}/>} component={Link} to="/user/reward">
-                      Điểm thưởng
-                    </Menu.Item>
                     <Menu.Item icon={<Alarm size={14}/>} component={Link} to="/user/preorder">
                       Đặt trước sản phẩm
-                    </Menu.Item>
-                    <Menu.Item icon={<MessageCircle size={14}/>} component={Link} to="/user/chat">
-                      Yêu cầu tư vấn
                     </Menu.Item>
                     <Menu.Item color="pink" icon={<Logout size={14}/>} onClick={handleSignoutMenu}>
                       Đăng xuất

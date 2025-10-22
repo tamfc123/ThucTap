@@ -55,6 +55,7 @@ import rewardStrategyRoutes from "./routes/reward-strategy.routes.js"
 import voucherRoutes from "./routes/voucher.routes.js"
 import orderCancellationReasonRoutes from "./routes/order-cancellation-reason.routes.js"
 import clientRoutes from "./routes/client.routes.js"
+import stastsRoutes from "./routes/stats.routes.js"
 
 dotenv.config()
 
@@ -145,7 +146,7 @@ app.use("/api/payment-methods", paymentMethodRoutes)
 app.use("/api/promotions", promotionRoutes)
 app.use("/api/rooms", chatRoutes)
 app.use("/api/messages", chatRoutes)
-app.use("/api/stats", statisticRoutes)
+app.use("/api/stats", stastsRoutes)
 app.use("/api/order-cancellation-reasons", orderCancellationReasonRoutes)
 app.use("/images", imageRoutes)
 

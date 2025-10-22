@@ -28,7 +28,7 @@ function ClientUserNavbar() {
         ['/user/setting/personal', '/user/setting/phone', '/user/setting/email', '/user/setting/password'])}
       {navButton('Thông báo', '/user/notification', Bell)}
       {navButton('Quản lý đơn hàng', '/order', FileBarcode, ['/order/detail'])}
-      {navButton('Đánh giá sản phẩm', '/user/review', Star)}
+      {/* {navButton('Đánh giá sản phẩm', '/user/review', Star)} */}
       {navButton('Sản phẩm yêu thích', '/user/wishlist', Heart)}
       {navButton('Điểm thưởng', '/user/reward', Award)}
       {navButton('Đặt trước sản phẩm', '/user/preorder', Alarm)}
