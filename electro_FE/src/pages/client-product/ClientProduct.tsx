@@ -42,7 +42,7 @@ function ClientProduct() {
 
           {product.description && <ClientProductDescription product={product} />}
 
-          <ClientProductReviews productSlug={slug as string} />
+          {/* <ClientProductReviews productSlug={slug as string} /> */}
 
           {product.productRelatedProducts && product.productRelatedProducts.length > 0 && <ClientProductRelatedProducts product={product} />}
         </Stack>
