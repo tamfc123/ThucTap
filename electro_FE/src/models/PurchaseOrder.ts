@@ -11,7 +11,7 @@ export interface PurchaseOrderResponse extends BaseResponse {
   totalAmount: number;
   note: string | null;
   status: number;
-  dockets: DocketResponse[];
+  //dockets: DocketResponse[];
 }
 
 interface DocketResponse extends BaseResponse {
@@ -29,9 +29,9 @@ interface WarehouseResponse extends BaseResponse {
 
 export interface PurchaseOrderRequest {
   code: string;
-  supplierId: number;
+  supplierId: string;
   purchaseOrderVariants: PurchaseOrderVariantRequest[];
-  destinationId: number;
+  destinationId: string;
   totalAmount: number;
   note: string | null;
   status: number;

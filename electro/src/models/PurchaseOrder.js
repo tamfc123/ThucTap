@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const purchaseOrderSchema = new mongoose.Schema(
   {
@@ -7,40 +7,53 @@ const purchaseOrderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    supplier: {
+    supplier: { 
       type: mongoose.Schema.Types.ObjectId,
       ref: "Supplier",
       required: true,
     },
-    warehouse: {
+    destination: { 
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Warehouse",
+      ref: "Destination", 
       required: true,
     },
-    items: [
+    purchaseOrderVariants: [ 
       {
-        variant: {
+        variant: { 
           type: mongoose.Schema.Types.ObjectId,
           ref: "Variant",
+          required: true, 
         },
-        quantity: Number,
-        price: Number,
+        quantity: {
+          type: Number,
+          required: true, 
+        },
+        cost: { // Đã đổi tên từ price cho khớp (hoặc bạn đổi UI thành price)
+          type: Number,
+          required: true, 
+        },
+        _id: false 
       },
     ],
     totalAmount: {
       type: Number,
       default: 0,
+      required: true, 
     },
     status: {
-      type: String,
-      enum: ["PENDING", "APPROVED", "RECEIVED", "CANCELLED"],
-      default: "PENDING",
+      type: Number,
+      required: true, 
+      default: 1, // Ví dụ: 1 = PENDING
     },
-    note: String,
+    note: {
+      type: String,
+      default: null, 
+    },
+    // dockets: [{ ... }] // <-- Đã xóa trường này
   },
   {
     timestamps: true,
   },
-)
+);
 
-export default mongoose.model("PurchaseOrder", purchaseOrderSchema)
+export default mongoose.model("PurchaseOrder", purchaseOrderSchema);

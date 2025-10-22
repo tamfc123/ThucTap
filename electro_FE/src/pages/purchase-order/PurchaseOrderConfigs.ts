@@ -76,7 +76,7 @@ class PurchaseOrderConfigs extends Configs {
     code: z.string().min(5, MessageUtils.min(PurchaseOrderConfigs.properties.code.label, 5)),
     supplierId: z.string(),
     purchaseOrderVariants: z.array(z.object({
-      variantId: z.number(),
+      variantId: z.string(),
       cost: z.number(),
       quantity: z.number(),
       amount: z.number(),

@@ -24,14 +24,14 @@ function useCountCreateViewModel() {
 
   const [variants, setVariants] = useState<VariantResponse[]>([]);
 
-  const [variantIdForFetchInventory, setVariantIdForFetchInventory] = useState(0);
+  const [variantIdForFetchInventory, setVariantIdForFetchInventory] = useState('');
 
   const createApi = useCreateApi<CountRequest, CountResponse>(CountConfigs.resourceUrl);
   useGetAllApi<WarehouseResponse>(WarehouseConfigs.resourceUrl, WarehouseConfigs.resourceKey,
     { sort: 'id,asc', all: 1 },
     (warehouseListResponse) => {
       const selectList: SelectOption[] = warehouseListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setWarehouseSelectList(selectList);
@@ -41,14 +41,14 @@ function useCountCreateViewModel() {
     variantIdForFetchInventory,
     (variantInventoryResponse) => {
       const countVariantRequest: CountVariantRequest = {
-        variantId: variantInventoryResponse.variant.id,
+        variantId: variantInventoryResponse.variant._id,
         inventory: variantInventoryResponse.inventory,
         actualInventory: variantInventoryResponse.inventory,
       };
       const currentCountVariantRequests = [...form.values.countVariants, countVariantRequest];
       form.setFieldValue('countVariants', currentCountVariantRequests);
       setVariants(variants => [...variants, variantInventoryResponse.variant]);
-      setVariantIdForFetchInventory(0); // Reset
+      setVariantIdForFetchInventory(''); // Reset
     },
     { enabled: !!variantIdForFetchInventory }
   );
@@ -56,7 +56,7 @@ function useCountCreateViewModel() {
   const handleFormSubmit = form.onSubmit((formValues) => {
     const requestBody: CountRequest = {
       code: formValues.code,
-      warehouseId: Number(formValues.warehouseId),
+      warehouseId: formValues.warehouseId!,
       countVariants: formValues.countVariants,
       note: formValues.note || null,
       status: Number(formValues.status),
@@ -65,8 +65,8 @@ function useCountCreateViewModel() {
   });
 
   const handleClickVariantResultItem = (variant: VariantResponse) => {
-    setTimeout(() => (variantIdForFetchInventory === variant.id)
-      ? refetch() : setVariantIdForFetchInventory(variant.id), 100);
+    setTimeout(() => (variantIdForFetchInventory === variant._id)
+      ? refetch() : setVariantIdForFetchInventory(variant._id), 100);
   };
 
   const handleActualInventoryInput = (actualInventory: number, index: number) => {

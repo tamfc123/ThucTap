@@ -10,6 +10,6 @@ router.get("/", purchaseOrderController.getAll)
 router.get("/:id", purchaseOrderController.getById)
 router.post("/", purchaseOrderController.create)
 router.put("/:id", purchaseOrderController.update)
-router.delete("/", purchaseOrderController.deleteMany)
+router.delete("/:id", purchaseOrderController.deletePurchaseOrder)
 
 export default router

@@ -12,7 +12,7 @@ export interface CountResponse extends BaseResponse {
 
 export interface CountRequest {
   code: string;
-  warehouseId: number;
+  warehouseId: string;
   countVariants: CountVariantRequest[];
   note: string | null;
   status: number;

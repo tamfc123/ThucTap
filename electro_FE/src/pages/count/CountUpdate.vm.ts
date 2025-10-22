@@ -16,7 +16,7 @@ import { CountVariantKeyRequest, CountVariantRequest } from 'models/CountVariant
 import useDeleteByIdsApi from 'hooks/use-delete-by-ids-api';
 import produce from 'immer';
 
-function useCountUpdateViewModel(id: number) {
+function useCountUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: CountConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(CountConfigs.createUpdateFormSchema),
@@ -29,7 +29,7 @@ function useCountUpdateViewModel(id: number) {
 
   const [variants, setVariants] = useState<VariantResponse[]>([]);
 
-  const [variantIdForFetchInventory, setVariantIdForFetchInventory] = useState(0);
+  const [variantIdForFetchInventory, setVariantIdForFetchInventory] = useState('');
 
   const updateApi = useUpdateApi<CountRequest, CountResponse>(CountConfigs.resourceUrl, CountConfigs.resourceKey, id);
   useGetByIdApi<CountResponse>(CountConfigs.resourceUrl, CountConfigs.resourceKey, id,
@@ -37,10 +37,10 @@ function useCountUpdateViewModel(id: number) {
       setCount(countResponse);
       const formValues: typeof form.values = {
         code: countResponse.code,
-        warehouseId: String(countResponse.warehouse.id),
+        warehouseId: String(countResponse.warehouse._id),
         countVariants: countResponse.countVariants
           .map(countVariantResponse => ({
-            variantId: countVariantResponse.variant.id,
+            variantId: countVariantResponse.variant._id,
             inventory: countVariantResponse.inventory,
             actualInventory: countVariantResponse.actualInventory,
           })),
@@ -56,7 +56,7 @@ function useCountUpdateViewModel(id: number) {
     { sort: 'id,asc', all: 1 },
     (warehouseListResponse) => {
       const selectList: SelectOption[] = warehouseListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setWarehouseSelectList(selectList);
@@ -66,14 +66,14 @@ function useCountUpdateViewModel(id: number) {
     variantIdForFetchInventory,
     (variantInventoryResponse) => {
       const countVariantRequest: CountVariantRequest = {
-        variantId: variantInventoryResponse.variant.id,
+        variantId: variantInventoryResponse.variant._id,
         inventory: variantInventoryResponse.inventory,
         actualInventory: variantInventoryResponse.inventory,
       };
       const currentCountVariantRequests = [...form.values.countVariants, countVariantRequest];
       form.setFieldValue('countVariants', currentCountVariantRequests);
       setVariants(variants => [...variants, variantInventoryResponse.variant]);
-      setVariantIdForFetchInventory(0); // Reset
+      setVariantIdForFetchInventory(''); // Reset
     },
     { enabled: !!variantIdForFetchInventory }
   );
@@ -88,7 +88,7 @@ function useCountUpdateViewModel(id: number) {
     if (prevFormValues && !MiscUtils.isEquals(formValues, prevFormValues)) {
       const requestBody: CountRequest = {
         code: formValues.code,
-        warehouseId: Number(formValues.warehouseId),
+        warehouseId: formValues.warehouseId!,
         countVariants: formValues.countVariants,
         note: formValues.note || null,
         status: Number(formValues.status),
@@ -107,8 +107,8 @@ function useCountUpdateViewModel(id: number) {
   });
 
   const handleClickVariantResultItem = (variant: VariantResponse) => {
-    setTimeout(() => (variantIdForFetchInventory === variant.id)
-      ? refetch() : setVariantIdForFetchInventory(variant.id), 100);
+    setTimeout(() => (variantIdForFetchInventory === variant._id)
+      ? refetch() : setVariantIdForFetchInventory(variant._id), 100);
   };
 
   const handleActualInventoryInput = (actualInventory: number, index: number) => {

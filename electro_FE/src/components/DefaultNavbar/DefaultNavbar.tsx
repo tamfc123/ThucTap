@@ -156,22 +156,6 @@ const navbarLinks: NavbarLink[] = [
         link: '/admin/inventory/destination',
         label: 'Điểm nhập hàng',
       },
-      {
-        link: '/admin/inventory/docket',
-        label: 'Phiếu nhập xuất kho',
-      },
-      {
-        link: '/admin/inventory/docket-reason',
-        label: 'Lý do phiếu NXK',
-      },
-      {
-        link: '/admin/inventory/count',
-        label: 'Phiếu kiểm kho',
-      },
-      {
-        link: '/admin/inventory/transfer',
-        label: 'Phiếu chuyển kho',
-      },
     ],
   },
   {

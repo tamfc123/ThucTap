@@ -17,7 +17,7 @@ import produce from 'immer';
 import useDeleteByIdsApi from 'hooks/use-delete-by-ids-api';
 import ResourceURL from 'constants/ResourceURL';
 
-function usePurchaseOrderUpdateViewModel(id: number) {
+function usePurchaseOrderUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: PurchaseOrderConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(PurchaseOrderConfigs.createUpdateFormSchema),
@@ -37,15 +37,15 @@ function usePurchaseOrderUpdateViewModel(id: number) {
       setPurchaseOrder(purchaseOrderResponse);
       const formValues: typeof form.values = {
         code: purchaseOrderResponse.code,
-        supplierId: String(purchaseOrderResponse.supplier.id),
+        supplierId: String(purchaseOrderResponse.supplier._id),
         purchaseOrderVariants: purchaseOrderResponse.purchaseOrderVariants
           .map(purchaseOrderVariantResponse => ({
-            variantId: purchaseOrderVariantResponse.variant.id,
+            variantId: purchaseOrderVariantResponse.variant._id,
             cost: purchaseOrderVariantResponse.cost,
             quantity: purchaseOrderVariantResponse.quantity,
             amount: purchaseOrderVariantResponse.amount,
           })),
-        destinationId: String(purchaseOrderResponse.destination.id),
+        destinationId: String(purchaseOrderResponse.destination._id),
         totalAmount: purchaseOrderResponse.totalAmount,
         note: purchaseOrderResponse.note || '',
         status: String(purchaseOrderResponse.status),
@@ -59,7 +59,7 @@ function usePurchaseOrderUpdateViewModel(id: number) {
     { all: 1 },
     (supplierListResponse) => {
       const selectList: SelectOption[] = supplierListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.displayName,
       }));
       setSupplierSelectList(selectList);
@@ -69,8 +69,8 @@ function usePurchaseOrderUpdateViewModel(id: number) {
     { all: 1 },
     (destinationListResponse) => {
       const selectList: SelectOption[] = destinationListResponse.content.map((item) => ({
-        value: String(item.id),
-        label: [item.address.line, item.address.district?.name, item.address.province?.name].filter(Boolean).join(', '),
+        value: String(item._id),
+        label: [item.address.line, item.address.districtId?.name, item.address.provinceId?.name].filter(Boolean).join(', '),
       }));
       setDestinationSelectList(selectList);
     }
@@ -86,9 +86,9 @@ function usePurchaseOrderUpdateViewModel(id: number) {
     if (prevFormValues && !MiscUtils.isEquals(formValues, prevFormValues)) {
       const requestBody: PurchaseOrderRequest = {
         code: formValues.code,
-        supplierId: Number(formValues.supplierId),
+        supplierId: formValues.supplierId!,
         purchaseOrderVariants: formValues.purchaseOrderVariants,
-        destinationId: Number(formValues.destinationId),
+        destinationId: formValues.destinationId!,
         totalAmount: formValues.totalAmount,
         note: formValues.note || null,
         status: Number(formValues.status),
@@ -112,7 +112,7 @@ function usePurchaseOrderUpdateViewModel(id: number) {
   const handleClickVariantResultItem = (variant: VariantResponse) => {
     setTimeout(() => {
       const purchaseOrderVariantRequest: PurchaseOrderVariantRequest = {
-        variantId: variant.id,
+        variantId: variant._id,
         cost: variant.cost,
         quantity: 1,
         amount: variant.cost,

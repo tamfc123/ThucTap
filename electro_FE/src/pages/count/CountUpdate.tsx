@@ -8,6 +8,9 @@ import { EntityType } from 'components/VariantTable/VariantTable';
 
 function CountUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không có phiếu kiểm kho</div>;
+  }
   const {
     count,
     form,
@@ -19,7 +22,7 @@ function CountUpdate() {
     warehouseSelectList,
     statusSelectList,
     variants,
-  } = useCountUpdateViewModel(Number(id));
+  } = useCountUpdateViewModel(id);
 
   if (!count) {
     return null;
@@ -33,7 +36,7 @@ function CountUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={count.id}
+        id={count._id}
         createdAt={count.createdAt}
         updatedAt={count.updatedAt}
         createdBy="1"
