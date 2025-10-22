@@ -13,7 +13,7 @@ import { DistrictResponse } from 'models/District';
 import DistrictConfigs from 'pages/district/DistrictConfigs';
 import { AddressRequest } from 'models/Address';
 
-function useWarehouseUpdateViewModel(id: number) {
+function useWarehouseUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: WarehouseConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(WarehouseConfigs.createUpdateFormSchema),
@@ -32,8 +32,8 @@ function useWarehouseUpdateViewModel(id: number) {
         code: warehouseResponse.code,
         name: warehouseResponse.name,
         'address.line': warehouseResponse.address?.line || '',
-        'address.provinceId': warehouseResponse.address?.province ? String(warehouseResponse.address.province.id) : null,
-        'address.districtId': warehouseResponse.address?.district ? String(warehouseResponse.address.district.id) : null,
+        'address.provinceId': warehouseResponse.address?.provinceId ? String(warehouseResponse.address.provinceId._id) : null,
+        'address.districtId': warehouseResponse.address?.districtId ? String(warehouseResponse.address.districtId._id) : null,
         status: String(warehouseResponse.status),
       };
       form.setValues(formValues);
@@ -44,20 +44,27 @@ function useWarehouseUpdateViewModel(id: number) {
     { all: 1 },
     (provinceListResponse) => {
       const selectList: SelectOption[] = provinceListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setProvinceSelectList(selectList);
     }
   );
   useGetAllApi<DistrictResponse>(DistrictConfigs.resourceUrl, DistrictConfigs.resourceKey,
-    { all: 1 },
+    {
+      provinceId: form.values['address.provinceId'] || undefined,
+      size: 999
+    },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
+    },
+    {
+      refetchOnWindowFocus: false,
+enabled: !!form.values['address.provinceId'] 
     }
   );
 
@@ -66,8 +73,8 @@ function useWarehouseUpdateViewModel(id: number) {
     if (!MiscUtils.isEquals(formValues, prevFormValues)) {
       const addressRequest: AddressRequest = {
         line: formValues['address.line'] || null,
-        provinceId: Number(formValues['address.provinceId']) || null,
-        districtId: Number(formValues['address.districtId']) || null,
+        provinceId: formValues['address.provinceId'] || null,
+        districtId: formValues['address.districtId'] || null,
         wardId: null,
       };
       const requestBody: WarehouseRequest = {

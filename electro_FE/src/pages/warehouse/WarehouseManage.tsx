@@ -41,7 +41,7 @@ function WarehouseManage() {
 
   const showedPropertiesFragment = (entity: WarehouseResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>{DateUtils.isoDateToString(entity.updatedAt)}</td>
       <td>
@@ -58,11 +58,13 @@ function WarehouseManage() {
     </>
   );
 
-  const entityDetailTableRowsFragment = (entity: WarehouseResponse) => (
-    <>
+  const entityDetailTableRowsFragment = (entity: WarehouseResponse) => {
+    console.log('entity in detail fragment', entity);
+    return(
+      <>
       <tr>
         <td>{WarehouseConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{WarehouseConfigs.properties.createdAt.label}</td>
@@ -86,18 +88,19 @@ function WarehouseManage() {
       </tr>
       <tr>
         <td>{WarehouseConfigs.properties['address.province.name'].label}</td>
-        <td>{entity.address?.province?.name}</td>
+        <td>{entity.address?.provinceId?.name}</td>
       </tr>
       <tr>
-        <td>{WarehouseConfigs.properties['address.district.name'].label}</td>
-        <td>{entity.address?.district?.name}</td>
+<td>{WarehouseConfigs.properties['address.district.name'].label}</td>
+        <td>{entity.address?.districtId?.name}</td>
       </tr>
       <tr>
         <td>{WarehouseConfigs.properties.status.label}</td>
         <td>{warehouseStatusBadgeFragment(entity.status)}</td>
       </tr>
     </>
-  );
+    )
+  };
 
   return (
     <Stack>
