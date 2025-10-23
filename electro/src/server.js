@@ -25,7 +25,7 @@ import supplierRoutes from "./routes/supplier.routes.js"
 import employeeRoutes from "./routes/employee.routes.js"
 import customerRoutes from "./routes/customer.routes.js"
 import promotionRoutes from "./routes/promotion.routes.js"
-import paymentMethodRoutes from "./routes/paymentMethod.routes.js"
+import paymentMethodRoutes from "./routes/payment-method.routes.js"
 import imageRoutes from "./routes/image.routes.js"
 import chatRoutes from "./routes/chat.routes.js"
 import statisticRoutes from "./routes/statistic.routes.js"
@@ -56,6 +56,7 @@ import voucherRoutes from "./routes/voucher.routes.js"
 import orderCancellationReasonRoutes from "./routes/order-cancellation-reason.routes.js"
 import clientRoutes from "./routes/client.routes.js"
 import stastsRoutes from "./routes/stats.routes.js"
+import cartRoutes from "./routes/cart.routes.js"
 
 dotenv.config()
 
@@ -108,7 +109,6 @@ app.use("/api/roles", roleRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use("/api/brands", brandRoutes)
-app.use("/api/orders", orderRoutes)
 app.use("/api/reviews", reviewRoutes)
 app.use("/api/addresses", addressRoutes)
 app.use("/api/provinces", provinceRoutes)
@@ -142,7 +142,6 @@ app.use("/api/transfers", transferRoutes)
 app.use("/api/waybills", waybillRoutes)
 app.use("/api/reward-strategies", rewardStrategyRoutes)
 app.use("/api/vouchers", voucherRoutes)
-app.use("/api/payment-methods", paymentMethodRoutes)
 app.use("/api/promotions", promotionRoutes)
 app.use("/api/rooms", chatRoutes)
 app.use("/api/messages", chatRoutes)
@@ -150,8 +149,10 @@ app.use("/api/stats", stastsRoutes)
 app.use("/api/order-cancellation-reasons", orderCancellationReasonRoutes)
 app.use("/images", imageRoutes)
 
+app.use("/client-api/payment-methods", paymentMethodRoutes)
+app.use('/client-api/carts', cartRoutes);
+app.use("/client-api/orders", orderRoutes)
 app.use("/client-api", clientRoutes)
-
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "OK", message: "Server is running" })

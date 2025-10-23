@@ -2,15 +2,16 @@ import BaseResponse from 'models/BaseResponse';
 
 export interface PaymentMethodResponse extends BaseResponse {
   name: string;
-  code: PaymentMethodType;
-  status: number;
+  code: string;
+  status: string;
 }
 
 export interface PaymentMethodRequest {
-  status: number;
+  status: string;
 }
 
 export enum PaymentMethodType {
   CASH = 'CASH',
-  PAYPAL = 'PAYPAL'
+  PAYPAL = 'PAYPAL',
+  MOMO = 'MOMO',
 }

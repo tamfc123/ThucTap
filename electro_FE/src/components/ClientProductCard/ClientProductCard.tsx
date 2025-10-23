@@ -81,7 +81,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
       NotifyUtils.simple('Vui lòng đăng nhập để sử dụng chức năng');
     } else {
       const cartRequest: ClientCartRequest = {
-        cartId: currentCartId,
+        cartId: currentCartId || '',
         userId: user._id,
         cartItems: [
           {
