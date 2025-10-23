@@ -9,6 +9,9 @@ import { EntityType } from 'components/VariantTable/VariantTable';
 
 function PurchaseOrderUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không có sản phẩm</div>;
+  }
   const {
     purchaseOrder,
     form,
@@ -21,7 +24,7 @@ function PurchaseOrderUpdate() {
     destinationSelectList,
     statusSelectList,
     variants,
-  } = usePurchaseOrderUpdateViewModel(Number(id));
+  } = usePurchaseOrderUpdateViewModel(id);
 
   if (!purchaseOrder) {
     return null;
@@ -35,7 +38,7 @@ function PurchaseOrderUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={purchaseOrder.id}
+        id={purchaseOrder._id}
         createdAt={purchaseOrder.createdAt}
         updatedAt={purchaseOrder.updatedAt}
         createdBy="1"

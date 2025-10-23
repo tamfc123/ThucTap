@@ -4,7 +4,7 @@ import { ElectroLogo } from 'components';
 import { z } from 'zod';
 import MessageUtils from 'utils/MessageUtils';
 import useTitle from 'hooks/use-title';
-import {useAdminAuthStore} from 'stores/use-admin-auth-store';
+import { useAdminAuthStore } from 'stores/use-admin-auth-store';
 import { useForm, zodResolver } from '@mantine/form';
 import { useMutation } from 'react-query';
 import { JwtResponse, LoginRequest } from 'models/Authentication';

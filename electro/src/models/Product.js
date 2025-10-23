@@ -97,6 +97,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
+    inventory: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

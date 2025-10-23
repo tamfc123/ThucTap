@@ -7,6 +7,9 @@ import useWarehouseUpdateViewModel from 'pages/warehouse/WarehouseUpdate.vm';
 
 function WarehouseUpdate() {
   const { id } = useParams();
+  if (!id) {
+    return <div>Không</div>
+  }
   const {
     warehouse,
     form,
@@ -14,7 +17,7 @@ function WarehouseUpdate() {
     provinceSelectList,
     districtSelectList,
     statusSelectList,
-  } = useWarehouseUpdateViewModel(Number(id));
+  } = useWarehouseUpdateViewModel(id);
 
   if (!warehouse) {
     return null;
@@ -28,7 +31,7 @@ function WarehouseUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={warehouse.id}
+        id={warehouse._id}
         createdAt={warehouse.createdAt}
         updatedAt={warehouse.updatedAt}
         createdBy="1"
@@ -61,7 +64,7 @@ function WarehouseUpdate() {
               </Grid.Col>
               <Grid.Col xs={6}>
                 <Select
-                  label={WarehouseConfigs.properties['address.provinceId'].label}
+                  label={WarehouseConfigs.properties['address.province.name'].label}
                   placeholder="--"
                   clearable
                   searchable
@@ -71,7 +74,7 @@ function WarehouseUpdate() {
               </Grid.Col>
               <Grid.Col xs={6}>
                 <Select
-                  label={WarehouseConfigs.properties['address.districtId'].label}
+                  label={WarehouseConfigs.properties['address.district.name'].label}
                   placeholder="--"
                   clearable
                   searchable
@@ -89,8 +92,7 @@ function WarehouseUpdate() {
                 />
               </Grid.Col>
             </Grid>
-
-            <Divider mt="xs"/>
+<Divider mt="xs"/>
 
             <Group position="apart" p="sm">
               <Button variant="default" onClick={form.reset}>Mặc định</Button>

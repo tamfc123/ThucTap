@@ -19,37 +19,38 @@ function Client() {
         <Outlet/>
         <ClientFooter/>
       </LoadingMiddleware>
-      {user && <ChatButton/>}
+      {/* {user && <ChatButton/>} */}
       <Shortcut/>
     </>
   );
 }
 
-function ChatButton() {
-  return (
-    <Affix position={{ bottom: 20, right: 20 }}>
-      <Card shadow="sm" p="xs" radius="xl">
-        <Tooltip
-          label="Yêu cầu tư vấn mua hàng"
-          position="left"
-          placement="center"
-          withArrow
-        >
-          <ActionIcon
-            component={Link}
-            to="/user/chat"
-            color="teal"
-            size="xl"
-            radius="xl"
-            variant="light"
-          >
-            <Messages/>
-          </ActionIcon>
-        </Tooltip>
-      </Card>
-    </Affix>
-  );
-}
+// function ChatButton() {
+//   return (
+//     <Affix position={{ bottom: 20, right: 20 }}>
+//       <Card shadow="sm" p="xs" radius="xl">
+//         <Tooltip
+//           label="Yêu cầu tư vấn mua hàng"
+//           position="left"
+//           placement="center"
+//           withArrow
+//         >
+//           <ActionIcon
+//             component={Link}
+//             to="/user/chat"
+//             color="teal"
+//             size="xl"
+//             radius="xl"
+//             variant="light"
+//           >
+//             <Messages/>
+//           </ActionIcon>
+//         </Tooltip>
+//       </Card>
+//     </Affix>
+//   );
+// }
+
 
 // Only for test
 function Shortcut() {

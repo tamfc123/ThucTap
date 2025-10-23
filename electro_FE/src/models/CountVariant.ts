@@ -24,12 +24,12 @@ interface ProductResponse extends BaseResponse {
 }
 
 export interface CountVariantRequest {
-  variantId: number;
+  variantId: string;
   inventory: number;
   actualInventory: number;
 }
 
 export interface CountVariantKeyRequest {
-  countId: number;
-  variantId: number;
+  countId: string;
+  variantId: string;
 }

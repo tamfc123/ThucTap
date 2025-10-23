@@ -36,7 +36,7 @@ const useStyles = createStyles((theme) => ({
     marginTop: theme.spacing.xl * 2,
     paddingTop: theme.spacing.xl * 2,
     paddingBottom: theme.spacing.xl * 2,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
     borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
   },
 
@@ -49,7 +49,7 @@ const useStyles = createStyles((theme) => ({
   afterFooter: {
     marginTop: theme.spacing.xl * 2,
     paddingTop: theme.spacing.xl,
-    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]}`,
+    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.dark[2]}`,
   },
 }));
 
@@ -65,7 +65,7 @@ function ClientFooter() {
         <Grid>
           <Grid.Col md={6}>
             <Stack spacing={theme.spacing.lg * 1.75}>
-              <ElectroLogo width={135}/>
+                <ElectroLogo width={224}/>
               <Group>
                 <Headset size={52} color={theme.colors[theme.primaryColor][6]} strokeWidth={1.25}/>
                 <Stack spacing={theme.spacing.xs / 4}>
@@ -154,7 +154,7 @@ function ClientFooter() {
         </Grid>
         <Group className={classes.afterFooter} position="apart">
           <Text color="dimmed" size="sm">
-            © 2022 Electro Corporation. Bảo lưu mọi quyền.
+            © 2025 Thuộc quyền sở hữu của Minh Minh Long.
           </Text>
           <Group spacing="xs">
             <ThemeIcon variant="outline" color="gray" sx={{ width: 50, height: 30 }}>

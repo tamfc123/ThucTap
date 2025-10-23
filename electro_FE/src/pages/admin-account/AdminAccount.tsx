@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Badge, Divider, Group, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { Home, Mail, Mars, Phone, Venus } from 'tabler-icons-react';
-import {useAdminAuthStore} from 'stores/use-admin-auth-store';
+import { useAdminAuthStore } from 'stores/use-admin-auth-store';
 
 function AdminAccount() {
   const { user } = useAdminAuthStore();
@@ -45,7 +45,7 @@ function AdminAccount() {
             <Stack spacing={0}>
               <Text weight={500}>Địa chỉ</Text>
               <Text>
-                {[user?.address.line, user?.address.ward?.name, user?.address.district?.name, user?.address.province?.name]
+                {[user?.address.line, user?.address.ward?.name, user?.address.districtId?.name, user?.address.provinceId?.name]
                   .filter(Boolean)
                   .join(', ')}
               </Text>

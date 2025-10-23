@@ -54,7 +54,7 @@ function PurchaseOrderManage() {
 
   const showedPropertiesFragment = (entity: PurchaseOrderResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
@@ -69,10 +69,10 @@ function PurchaseOrderManage() {
       <td>
         <Stack spacing={0}>
           <Highlight highlight={searchToken} highlightColor="blue" size="sm">
-            {entity.destination.address.line || ''}
+            {entity.destination?.address?.line || ''}
           </Highlight>
           <Text inherit>
-            {[entity.destination.address.district?.name, entity.destination.address.province?.name]
+            {[entity.destination?.address?.districtId?.name, entity.destination?.address?.provinceId?.name]
               .filter(Boolean)
               .join(', ')}
           </Text>
@@ -95,11 +95,13 @@ function PurchaseOrderManage() {
     </>
   );
 
-  const entityDetailTableRowsFragment = (entity: PurchaseOrderResponse) => (
-    <>
+  const entityDetailTableRowsFragment = (entity: PurchaseOrderResponse) => {
+    console.log('entity', entity);
+    return(
+      <>
       <tr>
         <td>{PurchaseOrderConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{PurchaseOrderConfigs.properties.createdAt.label}</td>
@@ -121,9 +123,9 @@ function PurchaseOrderManage() {
         <td>{PurchaseOrderConfigs.properties['destination.address.line'].label}</td>
         <td>
           <Stack spacing={0}>
-            <Text inherit>{entity.destination.address.line}</Text>
+            <Text inherit>{entity.destination?.address?.line}</Text>
             <Text inherit>
-              {[entity.destination.address.district?.name, entity.destination.address.province?.name]
+              {[entity.destination?.address?.districtId?.name, entity.destination?.address?.provinceId?.name]
                 .filter(Boolean)
                 .join(', ')}
             </Text>
@@ -153,7 +155,8 @@ function PurchaseOrderManage() {
         <td>{purchaseOrderStatusBadgeFragment(entity.status)}</td>
       </tr>
     </>
-  );
+    )
+};
 
   return (
     <Stack>

@@ -65,70 +65,77 @@ function VariantTable({
         </tr>
       </thead>
       <tbody>
-        {variants.map((variant, index) => (
-          <tr key={variant._id}>
-            <td style={{ textAlign: 'center' }}>{index + 1}</td>
-            <td>
-              <Stack spacing={2}>
-                <Text size="sm">
-                  {variant.product.name}
-                </Text>
-                <Group spacing={5}>
-                  {variant.properties && variant.properties.content.map(property => (
-                    <React.Fragment key={property.code}>
-                      <Text size="xs" color="blue" title={property.name}>
-                        {property.value}
-                      </Text>
-                      <Text size="xs" color="dimmed">⋅</Text>
-                    </React.Fragment>
-                  ))}
-                  <Text size="xs" color="dimmed">
-                    SKU: {variant.sku}
-                  </Text>
-                </Group>
-              </Stack>
-            </td>
-            {type === EntityType.PURCHASE_ORDER && (
-              <td style={{ textAlign: 'right' }}>
-                {MiscUtils.formatPrice(variant.cost) + ' ₫'}
-              </td>
-            )}
-            {type === EntityType.ORDER && (
-              <td style={{ textAlign: 'right' }}>
-                {MiscUtils.formatPrice(variant.price) + ' ₫'}
-              </td>
-            )}
-            {type !== EntityType.COUNT && handleQuantityInput && (
+        {variants.map((variant, index) => {
+          // === SỬA LỖI: THÊM ĐIỀU KIỆN BẢO VỆ ===
+          // Lấy request data tương ứng một cách an toàn
+          const request = variantRequests[index];
+
+          // NẾU KHÔNG TÌM THẤY REQUEST TƯƠNG ỨNG (do mảng bị lệch)
+          // => Bỏ qua (return null) để không làm crash ứng dụng
+          if (!request) {
+            // Log lỗi ra console để bạn biết đang có vấn đề dữ liệu
+            console.error(
+              `Dữ liệu không đồng bộ: Không tìm thấy variantRequest tại index ${index} cho variant ${variant.sku}`
+            );
+            return null; // Quan trọng: Bỏ qua, không render hàng này
+          }
+
+          // === TỪ ĐÂY TRỞ ĐI ===
+          // Mọi thứ đều an toàn, ta dùng biến `request`
+          // thay vì `variantRequests[index]`
+
+          return (
+            <tr key={variant._id}>
+              <td style={{ textAlign: 'center' }}>{index + 1}</td>
               <td>
-                <Center>
-                  <NumberInput
-                    size="xs"
-                    placeholder="--"
-                    value={(variantRequests[index] as PurchaseOrderVariantRequest | DocketVariantRequest | OrderVariantRequest)
-                      .quantity}
-                    onChange={(value) => handleQuantityInput(value || 1, index)}
-                    min={1}
-                    max={1_000_000}
-                    parser={MiscUtils.parserPrice}
-                    formatter={MiscUtils.formatterPrice}
-                    sx={{ width: 100 }}
-                  />
-                </Center>
+                <Stack spacing={2}>
+                  {/* ... (phần này không đổi) ... */}
+                  <Text size="sm">{variant.product?.name}</Text>
+                  <Group spacing={5}>
+                    {variant.properties && variant.properties.content &&
+                      variant.properties.content.map((property) => (
+                        <React.Fragment key={property.code}>
+                          <Text size="xs" color="blue" title={property.name}>
+                            {property.value}
+                          </Text>
+                          <Text size="xs" color="dimmed">
+                            ⋅
+                          </Text>
+                        </React.Fragment>
+                      ))}
+                    <Text size="xs" color="dimmed">
+                      SKU: {variant.sku}
+                    </Text>
+                  </Group>
+                </Stack>
               </td>
-            )}
-            {type === EntityType.COUNT && handleActualInventoryInput && (
-              <>
-                <td style={{ textAlign: 'center' }}>
-                  {(variantRequests[index] as CountVariantRequest).inventory}
+              {type === EntityType.PURCHASE_ORDER && (
+                <td style={{ textAlign: 'right' }}>
+                  {MiscUtils.formatPrice(variant.cost) + ' ₫'}
                 </td>
+              )}
+              {type === EntityType.ORDER && (
+                <td style={{ textAlign: 'right' }}>
+                  {MiscUtils.formatPrice(variant.price) + ' ₫'}
+                </td>
+              )}
+              {type !== EntityType.COUNT && handleQuantityInput && (
                 <td>
                   <Center>
                     <NumberInput
                       size="xs"
                       placeholder="--"
-                      value={(variantRequests[index] as CountVariantRequest).actualInventory}
-                      onChange={(value) => handleActualInventoryInput(value || 0, index)}
-                      min={0}
+                      // Sửa: Dùng `request`
+                      value={
+                        (
+                          request as
+                          | PurchaseOrderVariantRequest
+                          | DocketVariantRequest
+                          | OrderVariantRequest
+                        ).quantity
+                      }
+                      onChange={(value) => handleQuantityInput(value || 1, index)}
+                      min={1}
                       max={1_000_000}
                       parser={MiscUtils.parserPrice}
                       formatter={MiscUtils.formatterPrice}
@@ -136,33 +143,65 @@ function VariantTable({
                     />
                   </Center>
                 </td>
-                <td style={{ textAlign: 'center' }}>
-                  {deltaVariantInventoryFragment((variantRequests[index] as CountVariantRequest).actualInventory
-                    - (variantRequests[index] as CountVariantRequest).inventory)}
+              )}
+              {type === EntityType.COUNT && handleActualInventoryInput && (
+                <>
+                  <td style={{ textAlign: 'center' }}>
+                    {/* Sửa: Dùng `request` */}
+                    {(request as CountVariantRequest).inventory}
+                  </td>
+                  <td>
+                    <Center>
+                      <NumberInput
+                        size="xs"
+                        placeholder="--"
+                        // Sửa: Dùng `request`
+                        value={(request as CountVariantRequest).actualInventory}
+                        onChange={(value) =>
+                          handleActualInventoryInput(value || 0, index)
+                        }
+                        min={0}
+                        max={1_000_000}
+                        parser={MiscUtils.parserPrice}
+                        formatter={MiscUtils.formatterPrice}
+                        sx={{ width: 100 }}
+                      />
+                    </Center>
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    {/* Sửa: Dùng `request` */}
+                    {deltaVariantInventoryFragment(
+                      (request as CountVariantRequest).actualInventory -
+                      (request as CountVariantRequest).inventory
+                    )}
+                  </td>
+                </>
+              )}
+              {[EntityType.PURCHASE_ORDER, EntityType.ORDER].includes(type) && (
+                <td style={{ textAlign: 'right' }}>
+                  {MiscUtils.formatPrice(
+                    // Sửa: Dùng `request`
+                    (request as PurchaseOrderVariantRequest | OrderVariantRequest)
+                      .amount
+                  ) + ' ₫'}
                 </td>
-              </>
-            )}
-            {[EntityType.PURCHASE_ORDER, EntityType.ORDER].includes(type) && (
-              <td style={{ textAlign: 'right' }}>
-                {MiscUtils.formatPrice(
-                  (variantRequests[index] as PurchaseOrderVariantRequest | OrderVariantRequest).amount) + ' ₫'}
+              )}
+              <td>
+                <Center>
+                  <ActionIcon
+                    color="red"
+                    variant="outline"
+                    size={24}
+                    title="Xóa mặt hàng này"
+                    onClick={() => handleDeleteVariantButton(index)}
+                  >
+                    <Trash size={16} />
+                  </ActionIcon>
+                </Center>
               </td>
-            )}
-            <td>
-              <Center>
-                <ActionIcon
-                  color="red"
-                  variant="outline"
-                  size={24}
-                  title="Xóa mặt hàng này"
-                  onClick={() => handleDeleteVariantButton(index)}
-                >
-                  <Trash size={16}/>
-                </ActionIcon>
-              </Center>
-            </td>
-          </tr>
-        ))}
+            </tr>
+          );
+        })}
       </tbody>
     </Table>
   );
