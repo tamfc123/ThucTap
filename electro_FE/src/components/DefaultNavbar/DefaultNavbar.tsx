@@ -52,34 +52,6 @@ const navbarLinks: NavbarLink[] = [
     disableForEmployee: true,
   },
   {
-    link: '/admin/employee',
-    label: 'Nhân viên',
-    icon: Building,
-    childLinks: [
-      {
-        link: '/admin/employee/office',
-        label: 'Văn phòng',
-      },
-      {
-        link: '/admin/employee/department',
-        label: 'Phòng ban',
-      },
-      {
-        link: '/admin/employee/job-type',
-        label: 'Loại hình công việc',
-      },
-      {
-        link: '/admin/employee/job-level',
-        label: 'Cấp bậc công việc',
-      },
-      {
-        link: '/admin/employee/job-title',
-        label: 'Chức danh công việc',
-      },
-    ],
-    disableForEmployee: true,
-  },
-  {
     link: '/admin/customer',
     label: 'Khách hàng',
     icon: Users,
@@ -155,21 +127,6 @@ const navbarLinks: NavbarLink[] = [
       {
         link: '/admin/inventory/destination',
         label: 'Điểm nhập hàng',
-      },
-    ],
-  },
-  {
-    link: '/admin/order',
-    label: 'Đơn hàng',
-    icon: FileBarcode,
-    childLinks: [
-      {
-        link: '/admin/order/resource',
-        label: 'Nguồn đơn hàng',
-      },
-      {
-        link: '/admin/order/cancellation-reason',
-        label: 'Lý do hủy đơn hàng',
       },
     ],
   },

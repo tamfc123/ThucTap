@@ -34,9 +34,10 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     address: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Address",
-      required: true,
+      line: String,
+      provinceId: { type: mongoose.Schema.Types.ObjectId, ref: "Province" },
+      districtId: { type: mongoose.Schema.Types.ObjectId, ref: "District" },
+      wardId: { type: mongoose.Schema.Types.ObjectId, ref: "Ward" },
     },
     avatar: {
       type: String,

@@ -338,14 +338,10 @@ export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
       .populate('roles', 'name code') // <-- Lấy chi tiết 'roles' (chỉ lấy name và code)
-      .populate({ // 2. Populate 'address' (dùng cú pháp object)
-        path: 'address', // <-- Đường dẫn là 'address'
-        populate: [ // <-- BÊN TRONG 'address', populate tiếp:
-          { path: 'province', select: 'name code' }, // Lấy chi tiết 'province'
-          { path: 'district', select: 'name code' }, // Lấy chi tiết 'district'
-          { path: 'ward', select: 'name code' }      // Lấy chi tiết 'ward'
-        ]
-      });
+      .populate('address.provinceId', 'name code') // Populate lồng nhau
+      .populate('address.districtId', 'name code')
+      .populate('address.wardId', 'name code');
+    console.log('User with populated roles and address:', user);
     if (!user) {
       return res.status(404).json({ message: "Không tìm thấy người dùng" })
     }

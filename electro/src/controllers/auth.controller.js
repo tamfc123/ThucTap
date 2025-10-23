@@ -86,17 +86,18 @@ export const getUserInfo = async (req, res, next) => {
 // @access  Public
 export const register = async (req, res, next) => {
   try {
-    let { username, password, fullname, email, phone, gender, address } =
-      req.body;
+    let { username, password, fullname, email, phone, gender, address } = req.body;
     console.log("📦 Registration body:", req.body);
 
-    // 🔧 Chuẩn hóa address field từ FE (nếu có)
-    if (address) {
-      address = {
+    // 1. 🔧 Chuẩn hóa address object (ĐỂ KHỚP VỚI USER SCHEMA)
+    //    (Giả sử FE gửi lên đúng 'line', 'provinceId', 'districtId', 'wardId')
+    let addressObject = null;
+    if (address && (address.line || address.provinceId)) { // Chỉ tạo object nếu có dữ liệu
+      addressObject = {
         line: address.line || null,
-        province: address.provinceId || address.province || null,
-        district: address.districtId || address.district || null,
-        ward: address.wardId || address.ward || null,
+        provinceId: address.provinceId || null,
+        districtId: address.districtId || null,
+        wardId: address.wardId || null,
       };
     }
 
@@ -106,15 +107,14 @@ export const register = async (req, res, next) => {
       return res.status(400).json({
         statusCode: 400,
         message: "User already exists",
-        timestamp: new Date().toISOString(),
       });
     }
 
-    // Create address if available
-    let newAddress = null;
-    if (address && address.line) {
-      newAddress = await Address.create(address);
-    }
+    // 2. ❌ BỎ HOÀN TOÀN LOGIC TẠO 'Address' RIÊNG LẺ
+    // let newAddress = null;
+    // if (address && address.line) {
+    //   newAddress = await Address.create(address); // <-- BỎ
+    // }
 
     // Get or create role
     let customerRole = await Role.findOne({ code: "CUSTOMER" });
@@ -126,7 +126,7 @@ export const register = async (req, res, next) => {
       });
     }
 
-    // Create user
+    // 3. ✅ SỬA LẠI: Lưu 'addressObject' lồng trực tiếp
     const user = await User.create({
       username,
       password,
@@ -134,10 +134,12 @@ export const register = async (req, res, next) => {
       email,
       phone,
       gender,
-      address: newAddress ? newAddress._id : null,
+      address: addressObject, // <-- LƯU TRỰC TIẾP OBJECT VÀO ĐÂY
       status: 0,
       roles: [customerRole._id],
     });
+
+    // --- (Phần còn lại giữ nguyên: tạo token, gửi mail...) ---
 
     // Generate verification token
     const token = crypto.randomBytes(32).toString("hex");
@@ -152,7 +154,10 @@ export const register = async (req, res, next) => {
     });
 
     // Send email
+    // Send email
+
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}&userId=${user._id}`;
+
     await sendEmail({
       to: email,
       subject: "Email Verification",
@@ -161,16 +166,16 @@ export const register = async (req, res, next) => {
     <p>Mã xác nhận của bạn là: <b>${code}</b></p>
     <p>Hoặc click vào link sau để xác nhận:</p>
     <a href="${verificationUrl}" target="_blank">Verify Email</a>
-    <p>Link này sẽ hết hạn trong 24 giờ.</p>
-  `,
+    <p>Link này sẽ hết hạn trong 24 giờ.</p>`,
     });
 
     res.status(201).json({
       id: user._id,
-      message:
-        "Registration successful. Please check your email to verify your account.",
+      message: "Registration successful. Please check your email to verify your account.",
     });
+
   } catch (error) {
+    // ... (giữ nguyên logic bắt lỗi) ...
     console.error("❌ Registration error:", error);
     if (error.name === "ValidationError") {
       for (let field in error.errors) {

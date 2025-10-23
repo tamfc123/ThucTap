@@ -121,11 +121,16 @@ export const createOrder = async (req, res) => {
     const { cartId, paymentMethodType } = req.body;
     const userId = req.user._id;
 
+    // 🔽🔽🔽 THÊM 2 DÒNG NÀY 🔽🔽🔽
+    console.log("Đang tìm giỏ hàng với cartId:", cartId);
+    console.log("Đang tìm giỏ hàng với userId:", userId);
+    // 🔼🔼🔼 KẾT THÚC THÊM 🔼🔼🔼
+
     // 2. Lấy thông tin User (để lấy địa chỉ)
     const user = await User.findById(userId)
-      .populate("address.ward")
-      .populate("address.district")
-      .populate("address.province")
+      .populate("address.wardId")     // Sửa 'ward' -> 'wardId'
+      .populate("address.districtId") // Sửa 'district' -> 'districtId'
+      .populate("address.provinceId") // Sửa 'province' -> 'provinceId'
       .session(session);
 
     if (!user) {
@@ -133,19 +138,20 @@ export const createOrder = async (req, res) => {
     }
 
     // 3. Lấy thông tin giỏ hàng
-    const cart = await Cart.findOne({ _id: cartId, userId: userId })
+    const cart = await Cart.findOne({ _id: cartId, user: userId })
       .populate({
-        path: "cartItems.variant",
+        path: "cartVariants.variant",
         populate: {
           path: "product",
-          populate: {
-            path: "promotion", // Lấy thông tin khuyến mãi
-          },
+          // populate: {
+          //   path: "promotionId", // Lấy thông tin khuyến mãi
+          // },
         },
       })
       .session(session);
+    console.log('Cart fetched in createOrder:', cart);
 
-    if (!cart || !cart.cartItems || cart.cartItems.length === 0) {
+    if (!cart || !cart.cartVariants || cart.cartVariants.length === 0) {
       throw new Error("Giỏ hàng rỗng.");
     }
 
@@ -154,9 +160,9 @@ export const createOrder = async (req, res) => {
     if (
       !address ||
       !address.line ||
-      !address.ward ||
-      !address.district ||
-      !address.province
+      !address.wardId ||     // Sửa 'ward' -> 'wardId'
+      !address.districtId || // Sửa 'district' -> 'districtId'
+      !address.provinceId    // Sửa 'province' -> 'provinceId'
     ) {
       throw new Error(
         "Vui lòng cập nhật địa chỉ giao hàng trước khi đặt hàng."
@@ -164,9 +170,9 @@ export const createOrder = async (req, res) => {
     }
     const fullAddress = [
       address.line,
-      address.ward.name,
-      address.district.name,
-      address.province.name,
+      address.wardId.name,     // Sửa 'ward' -> 'wardId'
+      address.districtId.name, // Sửa 'district' -> 'districtId'
+      address.provinceId.name, // Sửa 'province' -> 'provinceId'
     ].join(", ");
 
     // 6. Tính toán đơn hàng và chuẩn bị 'orderVariants'
@@ -179,7 +185,7 @@ export const createOrder = async (req, res) => {
       return price - (price * percent) / 100;
     };
 
-    for (const item of cart.cartItems) {
+    for (const item of cart.cartVariants) {
       const variant = item.variant;
       const product = variant.product;
 
@@ -192,9 +198,7 @@ export const createOrder = async (req, res) => {
         );
       }
 
-      const promotionPercent = product.promotion
-        ? product.promotion.percent
-        : 0;
+      const promotionPercent = 0;
       const finalPrice = calculateDiscountedPrice(
         variant.price,
         promotionPercent
@@ -230,9 +234,9 @@ export const createOrder = async (req, res) => {
       toName: user.fullname,
       toPhone: user.phone,
       toAddress: address.line,
-      toWardName: address.ward.name,
-      toDistrictName: address.district.name,
-      toProvinceName: address.province.name,
+      toWardName: address.wardId.name,     // Sửa 'ward' -> 'wardId'
+      toDistrictName: address.districtId.name, // Sửa 'district' -> 'districtId'
+      toProvinceName: address.provinceId.name, // Sửa 'province' -> 'provinceId'
 
       orderResource: null, // <--- SỬA DÒNG NÀY (gán thẳng là null)
 
@@ -265,8 +269,8 @@ export const createOrder = async (req, res) => {
       // TODO: Gọi API Momo để tạo link thanh toán
       // momoCheckoutLink = ...
     }
-    
-    
+
+
     res.status(201).json({
       orderCode: newOrder.code,
       orderPaymentMethodType: newOrder.paymentMethodType,

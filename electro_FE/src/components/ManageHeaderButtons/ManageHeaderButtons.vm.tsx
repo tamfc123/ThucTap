@@ -43,7 +43,7 @@ function useManageHeaderButtonsViewModel({
     }
   };
 
-  const handleConfirmedDeleteBatchEntitiesButton = (entityIds: number[]) => {
+  const handleConfirmedDeleteBatchEntitiesButton = (entityIds: string[]) => {
     if (entityIds.length > 0) {
       deleteByIdsApi.mutate(entityIds, {
         onSuccess: () => {

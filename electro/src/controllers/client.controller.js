@@ -12,7 +12,7 @@ import Room from "../models/Room.js"
 import Reward from "../models/Reward.js"
 import Brand from "../models/Brand.js";
 import Variant from "../models/Variant.js";
-
+import { randomUUID } from 'crypto';
 // Categories
 export const getCategories = async (req, res, next) => {
   try {
@@ -295,7 +295,11 @@ export const getFiltersBySearch = async (req, res, next) => {
 // User Info & Settings
 export const getUserInfo = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select("-password")
+    const user = await User.findById(req.user.id).select("-password") // <-- Đường dẫn là 'address'
+      .populate('address.provinceId', 'name code')
+      .populate('address.districtId', 'name code')
+      .populate('address.wardId', 'name code')
+      .populate('roles');
     res.json(user)
   } catch (error) {
     next(error)
@@ -568,12 +572,13 @@ export const getNotifications = async (req, res, next) => {
 
 export const initNotificationEvents = async (req, res, next) => {
   try {
-    const eventSourceUuid = require("crypto").randomUUID()
-    res.json({ eventSourceUuid })
+    // Sử dụng hàm đã import, không cần "crypto." nữa
+    const eventSourceUuid = randomUUID();
+    res.json({ eventSourceUuid });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updateNotification = async (req, res, next) => {
   try {

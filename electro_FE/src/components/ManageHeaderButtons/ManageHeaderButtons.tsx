@@ -12,7 +12,7 @@ export interface ManageHeaderButtonsProps {
 }
 
 function ManageHeaderButtons(props: ManageHeaderButtonsProps) {
-  const { handleDeleteBatchEntitiesButton } = useManageHeaderButtonsViewModel(props);
+  //const { handleDeleteBatchEntitiesButton } = useManageHeaderButtonsViewModel(props);
 
   return (
     <Group spacing="xs">
@@ -20,17 +20,9 @@ function ManageHeaderButtons(props: ManageHeaderButtonsProps) {
         component={Link}
         to="create"
         variant="outline"
-        leftIcon={<Plus/>}
+        leftIcon={<Plus />}
       >
         Thêm mới
-      </Button>
-      <Button
-        variant="outline"
-        color="red"
-        leftIcon={<Trash/>}
-        onClick={handleDeleteBatchEntitiesButton}
-      >
-        Xóa hàng loạt
       </Button>
     </Group>
   );

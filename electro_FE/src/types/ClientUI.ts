@@ -317,6 +317,7 @@ export interface ClientRoomExistenceResponse {
 export interface ClientSimpleOrderRequest {
   paymentMethodType: PaymentMethodType;
   cartId: string;
+  shippingAddress: any;
 }
 
 export interface ClientConfirmedOrderResponse {

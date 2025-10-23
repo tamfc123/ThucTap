@@ -45,7 +45,7 @@ export const getById = async (req, res, next) => {
     const item = await Destination.findById(req.params.id)
       .populate('address.provinceId', 'name code') // Populate lồng nhau
       .populate('address.districtId', 'name code');
-
+    console.log(item);
     if (!item) {
       return res.status(404).json({ message: "Destination not found" });
     }

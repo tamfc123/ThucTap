@@ -27,7 +27,7 @@ function useUserCreateViewModel() {
     { all: 1 },
     (provinceListResponse) => {
       const selectList: SelectOption[] = provinceListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setProvinceSelectList(selectList);
@@ -37,7 +37,7 @@ function useUserCreateViewModel() {
     { all: 1 },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
@@ -47,7 +47,7 @@ function useUserCreateViewModel() {
     { sort: 'id,asc', all: 1 },
     (roleListResponse) => {
       const selectList: SelectOption[] = roleListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setRoleSelectList(selectList);
@@ -64,13 +64,13 @@ function useUserCreateViewModel() {
       gender: formValues.gender,
       address: {
         line: formValues['address.line'],
-        provinceId: Number(formValues['address.provinceId']),
-        districtId: Number(formValues['address.districtId']),
+        provinceId: formValues['address.provinceId'],
+        districtId: formValues['address.districtId'],
         wardId: null,
       },
       avatar: formValues.avatar.trim() || null,
       status: Number(formValues.status),
-      roles: formValues.roles.map((roleId) => ({ id: Number(roleId) })),
+      roles: formValues.roles.map((roleId) => ({ id: roleId })),
     };
     createApi.mutate(requestBody);
   });

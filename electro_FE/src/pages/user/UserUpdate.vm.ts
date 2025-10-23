@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, zodResolver } from '@mantine/form';
 import UserConfigs from 'pages/user/UserConfigs';
 import { UserRequest, UserResponse } from 'models/User';
@@ -14,12 +14,21 @@ import { RoleResponse } from 'models/Role';
 import { SelectOption } from 'types';
 import RoleConfigs from 'pages/role/RoleConfigs';
 import { useAdminAuthStore } from 'stores/use-admin-auth-store';
+import { useQueryClient } from 'react-query';
 
 function useUserUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: UserConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(UserConfigs.createUpdateFormSchema),
   });
+  const queryClient = useQueryClient();
+
+  const { data: destination } = useGetByIdApi<UserResponse>(
+    UserConfigs.resourceUrl,
+    UserConfigs.resourceKey,
+    id
+  );
+
 
   const { user: adminUser, updateUser: updateAdminUser } = useAdminAuthStore();
 
@@ -41,8 +50,8 @@ function useUserUpdateViewModel(id: string) {
         phone: userResponse.phone,
         gender: userResponse.gender,
         'address.line': userResponse.address.line || '',
-        'address.provinceId': userResponse.address.province ? String(userResponse.address.province._id) : null,
-        'address.districtId': userResponse.address.district ? String(userResponse.address.district._id) : null,
+        'address.provinceId': userResponse.address.provinceId ? String(userResponse.address.provinceId._id) : null,
+        'address.districtId': userResponse.address.districtId ? String(userResponse.address.districtId._id) : null,
         avatar: userResponse.avatar || '',
         status: String(userResponse.status),
         roles: userResponse.roles.map((role) => String(role._id)),
@@ -61,16 +70,46 @@ function useUserUpdateViewModel(id: string) {
       setProvinceSelectList(selectList);
     }
   );
-  useGetAllApi<DistrictResponse>(DistrictConfigs.resourceUrl, DistrictConfigs.resourceKey,
-    { all: 1 },
+
+  // 🧩 3. Load danh sách huyện (theo tỉnh đang chọn hoặc từ data ban đầu)
+  const provinceIdFromDestination = destination?.address?.provinceId?._id;
+  const provinceIdFromForm = form.values['address.provinceId'];
+  const activeProvinceId = provinceIdFromForm || provinceIdFromDestination;
+
+  useGetAllApi<DistrictResponse>(
+    DistrictConfigs.resourceUrl,
+    DistrictConfigs.resourceKey,
+    {
+      provinceId: activeProvinceId || undefined,
+      size: 999,
+    },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
         value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!activeProvinceId,
     }
   );
+
+  // 🧩 4. Reset huyện khi đổi tỉnh
+  const isInitialMount = useRef(true);
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else if (form.values['address.provinceId'] !== destination?.address?.provinceId?._id) {
+      form.setFieldValue('address.districtId', null);
+      queryClient.removeQueries([DistrictConfigs.resourceKey, 'getAll']);
+      setDistrictSelectList([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values['address.provinceId']]);
+
+
   useGetAllApi<RoleResponse>(RoleConfigs.resourceUrl, RoleConfigs.resourceKey,
     { sort: 'id,asc', all: 1 },
     (roleListResponse) => {

@@ -98,6 +98,7 @@ function ClientCart() {
 
     if (Object.hasOwn(cartResponse, 'cartId')) {
       cart = cartResponse as ClientCartResponse;
+      //console.log('Using cart from cartResponse:', cart);
     } else {
       cart = { cartId: '', cartItems: [] };
     }
@@ -499,20 +500,34 @@ function ConfirmedOrder({ cartId }: { cartId: string }) {
   // ĐÃ XÓA: checkoutPaypalStatus
   const [checkoutMomoStatus, setCheckoutMomoStatus] = useState<'none' | 'success' | 'cancel'>('none');
 
-  const { currentPaymentMethod } = useAuthStore();
+  const { currentPaymentMethod, user } = useAuthStore();
+  // 🔽 THÊM DÒNG NÀY ĐỂ XEM TOÀN BỘ USER STATE 🔽
+  console.log("USER OBJECT TỪ STORE:", JSON.stringify(user, null, 2));
 
   let contentFragment;
 
   useEffect(() => {
-    if (checkoutMomoStatus === 'none' && cartId) {
+    if (checkoutMomoStatus === 'none' && cartId && user && user.address) {
       const request: ClientSimpleOrderRequest = {
         paymentMethodType: currentPaymentMethod,
         cartId: cartId, // Dùng 'cartId' từ props
+        shippingAddress: {
+          line: user.address.line,
+          wardCode: (user.address as any).wardId?.code,
+          districtId: user.address.districtId?._id,
+          provinceId: user.address.provinceId?._id,
+          phone: user.phone,
+          fullname: user.fullname,
+        }
       };
+
+      // 🔽 THÊM DÒNG NÀY ĐỂ DEBUG 🔽
+      console.log("Payload chuẩn bị gửi lên server:", JSON.stringify(request, null, 2));
       createClientOrder(request);
     }
+
     // SỬA DÒNG NÀY: Thêm 'cartId' vào dependency array
-  }, [createClientOrder, currentPaymentMethod, cartId]);
+  }, [createClientOrder, currentPaymentMethod, cartId, user, checkoutMomoStatus]);
 
   const { newNotifications } = useClientSiteStore();
 
@@ -672,9 +687,11 @@ function useGetCartApi() {
       // 2. Thêm callback onSuccess
       onSuccess: (data) => {
         if (data && 'cartId' in data) {
+          //console.log('Fetched cart data:', data);
           // 3. Cập nhật cartId vào store
           updateCurrentCartId(data.cartId);
         } else {
+          console.log('Fetched cart data is empty or has no cartId:', data);
           // Nếu giỏ hàng rỗng hoặc không có cartId, set store về null
           updateCurrentCartId(null);
         }
