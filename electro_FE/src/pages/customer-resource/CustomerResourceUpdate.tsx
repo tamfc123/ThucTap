@@ -12,7 +12,7 @@ function CustomerResourceUpdate() {
     form,
     handleFormSubmit,
     statusSelectList,
-  } = useCustomerResourceUpdateViewModel(Number(id));
+  } = useCustomerResourceUpdateViewModel(id!);
 
   if (!customerResource) {
     return null;
@@ -26,7 +26,7 @@ function CustomerResourceUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={customerResource.id}
+        id={customerResource._id}
         createdAt={customerResource.createdAt}
         updatedAt={customerResource.updatedAt}
         createdBy="1"

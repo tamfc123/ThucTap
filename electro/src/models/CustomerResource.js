@@ -12,6 +12,7 @@ const customerResourceSchema = new mongoose.Schema(
       unique: true,
     },
     description: String,
+    color: String,
     status: {
       type: Number,
       default: 1,

@@ -10,6 +10,6 @@ router.get("/", customerResourceController.getAll)
 router.get("/:id", customerResourceController.getById)
 router.post("/", customerResourceController.create)
 router.put("/:id", customerResourceController.update)
-router.delete("/", customerResourceController.deleteMany)
+router.delete("/:id", customerResourceController.deleteById)
 
 export default router

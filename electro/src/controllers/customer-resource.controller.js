@@ -57,14 +57,20 @@ export const getAll = async (req, res, next) => {
     }
   }
 
-  export const deleteMany = async (req, res, next) => {
+  export const deleteById = async (req, res, next) => {
     try {
-      const { ids } = req.body
-      await CustomerResource.deleteMany({ _id: { $in: ids } })
-      res.json({ message: "CustomerResources deleted successfully" })
-    } catch (error) {
-      next(error)
-    }
-  }
+      const { id } = req.params;
 
-export default { getAll, getById, create, update, deleteMany }
+      const deletedCustomerResource = await CustomerResource.findByIdAndDelete(id);
+
+      if (!deletedCustomerResource) {
+        return res.status(404).json({ message: "CustomerResource not found" });
+      }
+
+      res.json({ message: "CustomerResource deleted successfully" });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+export default { getAll, getById, create, update, deleteById }
