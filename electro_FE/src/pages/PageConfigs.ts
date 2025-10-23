@@ -14,7 +14,8 @@ import {
   DeviceWatch,
   Icon,
   Keyboard,
-  Mouse
+  Mouse,
+  Wallet
 } from 'tabler-icons-react';
 import { PaymentMethodType } from 'models/PaymentMethod';
 
@@ -101,11 +102,13 @@ class PageConfigs {
   static paymentMethodIconMap: Record<PaymentMethodType, Icon> = {
     [PaymentMethodType.CASH]: Cash,
     [PaymentMethodType.PAYPAL]: BrandPaypal,
+    [PaymentMethodType.MOMO]: Wallet
   };
 
   static paymentMethodNameMap: Record<PaymentMethodType, string> = {
     [PaymentMethodType.CASH]: 'Thanh toán tiền mặt',
     [PaymentMethodType.PAYPAL]: 'Thanh toán PayPal',
+    [PaymentMethodType.MOMO]: 'Thanh toán MoMo'
   };
 }
 

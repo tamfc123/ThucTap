@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 
 const cartSchema = new mongoose.Schema(
   {
@@ -34,16 +34,6 @@ const cartSchema = new mongoose.Schema(
   {
     timestamps: true,
   },
-)
+);
 
-cartSchema.set("toJSON", {
-  virtuals: true,
-  transform: (doc, ret) => {
-    ret.id = ret._id
-    delete ret._id
-    delete ret.__v
-    return ret
-  },
-})
-
-export default mongoose.model("Cart", cartSchema)
+export default mongoose.model("Cart", cartSchema);

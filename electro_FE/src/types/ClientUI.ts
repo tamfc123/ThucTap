@@ -171,7 +171,7 @@ export interface ClientReviewRequest {
 // CART
 
 export interface ClientCartResponse {
-  cartId: number;
+  cartId: string;
   cartItems: ClientCartVariantResponse[];
 }
 
@@ -181,7 +181,7 @@ export interface ClientCartVariantResponse {
 }
 
 interface ClientCartVariantResponse_ClientVariantResponse {
-  variantId: number;
+  variantId: string;
   variantProduct: ClientCartVariantResponse_ClientVariantResponse_ClientProductResponse;
   variantPrice: number;
   variantProperties: CollectionWrapper<VariantPropertyItem> | null;
@@ -189,7 +189,7 @@ interface ClientCartVariantResponse_ClientVariantResponse {
 }
 
 interface ClientCartVariantResponse_ClientVariantResponse_ClientProductResponse {
-  productId: number;
+  productId: string;
   productName: string;
   productSlug: string;
   productThumbnail: string | null;
@@ -197,7 +197,7 @@ interface ClientCartVariantResponse_ClientVariantResponse_ClientProductResponse 
 }
 
 export interface ClientCartRequest {
-  cartId: number | null;
+  cartId: string;
   userId: string;
   cartItems: ClientCartVariantRequest[];
   status: number;
@@ -210,8 +210,8 @@ interface ClientCartVariantRequest {
 }
 
 export interface ClientCartVariantKeyRequest {
-  cartId: number;
-  variantId: number;
+  cartId: string;
+  variantId: string;
 }
 
 export enum UpdateQuantityType {
@@ -222,9 +222,9 @@ export enum UpdateQuantityType {
 // PAYMENT_METHOD
 
 export interface ClientPaymentMethodResponse {
-  paymentMethodId: number;
-  paymentMethodName: string;
-  paymentMethodCode: PaymentMethodType;
+  _id: string;
+  name: string;
+  code: PaymentMethodType;
 }
 
 // ORDER
@@ -316,12 +316,14 @@ export interface ClientRoomExistenceResponse {
 
 export interface ClientSimpleOrderRequest {
   paymentMethodType: PaymentMethodType;
+  cartId: string;
 }
 
 export interface ClientConfirmedOrderResponse {
   orderCode: string;
   orderPaymentMethodType: PaymentMethodType;
   orderPaypalCheckoutLink: string | null;
+  orderMomoCheckoutLink: string | null;
 }
 
 // REWARD

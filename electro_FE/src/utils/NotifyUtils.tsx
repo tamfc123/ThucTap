@@ -30,6 +30,11 @@ class NotifyUtils {
       color: 'red',
     });
   };
+    static simpleWarning = (message: React.ReactNode) => {
+    showNotification({
+      message: message,
+    });
+  }
 }
 
 export default NotifyUtils;

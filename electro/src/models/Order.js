@@ -38,7 +38,7 @@ const orderSchema = new mongoose.Schema(
     orderResource: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "OrderResource",
-      required: true,
+      default: null,
     },
     orderCancellationReason: {
       type: mongoose.Schema.Types.ObjectId,

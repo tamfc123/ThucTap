@@ -7,7 +7,7 @@ import { PaymentMethodType } from 'models/PaymentMethod';
 interface AuthState {
   jwtToken: string | null;
   user: UserResponse | null;
-  currentCartId: number | null;
+  currentCartId: string | null;
   currentTotalCartItems: number;
   currentPaymentMethod: PaymentMethodType;
   currentSignupUserId: string | null;
@@ -17,7 +17,7 @@ interface AuthAction {
   updateJwtToken: (value: string) => void;
   updateUser: (value: UserResponse) => void;
   resetAuthState: () => void;
-  updateCurrentCartId: (value: number | null) => void;
+  updateCurrentCartId: (value: string | null) => void;
   updateCurrentTotalCartItems: (value: number) => void;
   updateCurrentPaymentMethod: (value: PaymentMethodType) => void;
   updateCurrentSignupUserId: (value: string | null) => void;
