@@ -36,10 +36,10 @@ export interface OrderRequest {
   toWardName: string;
   toDistrictName: string;
   toProvinceName: string;
-  orderResourceId: number;
-  orderCancellationReasonId: number | null;
+  // orderResourceId: number;
+  // orderCancellationReasonId: number | null;
   note: string | null;
-  userId: number;
+  userId: string;
   orderVariants: OrderVariantRequest[];
   totalAmount: number;
   tax: number;

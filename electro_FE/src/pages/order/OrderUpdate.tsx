@@ -42,7 +42,7 @@ function OrderUpdate() {
     statusSelectList,
     paymentStatusSelectList,
     variants,
-  } = useOrderUpdateViewModel(Number(id));
+  } = useOrderUpdateViewModel(id);
 
   const [userSelectKeyword, setUserSelectKeyword] = useState('');
 
@@ -82,8 +82,6 @@ function OrderUpdate() {
         id={order._id}
         createdAt={order.createdAt}
         updatedAt={order.updatedAt}
-        createdBy="1"
-        updatedBy="1"
       />
 
       <Grid>
@@ -232,7 +230,7 @@ function OrderUpdate() {
                       {...form.getInputProps('toAddress')}
                     />
                   </Grid.Col>
-                  <Grid.Col>
+                  {/* <Grid.Col>
                     <Select
                       required
                       label="Nguồn đơn hàng"
@@ -240,7 +238,7 @@ function OrderUpdate() {
                       data={orderResourceSelectList}
                       {...form.getInputProps('orderResourceId')}
                     />
-                  </Grid.Col>
+                  </Grid.Col> */}
                   <Grid.Col>
                     <Select
                       label="Lý do hủy đơn hàng"
@@ -258,7 +256,7 @@ function OrderUpdate() {
                       {...form.getInputProps('note')}
                     />
                   </Grid.Col>
-                  <Grid.Col>
+                  {/* <Grid.Col>
                     <Select
                       required
                       label="Hình thức thanh toán"
@@ -266,7 +264,7 @@ function OrderUpdate() {
                       data={paymentMethodSelectList}
                       {...form.getInputProps('paymentMethodType')}
                     />
-                  </Grid.Col>
+                  </Grid.Col> */}
                   <Grid.Col>
                     <Select
                       required

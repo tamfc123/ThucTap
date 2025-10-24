@@ -123,25 +123,25 @@ class OrderConfigs extends Configs {
 
   static orderStatusBadgeFragment = (status: number) => {
     switch (status) {
-    case 1:
-      return <Badge color="gray" variant="outline" size="sm">Đơn hàng mới</Badge>;
-    case 2:
-      return <Badge color="blue" variant="outline" size="sm">Đang xử lý</Badge>;
-    case 3:
-      return <Badge color="violet" variant="outline" size="sm">Đang giao hàng</Badge>;
-    case 4:
-      return <Badge color="green" variant="outline" size="sm">Đã giao hàng</Badge>;
-    case 5:
-      return <Badge color="red" variant="outline" size="sm">Hủy bỏ</Badge>;
+      case 1:
+        return <Badge color="gray" variant="outline" size="sm">Đơn hàng mới</Badge>;
+      case 2:
+        return <Badge color="blue" variant="outline" size="sm">Đang xử lý</Badge>;
+      case 3:
+        return <Badge color="violet" variant="outline" size="sm">Đang giao hàng</Badge>;
+      case 4:
+        return <Badge color="green" variant="outline" size="sm">Đã giao hàng</Badge>;
+      case 5:
+        return <Badge color="red" variant="outline" size="sm">Hủy bỏ</Badge>;
     }
   };
 
   static orderPaymentStatusBadgeFragment = (paymentStatus: number) => {
     switch (paymentStatus) {
-    case 1:
-      return <Badge color="gray" variant="outline" size="sm">Chưa thanh toán</Badge>;
-    case 2:
-      return <Badge color="green" variant="outline" size="sm">Đã thanh toán</Badge>;
+      case 1:
+        return <Badge color="gray" variant="outline" size="sm">Chưa thanh toán</Badge>;
+      case 2:
+        return <Badge color="green" variant="outline" size="sm">Đã thanh toán</Badge>;
     }
   };
 
@@ -175,8 +175,8 @@ class OrderConfigs extends Configs {
           <td>{OrderConfigs.properties['orderResource.name'].label}</td>
           <td>
             <Group spacing="xs">
-              <ColorSwatch color={entity.orderResource.color}/>
-              {entity.orderResource.name}
+              <ColorSwatch color={entity.orderResource?.color || '#868e96'} />
+              {entity.orderResource?.name || 'Không có'}
             </Group>
           </td>
         </tr>
@@ -192,8 +192,10 @@ class OrderConfigs extends Configs {
           <td>Người đặt hàng</td>
           <td>
             <Stack spacing={0}>
-              <Text size="sm">{entity.user.fullname}</Text>
-              <Text size="xs" color="dimmed">{entity.user.username}</Text>
+              {/* SỬA DÒNG NÀY: Thêm ?. và fallback text */}
+              <Text size="sm">{entity.user?.fullname || 'N/A'}</Text>
+              {/* SỬA DÒNG NÀY: Thêm ?. và fallback text */}
+              <Text size="xs" color="dimmed">{entity.user?.username || 'N/A'}</Text>
             </Stack>
           </td>
         </tr>
@@ -231,7 +233,7 @@ class OrderConfigs extends Configs {
         </tr>
         <tr>
           <td>Hình thức thanh toán</td>
-          <td><PaymentMethodIcon/></td>
+          <td><PaymentMethodIcon /></td>
         </tr>
         <tr>
           <td>Trạng thái thanh toán</td>
