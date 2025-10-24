@@ -60,7 +60,7 @@ function OrderUpdate() {
     },
     (userListResponse) => {
       const selectList: SelectOption[] = userListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.fullname,
       }));
       setUserSelectList(selectList);
@@ -79,7 +79,7 @@ function OrderUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={order.id}
+        id={order._id}
         createdAt={order.createdAt}
         updatedAt={order.updatedAt}
         createdBy="1"

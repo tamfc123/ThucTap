@@ -14,7 +14,7 @@ function useWaybillCreateViewModel() {
 
   const handleFormSubmit = form.onSubmit((formValues) => {
     const requestBody: WaybillRequest = {
-      orderId: Number(formValues.orderId),
+      orderId: formValues.orderId || '',
       shippingDate: formValues.shippingDate.toISOString(),
       weight: formValues.weight,
       length: formValues.length,

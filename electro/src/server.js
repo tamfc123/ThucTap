@@ -148,10 +148,11 @@ app.use("/api/messages", chatRoutes)
 app.use("/api/stats", stastsRoutes)
 app.use("/api/order-cancellation-reasons", orderCancellationReasonRoutes)
 app.use("/images", imageRoutes)
+app.use("/api/orders", orderRoutes)
 
 app.use("/client-api/payment-methods", paymentMethodRoutes)
 app.use('/client-api/carts', cartRoutes);
-app.use("/client-api/orders", orderRoutes)
+app.use("/client-api/orders", clientRoutes)
 app.use("/client-api", clientRoutes)
 // Health check
 app.get("/health", (req, res) => {

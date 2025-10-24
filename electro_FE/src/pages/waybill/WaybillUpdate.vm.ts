@@ -7,7 +7,7 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 
-function useWaybillUpdateViewModel(id: number) {
+function useWaybillUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: WaybillConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(WaybillConfigs.createUpdateFormSchema),
@@ -21,7 +21,7 @@ function useWaybillUpdateViewModel(id: number) {
     (waybillResponse) => {
       setWaybill(waybillResponse);
       const formValues: typeof form.values = {
-        orderId: String(waybillResponse.order.id), // Không sử dụng thực tế
+        orderId: String(waybillResponse.order._id), // Không sử dụng thực tế
         shippingDate: new Date(waybillResponse.shippingDate), // Không sử dụng thực tế
         weight: waybillResponse.weight, // Không sử dụng thực tế
         length: waybillResponse.length, // Không sử dụng thực tế
@@ -39,7 +39,7 @@ function useWaybillUpdateViewModel(id: number) {
     setPrevFormValues(formValues);
     if (!MiscUtils.isEquals(formValues, prevFormValues)) {
       const requestBody: WaybillRequest = {
-        orderId: Number(formValues.orderId),
+        orderId: formValues.orderId || '',
         shippingDate: formValues.shippingDate.toISOString(),
         weight: formValues.weight,
         length: formValues.length,

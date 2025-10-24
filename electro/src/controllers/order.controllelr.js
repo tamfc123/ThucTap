@@ -28,11 +28,11 @@ export const getAllOrders = async (req, res) => {
 
     const orders = await Order.find(query)
       .populate("user", "username email fullname phone")
-      .populate("orderItems.product")
-      .populate("orderItems.variant")
+      .populate("orderVariants.variant")
       .sort(sort)
       .skip(skip)
       .limit(limit);
+    console.log('Fetched orders:', orders);
 
     const total = await Order.countDocuments(query);
 
@@ -62,8 +62,10 @@ export const getMyOrders = async (req, res) => {
     const limit = Number.parseInt(size);
 
     const orders = await Order.find(query)
-      .populate("orderItems.product")
-      .populate("orderItems.variant")
+      // === SỬA Ở ĐÂY ===
+      // Xóa 2 dòng .populate() cũ
+      .populate("orderVariants.variant") // Thay bằng 1 dòng này
+      // ==================
       .sort("-createdAt")
       .skip(skip)
       .limit(limit);
@@ -78,6 +80,8 @@ export const getMyOrders = async (req, res) => {
       number: Number.parseInt(page) - 1,
     });
   } catch (error) {
+    // Thêm log lỗi để dễ debug nếu có lỗi khác
+    console.error("Lỗi getMyOrders:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -87,14 +91,17 @@ export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate("user", "username email fullname phone")
-      .populate("orderItems.product")
-      .populate("orderItems.variant");
-
+      // === SỬA Ở ĐÂY ===
+      .populate("orderVariants.variant"); // Thay 2 dòng cũ bằng 1 dòng này
+    console.log('Fetched order in getOrderById:', order);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
     // Check if user owns this order or is admin
+    // Chú ý: req.user._id (từ token) có thể là string, 
+    // order.user._id (từ populate) là object.
+    // Nên check 'order.user' (trường user trong order) thay vì 'order.user._id'
     if (
       order.user._id.toString() !== req.user._id.toString() &&
       req.user.role !== "ADMIN"
@@ -106,6 +113,7 @@ export const getOrderById = async (req, res) => {
 
     res.json(order);
   } catch (error) {
+    console.error("Lỗi getOrderById:", error); // Thêm log
     res.status(500).json({ message: error.message });
   }
 };

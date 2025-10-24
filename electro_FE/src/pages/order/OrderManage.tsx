@@ -42,7 +42,7 @@ function OrderManage() {
 
     return (
       <>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
         <td>{DateUtils.isoDateToString(entity.createdAt)}</td>
         <td>
           <Group spacing="xs">
@@ -70,9 +70,9 @@ function OrderManage() {
         </td>
         <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.orderResource.color}/>
+            <ColorSwatch color={entity.orderResource?.color || theme.colors.gray[5]}/>
             <Highlight highlight={searchToken} highlightColor="blue" size="sm">
-              {entity.orderResource.name}
+              {entity.orderResource?.name || 'không '}
             </Highlight>
           </Group>
         </td>
