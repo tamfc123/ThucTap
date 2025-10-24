@@ -83,6 +83,7 @@ import RewardManage from 'pages/reward-strategy';
 import ClientReward from 'pages/client-reward';
 import ClientSignup from 'pages/client-signup';
 import ClientForgotPassword, { ClientChangePassword } from 'pages/client-forgot-password';
+import ClientPaymentResult from 'pages/result/ClientPaymentResult';
 
 const queryClient = new QueryClient();
 
@@ -352,6 +353,7 @@ function App() {
                 </Route>
                 <Route path="/payment/success" element={<ClientPaymentSuccess />} />
                 <Route path="/payment/cancel" element={<ClientPaymentCancel />} />
+                <Route path="/payment/result" element={<ClientPaymentResult />} />
               </Routes>
             </ModalsProvider>
           </NotificationsProvider>

@@ -1,33 +1,39 @@
+// src/pages/ClientPaymentCancel.tsx
 import React from 'react';
 import useTitle from 'hooks/use-title';
-import { Button, Stack, Text, useMantineTheme } from '@mantine/core';
+import { Button, Stack, Text, useMantineTheme, Group } from '@mantine/core';
 import { ElectroLogo } from 'components';
 import { X } from 'tabler-icons-react';
+import { Link } from 'react-router-dom';
 
-function ClientPaymentCancel() {
-  useTitle();
+// Định nghĩa kiểu cho props
+interface ClientPaymentCancelProps {
+  message?: string;
+}
 
+const ClientPaymentCancel: React.FC<ClientPaymentCancelProps> = ({ message }) => {
+  useTitle('Thanh toán bị hủy');
   const theme = useMantineTheme();
-
-  const handleCloseWindow = () => {
-    // eslint-disable-next-line no-restricted-globals,@typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line no-restricted-globals
-    window.open(location, '_self')?.close();
-  };
 
   return (
     <Stack align="center" my="xl">
-      <ElectroLogo/>
+      <ElectroLogo />
       <Stack align="center" sx={{ alignItems: 'center', color: theme.colors.pink[6] }}>
-        <X size={100} strokeWidth={1}/>
-        <Text weight={500}>Đã hủy thanh toán PayPal</Text>
+        <X size={100} strokeWidth={1} />
+        <Text weight={500}>Thanh toán bị hủy</Text>
+        {message && <Text color="dimmed" size="sm">(Nội dung: {message})</Text>}
       </Stack>
-      <Button size="lg" mt="xl" onClick={handleCloseWindow}>
-        Đóng cửa sổ này
-      </Button>
+
+      <Group mt="xl">
+        <Button component={Link} to="/cart" variant="default" size="md">
+          Quay về Giỏ hàng
+        </Button>
+        <Button component={Link} to="/" size="md">
+          Về Trang chủ
+        </Button>
+      </Group>
     </Stack>
   );
-}
+};
 
 export default ClientPaymentCancel;

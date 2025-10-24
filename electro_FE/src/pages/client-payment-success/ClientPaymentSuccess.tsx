@@ -1,33 +1,39 @@
+// src/pages/ClientPaymentSuccess.tsx
 import React from 'react';
-import { Button, Stack, Text, useMantineTheme } from '@mantine/core';
-import { Check } from 'tabler-icons-react';
-import { ElectroLogo } from 'components';
-import useTitle from 'hooks/use-title';
+import { Button, Stack, Text, useMantineTheme, Group } from '@mantine/core';
+import { Check } from 'tabler-icons-react'; // Đảm bảo tabler-icons-react đã được cài
+import { ElectroLogo } from 'components'; // Đảm bảo bạn có component này
+import useTitle from 'hooks/use-title'; // Đảm bảo bạn có hook này
+import { Link } from 'react-router-dom';
 
-function ClientPaymentSuccess() {
-  useTitle();
+// Định nghĩa kiểu cho props
+interface ClientPaymentSuccessProps {
+  message?: string;
+}
 
+const ClientPaymentSuccess: React.FC<ClientPaymentSuccessProps> = ({ message }) => {
+  useTitle('Thanh toán thành công');
   const theme = useMantineTheme();
-
-  const handleCloseWindow = () => {
-    // eslint-disable-next-line no-restricted-globals,@typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line no-restricted-globals
-    window.open(location, '_self')?.close();
-  };
 
   return (
     <Stack align="center" my="xl">
-      <ElectroLogo/>
+      <ElectroLogo />
       <Stack align="center" sx={{ alignItems: 'center', color: theme.colors.teal[6] }}>
-        <Check size={100} strokeWidth={1}/>
-        <Text weight={500}>Thanh toán PayPal thành công</Text>
+        <Check size={100} strokeWidth={1} />
+        <Text weight={500}>Thanh toán thành công!</Text>
+        {message && <Text color="dimmed" size="sm">(Nội dung: {message})</Text>}
       </Stack>
-      <Button size="lg" mt="xl" onClick={handleCloseWindow}>
-        Đóng cửa sổ này
-      </Button>
+
+      <Group mt="xl">
+        <Button component={Link} to="/" variant="default" size="md">
+          Về Trang chủ
+        </Button>
+        <Button component={Link} to="/my-orders" size="md">
+          Xem Lịch sử Đơn hàng
+        </Button>
+      </Group>
     </Stack>
   );
-}
+};
 
 export default ClientPaymentSuccess;

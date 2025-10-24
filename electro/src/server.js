@@ -57,6 +57,7 @@ import orderCancellationReasonRoutes from "./routes/order-cancellation-reason.ro
 import clientRoutes from "./routes/client.routes.js"
 import stastsRoutes from "./routes/stats.routes.js"
 import cartRoutes from "./routes/cart.routes.js"
+import paymentRouter from "./routes/payment.route.js"
 
 dotenv.config()
 
@@ -148,6 +149,7 @@ app.use("/api/messages", chatRoutes)
 app.use("/api/stats", stastsRoutes)
 app.use("/api/order-cancellation-reasons", orderCancellationReasonRoutes)
 app.use("/images", imageRoutes)
+app.use("/api/v1/payment", paymentRouter);
 
 app.use("/client-api/payment-methods", paymentMethodRoutes)
 app.use('/client-api/carts', cartRoutes);
