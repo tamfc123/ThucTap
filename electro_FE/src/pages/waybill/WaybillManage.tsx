@@ -51,7 +51,7 @@ function WaybillManage() {
     }
   };
 
-  const handleViewOrderAnchor = (orderId: number) => {
+  const handleViewOrderAnchor = (orderId: string) => {
     modals.openModal({
       size: 'lg',
       overlayColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
@@ -74,7 +74,7 @@ function WaybillManage() {
 
     return (
       <>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
         <td>
           <Highlight
             highlight={searchToken}
@@ -87,7 +87,7 @@ function WaybillManage() {
         </td>
         <td>
           <Stack spacing={2.5}>
-            <Anchor onClick={() => handleViewOrderAnchor(entity.order.id)}>
+            <Anchor onClick={() => handleViewOrderAnchor(entity.order._id)}>
               <Highlight
                 highlight={searchToken}
                 highlightColor="blue"
@@ -121,7 +121,7 @@ function WaybillManage() {
     <>
       <tr>
         <td>{WaybillConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{WaybillConfigs.properties.createdAt.label}</td>

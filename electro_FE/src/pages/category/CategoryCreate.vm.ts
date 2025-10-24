@@ -21,7 +21,7 @@ function useCategoryCreateViewModel() {
     { all: 1 },
     (categoryListResponse) => {
       const selectList: SelectOption[] = categoryListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.parentCategory ? item.name + ' ← ' + item.parentCategory.name : item.name,
       }));
       setCategorySelectList(selectList);

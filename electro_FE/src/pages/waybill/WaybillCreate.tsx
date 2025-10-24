@@ -27,8 +27,9 @@ function WaybillCreate() {
     OrderConfigs.resourceKey,
     { size: 5, filter: 'status==1', search: orderSelectDebouncedKeyword },
     (orderListResponse) => {
+      console.log('Fetched order list response for select:', orderListResponse);
       const selectList: SelectOption[] = orderListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.code,
       }));
       setOrderSelectList(selectList);

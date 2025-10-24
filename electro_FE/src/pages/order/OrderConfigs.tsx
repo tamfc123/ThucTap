@@ -108,7 +108,7 @@ class OrderConfigs extends Configs {
     note: z.string(),
     userId: z.string({ invalid_type_error: 'Vui lòng không bỏ trống' }),
     orderVariants: z.array(z.object({
-      variantId: z.number(),
+      variantId: z.string(),
       price: z.number(),
       quantity: z.number(),
       amount: z.number(),
@@ -147,12 +147,13 @@ class OrderConfigs extends Configs {
 
   static entityDetailTableRowsFragment = (entity: OrderResponse) => {
     const PaymentMethodIcon = PageConfigs.paymentMethodIconMap[entity.paymentMethodType];
+    console.log('Rendering detail rows for order:', entity);
 
     return (
       <>
         <tr>
           <td>{OrderConfigs.properties.id.label}</td>
-          <td>{entity.id}</td>
+          <td>{entity._id}</td>
         </tr>
         <tr>
           <td>{OrderConfigs.properties.createdAt.label}</td>

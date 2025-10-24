@@ -77,7 +77,7 @@ function ClientOrder() {
     ordersContentFragment = (
       <>
         <Stack spacing="xs">
-          {orders.content.map(order => <ClientOrderCard key={order.orderId} order={order}/>)}
+          {orders.content.map(order => <ClientOrderCard key={order._id} order={order}/>)}
         </Stack>
 
         <Group position="apart" mt={theme.spacing.lg}>
@@ -122,6 +122,7 @@ function ClientOrder() {
 
 function ClientOrderCard({ order }: { order: ClientSimpleOrderResponse }) {
   const theme = useMantineTheme();
+  console.log('Rendering ClientOrderCard for order:', order);
 
   const orderStatusBadgeFragment = (status: number) => {
     switch (status) {
@@ -156,40 +157,40 @@ function ClientOrderCard({ order }: { order: ClientSimpleOrderResponse }) {
       <Stack>
         <Group position="apart">
           <Group>
-            <Text weight={500}>Mã đơn hàng: {order.orderCode}</Text>
+            <Text weight={500}>Mã đơn hàng: {order.code}</Text>
             <Text color="dimmed">
-              Ngày tạo: {DateUtils.isoDateToString(order.orderCreatedAt, 'DD/MM/YYYY')}
+              Ngày tạo: {DateUtils.isoDateToString(order.createdAt, 'DD/MM/YYYY')}
             </Text>
           </Group>
           <Group spacing="xs">
-            {orderStatusBadgeFragment(order.orderStatus)}
-            {orderPaymentStatusBadgeFragment(order.orderPaymentStatus)}
+            {orderStatusBadgeFragment(order.status)}
+            {orderPaymentStatusBadgeFragment(order.paymentStatus)}
           </Group>
         </Group>
 
         <Divider/>
 
-        {order.orderItems.map(orderItem => (
-          <Group key={orderItem.orderItemVariant.variantId} position="apart">
+        {order.orderVariants.map(orderItem => (
+          <Group key={orderItem._id} position="apart">
             <Group>
               <Image
                 radius="md"
                 width={55}
                 height={55}
-                src={orderItem.orderItemVariant.variantProduct.productThumbnail || undefined}
-                alt={orderItem.orderItemVariant.variantProduct.productName}
+                src={orderItem.variant?.thumbnail|| undefined}
+                alt={orderItem.variant?.name}
                 withPlaceholder
               />
               <Stack spacing={3.5}>
                 <Anchor
                   component={Link}
-                  to={'/product/' + orderItem.orderItemVariant.variantProduct.productSlug}
+                  to={'/product/' + orderItem.variant.slug}
                   weight={500}
                   size="sm"
                 >
-                  {orderItem.orderItemVariant.variantProduct.productName}
+                  {orderItem.variant.name}
                 </Anchor>
-                {orderItem.orderItemVariant.variantProperties && (
+                {/* {orderItem.orderItemVariant.variantProperties && (
                   <Stack spacing={1.5}>
                     {orderItem.orderItemVariant.variantProperties.content.map(variantProperty => (
                       <Text key={variantProperty.id} size="xs" color="dimmed">
@@ -197,14 +198,14 @@ function ClientOrderCard({ order }: { order: ClientSimpleOrderResponse }) {
                       </Text>
                     ))}
                   </Stack>
-                )}
+                )} */}
               </Stack>
             </Group>
 
             <Group spacing="xs">
-              <Text>{MiscUtils.formatPrice(orderItem.orderItemPrice) + '\u00A0₫'}</Text>
+              <Text>{MiscUtils.formatPrice(orderItem.price) + '\u00A0₫'}</Text>
               <Text color="blue" size="lg" sx={{ fontFamily: theme.fontFamilyMonospace }}>
-                ×{orderItem.orderItemQuantity}
+                ×{orderItem.quantity}
               </Text>
             </Group>
           </Group>
@@ -217,13 +218,13 @@ function ClientOrderCard({ order }: { order: ClientSimpleOrderResponse }) {
             radius="md"
             variant="outline"
             component={Link}
-            to={'/order/detail/' + order.orderCode}
+            to={'/order/detail/' + order.code}
           >
             Xem chi tiết
           </Button>
           <Group spacing={5}>
             <Text>Tổng tiền: </Text>
-            <Text weight={500} size="lg">{MiscUtils.formatPrice(order.orderTotalPay) + '\u00A0₫'}</Text>
+            <Text weight={500} size="lg">{MiscUtils.formatPrice(order.totalPay) + '\u00A0₫'}</Text>
           </Group>
         </Group>
       </Stack>

@@ -230,13 +230,34 @@ export interface ClientPaymentMethodResponse {
 // ORDER
 
 export interface ClientSimpleOrderResponse {
-  orderId: number;
-  orderCreatedAt: string;
-  orderCode: string;
-  orderStatus: number;
-  orderTotalPay: number;
-  orderItems: ClientOrderVariantResponse[];
-  orderPaymentStatus: number;
+  _id: string; // Giữ nguyên
+  id?: string; // Mongoose có thể tự thêm 'id', nên thêm vào cho an toàn
+  
+  createdAt: string;       // Sửa từ 'orderCreatedAt'
+  code: string;            // Sửa từ 'orderCode'
+  status: number;          // Sửa từ 'orderStatus'
+  totalPay: number;        // Sửa từ 'orderTotalPay'
+  paymentStatus: number;   // Sửa từ 'orderPaymentStatus'
+  
+  // Sửa tên mảng VÀ kiểu dữ liệu của mảng
+  orderVariants: ClientOrderVariantItem[]; 
+}
+// Định nghĩa kiểu cho sản phẩm đã được populate (bên trong 'variant')
+export interface PopulatedVariant {
+  _id: string;
+  name: string;
+  slug: string;
+  thumbnail?: string;
+  // Thêm bất kỳ trường nào khác của variant mà bạn cần
+}
+
+// Đây là kiểu dữ liệu CHÍNH XÁC cho một item trong mảng 'orderVariants'
+export interface ClientOrderVariantItem {
+  _id: string;
+  price: number;
+  quantity: number;
+  variant: PopulatedVariant; // Đây là object sản phẩm đã populate
+  // Backend không có 'amount' ở cấp này
 }
 
 export interface ClientOrderVariantResponse {
@@ -261,24 +282,31 @@ interface ClientOrderVariantResponse_ClientVariantResponse_ClientProductResponse
 }
 
 export interface ClientOrderDetailResponse {
-  orderId: number;
-  orderCreatedAt: string;
-  orderCode: string;
-  orderStatus: number;
-  orderToName: string;
-  orderToPhone: string;
-  orderToAddress: string;
-  orderToWardName: string;
-  orderToDistrictName: string;
-  orderToProvinceName: string;
-  orderTotalAmount: number;
-  orderTax: number;
-  orderShippingCost: number;
-  orderTotalPay: number;
-  orderPaymentMethodType: PaymentMethodType;
-  orderPaymentStatus: number;
-  orderItems: ClientOrderVariantResponse[];
-  orderWaybill: ClientWaybillResponse | null;
+  _id: string;    // Sửa từ 'orderId: number'
+  id?: string;   // Thêm (Phòng trường hợp Mongoose tự thêm)
+
+  // Bỏ hết tiền tố 'order'
+  createdAt: string;
+  code: string;
+  status: number;
+  toName: string;
+  toPhone: string;
+  toAddress: string;
+  toWardName: string;
+  toDistrictName: string;
+  toProvinceName: string;
+  totalAmount: number;
+  tax: number;
+  shippingCost: number;
+  totalPay: number;
+  paymentMethodType: PaymentMethodType;
+  paymentStatus: number;
+
+  // Sửa tên mảng (quan trọng nhất) và kiểu của mảng
+  orderVariants: ClientOrderVariantItem[]; // Sửa từ 'orderItems: ClientOrderVariantResponse[]'
+
+  // Sửa tên trường waybill
+  waybill: ClientWaybillResponse | null; // Sửa từ 'orderWaybill'
 }
 
 // WAYBILL

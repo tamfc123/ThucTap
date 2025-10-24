@@ -25,6 +25,7 @@ import { ClientUserNavbar } from 'components';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   ClientOrderDetailResponse,
+  ClientOrderVariantItem,
   ClientOrderVariantResponse,
   ClientReviewRequest,
   ClientReviewResponse,
@@ -167,21 +168,21 @@ function ClientOrderDetail() {
   };
 
   if (order) {
-    const PaymentMethodIcon = PageConfigs.paymentMethodIconMap[order.orderPaymentMethodType];
+    //const PaymentMethodIcon = PageConfigs.paymentMethodIconMap[order.paymentMethodType as PaymentMethodType];
 
     orderContentFragment = (
       <Stack>
         <Card p="md" radius="md" sx={cardStyles}>
           <Group position="apart">
             <Group>
-              <Text weight={500}>Mã đơn hàng: {order.orderCode}</Text>
+              <Text weight={500}>Mã đơn hàng: {order.code}</Text>
               <Text color="dimmed">
-                Ngày tạo: {DateUtils.isoDateToString(order.orderCreatedAt)}
+                Ngày tạo: {DateUtils.isoDateToString(order.createdAt)}
               </Text>
             </Group>
             <Group spacing="xs">
-              {orderStatusBadgeFragment(order.orderStatus)}
-              {orderPaymentStatusBadgeFragment(order.orderPaymentStatus)}
+              {orderStatusBadgeFragment(order.status)}
+              {orderPaymentStatusBadgeFragment(order.paymentStatus)}
             </Group>
           </Group>
         </Card>
@@ -192,10 +193,10 @@ function ClientOrderDetail() {
               <Stack spacing="xs">
                 <Text weight={500} color="dimmed">Thông tin người nhận</Text>
                 <Stack spacing={5}>
-                  <Text size="sm" weight={500}>{order.orderToName}</Text>
-                  <Text size="sm">{order.orderToPhone}</Text>
+                  <Text size="sm" weight={500}>{order.toName}</Text>
+                  <Text size="sm">{order.toPhone}</Text>
                   <Text size="sm">
-                    {[order.orderToAddress, order.orderToWardName, order.orderToDistrictName, order.orderToProvinceName]
+                    {[order.toAddress, order.toWardName, order.toDistrictName, order.toProvinceName]
                       .filter(Boolean)
                       .join(', ')}
                   </Text>
@@ -217,10 +218,10 @@ function ClientOrderDetail() {
             <Card p="md" radius="md" sx={cardStyles}>
               <Stack spacing="xs">
                 <Text weight={500} color="dimmed">Hình thức thanh toán</Text>
-                <Group spacing="xs">
+                {/* <Group spacing="xs">
                   <PaymentMethodIcon color={theme.colors.gray[5]}/>
                   <Text size="sm">{PageConfigs.paymentMethodNameMap[order.orderPaymentMethodType]}</Text>
-                </Group>
+                </Group> */}
               </Stack>
             </Card>
           </Grid.Col>
@@ -229,7 +230,7 @@ function ClientOrderDetail() {
         <Card p="md" radius="md" sx={cardStyles}>
           <Stack spacing="xs">
             <Text weight={500} color="dimmed">Theo dõi vận đơn</Text>
-            {order.orderWaybill
+            {order.waybill
               ? (
                 <Grid>
                   <Grid.Col sm={3}>
@@ -237,14 +238,14 @@ function ClientOrderDetail() {
                       <Stack align="flex-start" spacing={5}>
                         <Text size="sm" weight={500}>Mã vận đơn</Text>
                         <Badge radius="md" size="lg" variant="filled" color="grape">
-                          {order.orderWaybill.waybillCode}
+                          {order.waybill.waybillCode}
                         </Badge>
                       </Stack>
 
                       <Stack align="flex-start" spacing={5}>
                         <Text size="sm" weight={500}>Dự kiến giao hàng</Text>
                         <Text size="sm">
-                          {DateUtils.isoDateToString(order.orderWaybill.waybillExpectedDeliveryTime, 'DD/MM/YYYY')}
+                          {DateUtils.isoDateToString(order.waybill.waybillExpectedDeliveryTime, 'DD/MM/YYYY')}
                         </Text>
                       </Stack>
                     </Stack>
@@ -254,7 +255,7 @@ function ClientOrderDetail() {
                     <Stack align="flex-start" spacing="xs">
                       <Text size="sm" weight={500}>Lịch sử vận đơn</Text>
                       <Stack spacing={5}>
-                        {[...order.orderWaybill.waybillLogs]
+                        {[...order.waybill.waybillLogs]
                           .reverse()
                           .map(waybillLog => {
                             const waybillLogInfo = getWaybillLogInfo(waybillLog);
@@ -296,12 +297,12 @@ function ClientOrderDetail() {
                 </tr>
               </thead>
               <tbody>
-                {order.orderItems
+                {order.orderVariants
                   .map(orderItem => (
                     <OrderItemTableRow
-                      key={orderItem.orderItemVariant.variantId}
+                      key={orderItem.variant._id}
                       orderItem={orderItem}
-                      canReview={order.orderStatus === 4 && order.orderPaymentStatus === 2}
+                      canReview={order.status === 4 && order.paymentStatus === 2}
                     />
                   ))}
               </tbody>
@@ -316,20 +317,20 @@ function ClientOrderDetail() {
               <Group position="apart">
                 <Text size="sm" color="dimmed">Tạm tính</Text>
                 <Text size="sm" sx={{ textAlign: 'right' }}>
-                  {MiscUtils.formatPrice(order.orderTotalAmount) + '\u00A0₫'}
+                  {MiscUtils.formatPrice(order.totalAmount) + '\u00A0₫'}
                 </Text>
               </Group>
               <Group position="apart">
                 <Text size="sm" color="dimmed">Thuế (10%)</Text>
                 <Text size="sm" sx={{ textAlign: 'right' }}>
                   {MiscUtils.formatPrice(Number(
-                    (order.orderTotalAmount * ApplicationConstants.DEFAULT_TAX).toFixed(0))) + '\u00A0₫'}
+                    (order.totalAmount * ApplicationConstants.DEFAULT_TAX).toFixed(0))) + '\u00A0₫'}
                 </Text>
               </Group>
               <Group position="apart">
                 <Group spacing="xs">
                   <Text size="sm" color="dimmed">Phí vận chuyển</Text>
-                  {order.orderStatus === 1 && (
+                  {order.status === 1 && (
                     <Tooltip
                       label="Phí vận chuyển có thể chưa được tính và sẽ còn cập nhật"
                       withArrow
@@ -342,13 +343,13 @@ function ClientOrderDetail() {
                   )}
                 </Group>
                 <Text size="sm" sx={{ textAlign: 'right' }}>
-                  {MiscUtils.formatPrice(order.orderShippingCost) + '\u00A0₫'}
+                  {MiscUtils.formatPrice(order.shippingCost) + '\u00A0₫'}
                 </Text>
               </Group>
               <Group position="apart">
                 <Text size="sm" weight={500}>Tổng tiền</Text>
                 <Text size="lg" weight={700} color="blue" sx={{ textAlign: 'right' }}>
-                  {MiscUtils.formatPrice(order.orderTotalPay) + '\u00A0₫'}
+                  {MiscUtils.formatPrice(order.totalPay) + '\u00A0₫'}
                 </Text>
               </Group>
             </Stack>
@@ -362,7 +363,7 @@ function ClientOrderDetail() {
           radius="md"
           sx={{ width: 'fit-content' }}
           onClick={handleCancelOrderButton}
-          disabled={![1, 2].includes(order.orderStatus)}
+          disabled={![1, 2].includes(order.status)}
         >
           Hủy đơn hàng
         </Button>
@@ -395,7 +396,7 @@ function ClientOrderDetail() {
   );
 }
 
-function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVariantResponse, canReview: boolean }) {
+function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVariantItem, canReview: boolean }) {
   const theme = useMantineTheme();
   const modals = useModals();
 
@@ -412,25 +413,25 @@ function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVar
   // };
 
   return (
-    <tr key={orderItem.orderItemVariant.variantId}>
+    <tr key={orderItem.variant._id}>
       <td>
         <Group spacing="xs">
           <Image
             radius="md"
             width={65}
             height={65}
-            src={orderItem.orderItemVariant.variantProduct.productThumbnail || undefined}
-            alt={orderItem.orderItemVariant.variantProduct.productName}
+            src={orderItem.variant.thumbnail || undefined}
+            alt={orderItem.variant.name}
           />
           <Stack spacing={3.5}>
             <Anchor
               component={Link}
-              to={'/product/' + orderItem.orderItemVariant.variantProduct.productSlug}
+              to={'/product/' + orderItem.variant.slug}
               size="sm"
             >
-              {orderItem.orderItemVariant.variantProduct.productName}
+              {orderItem.variant.name}
             </Anchor>
-            {orderItem.orderItemVariant.variantProperties && (
+            {/* {orderItem.orderItemVariant.variantProperties && (
               <Stack spacing={1.5}>
                 {orderItem.orderItemVariant.variantProperties.content.map(variantProperty => (
                   <Text key={variantProperty.id} size="xs" color="dimmed">
@@ -452,18 +453,18 @@ function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVar
               >
                 Đánh giá
               </Button>
-            )}
+            )} */} 
           </Stack>
         </Group>
       </td>
       <td>
         <Text size="sm">
-          {MiscUtils.formatPrice(orderItem.orderItemPrice) + ' ₫'}
+          {MiscUtils.formatPrice(orderItem.price) + ' ₫'}
         </Text>
       </td>
       <td>
         <Text size="sm">
-          {orderItem.orderItemQuantity}
+          {orderItem.quantity}
         </Text>
       </td>
       {/* TODO: Thêm discountPercent cho OrderVariant */}
@@ -474,7 +475,7 @@ function OrderItemTableRow({ orderItem, canReview }: { orderItem: ClientOrderVar
       {/*</td>*/}
       <td>
         <Text weight={500} size="sm" color="blue">
-          {MiscUtils.formatPrice(orderItem.orderItemAmount) + ' ₫'}
+          {MiscUtils.formatPrice(orderItem.price) + ' ₫'}
         </Text>
       </td>
     </tr>

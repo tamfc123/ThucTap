@@ -53,7 +53,7 @@ function OrderCreate() {
     { size: 5, search: userSelectDebouncedKeyword },
     (userListResponse) => {
       const selectList: SelectOption[] = userListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.fullname,
       }));
       setUserSelectList(selectList);

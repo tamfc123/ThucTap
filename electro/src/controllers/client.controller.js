@@ -51,7 +51,7 @@ export const getCategories = async (req, res, next) => {
       .limit(size);      // <-- GIỚI HẠN số lượng (sẽ lấy 8)
 
     res.json(categories); // Bây giờ sẽ trả về đúng 8 danh mục
-    
+
     // Console log để kiểm tra
     console.log(`categories client: Fetched ${categories.length} categories.`);
 
@@ -672,34 +672,39 @@ export const removeFromCart = async (req, res, next) => {
 // Orders
 export const getOrders = async (req, res, next) => {
   try {
-    const { page = 1, size = 10, status } = req.query
-    const query = { user: req.user.id }
-    if (status) query.status = status
+    const { page = 1, size = 10, status } = req.query;
+    const query = { user: req.user.id };
+    if (status) query.status = status;
 
     const orders = await Order.find(query)
       .sort("-createdAt")
       .limit(size * 1)
       .skip((page - 1) * size)
-      .populate("items.product")
+      // SỬA DÒNG NÀY:
+      .populate("orderVariants.variant"); // <-- Đổi từ "items.product"
 
-    const total = await Order.countDocuments(query)
+    const total = await Order.countDocuments(query);
+    console.log('Fetched Orders:', orders);
 
     res.json({
       content: orders,
       totalElements: total,
       totalPages: Math.ceil(total / size),
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const getOrderByCode = async (req, res, next) => {
   try {
-    const order = await Order.findOne({ code: req.params.code, user: req.user.id }).populate(
-      "items.product items.variant paymentMethod",
-    )
-
+    const order = await Order.findOne({ code: req.params.code, user: req.user.id })
+      .populate('user', 'fullname email phone') // Populate thông tin người dùng
+      .populate('orderVariants.variant') // <-- Sửa 1: Đây là đường dẫn đúng
+      //.populate('paymentMethod'); // <-- Giữ nguyên
+    // .populate('waybill'); // TODO: Bạn cũng cần populate vận đơn (waybill)
+    // nếu frontend cần (tên trường tùy theo schema)
+    console.log('Fetched Order:', order);
     if (!order) {
       return res.status(404).json({ message: "Order not found" })
     }
@@ -709,7 +714,6 @@ export const getOrderByCode = async (req, res, next) => {
     next(error)
   }
 }
-
 export const createOrder = async (req, res, next) => {
   try {
     const orderCode = "ORD" + Date.now()

@@ -153,7 +153,7 @@ app.use("/api/v1/payment", paymentRouter);
 
 app.use("/client-api/payment-methods", paymentMethodRoutes)
 app.use('/client-api/carts', cartRoutes);
-app.use("/client-api/orders", orderRoutes)
+app.use("/client-api/orders", clientRoutes)
 app.use("/client-api", clientRoutes)
 // Health check
 app.get("/health", (req, res) => {

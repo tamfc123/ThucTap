@@ -131,6 +131,21 @@ const navbarLinks: NavbarLink[] = [
     ],
   },
   {
+    link: '/admin/order',
+    label: 'Đơn hàng',
+    icon: FileBarcode,
+    childLinks: [
+      {
+        link: '/admin/order/resource',
+        label: 'Nguồn đơn hàng',
+      },
+      {
+        link: '/admin/order/cancellation-reason',
+        label: 'Lý do hủy đơn hàng',
+      },
+    ],
+  },
+  {
     link: '/admin/waybill',
     label: 'Vận đơn',
     icon: Car,

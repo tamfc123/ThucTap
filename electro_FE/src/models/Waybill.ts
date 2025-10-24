@@ -19,7 +19,7 @@ export interface WaybillResponse extends BaseResponse {
 }
 
 export interface WaybillRequest {
-  orderId: number;
+  orderId: string;
   shippingDate: string;
   weight: number;
   length: number;
