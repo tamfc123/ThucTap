@@ -47,7 +47,7 @@ function ClientWishlist() {
     wishlistContentFragment = (
       <Stack>
         {Array(5).fill(0).map((_, index) => (
-          <Skeleton key={index} height={50} radius="md"/>
+          <Skeleton key={index} height={50} radius="md" />
         ))}
       </Stack>
     );
@@ -56,7 +56,7 @@ function ClientWishlist() {
   if (isErrorWishResponses) {
     wishlistContentFragment = (
       <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.pink[6] }}>
-        <AlertTriangle size={125} strokeWidth={1}/>
+        <AlertTriangle size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Đã có lỗi xảy ra</Text>
       </Stack>
     );
@@ -65,7 +65,7 @@ function ClientWishlist() {
   if (wishes && wishes.totalElements === 0) {
     wishlistContentFragment = (
       <Stack my={theme.spacing.xl} sx={{ alignItems: 'center', color: theme.colors.blue[6] }}>
-        <HeartBroken size={125} strokeWidth={1}/>
+        <HeartBroken size={125} strokeWidth={1} />
         <Text size="xl" weight={500}>Chưa có sản phẩm yêu thích</Text>
       </Stack>
     );
@@ -75,7 +75,7 @@ function ClientWishlist() {
     wishlistContentFragment = (
       <>
         <Stack>
-          {wishes.content.map(wish => <ClientWishCard key={wish.wishId} wish={wish}/>)}
+          {wishes.content.map(wish => <ClientWishCard key={wish._id} wish={wish} />)}
         </Stack>
 
         <Group position="apart" mt={theme.spacing.lg}>
@@ -98,7 +98,7 @@ function ClientWishlist() {
       <Container size="xl">
         <Grid gutter="lg">
           <Grid.Col md={3}>
-            <ClientUserNavbar/>
+            <ClientUserNavbar />
           </Grid.Col>
 
           <Grid.Col md={9}>
@@ -134,7 +134,7 @@ function ClientWishCard({ wish }: { wish: ClientWishResponse }) {
       title: <strong>Xác nhận xóa</strong>,
       children: (
         <Text size="sm">
-          Xóa sản phẩm <strong>{wish.wishProduct.productName}</strong> khỏi danh sách yêu thích?
+          Xóa sản phẩm <strong>{wish.product.name}</strong> khỏi danh sách yêu thích?
         </Text>
       ),
       labels: {
@@ -142,7 +142,7 @@ function ClientWishCard({ wish }: { wish: ClientWishResponse }) {
         confirm: 'Xóa',
       },
       confirmProps: { color: 'red' },
-      onConfirm: () => deleteWishesApi.mutate([wish.wishId]),
+      onConfirm: () => deleteWishesApi.mutate([wish._id]),
     });
   };
 
@@ -153,13 +153,13 @@ function ClientWishCard({ wish }: { wish: ClientWishResponse }) {
           radius="md"
           width={55}
           height={55}
-          src={wish.wishProduct.productThumbnail || undefined}
-          alt={wish.wishProduct.productName}
+          src={wish.product.images?.[0]?.path || undefined}
+          alt={wish.product.name}
           withPlaceholder
         />
         <Stack spacing={3.5}>
-          <Anchor component={Link} to={'/product/' + wish.wishProduct.productSlug} weight={500}>
-            {wish.wishProduct.productName}
+          <Anchor component={Link} to={'/product/' + wish.product.slug} weight={500}>
+            {wish.product.name}
           </Anchor>
           <Text size="sm" color="dimmed">
             Thêm vào lúc {DateUtils.isoDateToString(wish.wishCreatedAt)}
@@ -169,7 +169,7 @@ function ClientWishCard({ wish }: { wish: ClientWishResponse }) {
       <Button
         variant="outline"
         color="red"
-        leftIcon={<Trash size={18} strokeWidth={1.5}/>}
+        leftIcon={<Trash size={18} strokeWidth={1.5} />}
         compact
         onClick={handleDeleteWishButton}
       >
@@ -205,7 +205,7 @@ function useGetAllWishesApi(activePage: number) {
 function useDeleteWishesApi() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, ErrorMessage, number[]>(
+  return useMutation<void, ErrorMessage, string[]>(
     (entityIds) => FetchUtils.deleteWithToken(ResourceURL.CLIENT_WISH, entityIds),
     {
       onSuccess: () => {

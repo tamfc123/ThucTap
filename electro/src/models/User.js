@@ -77,18 +77,6 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password)
 }
 
-// // Transform output
-// userSchema.set("toJSON", {
-//   virtuals: true,
-//   transform: (doc, ret) => {
-//     ret.id = ret._id
-//     ret.createdAt = ret.createdAt
-//     ret.updatedAt = ret.updatedAt
-//     delete ret._id
-//     delete ret.__v
-//     delete ret.password
-//     return ret
-//   },
-// })
+
 
 export default mongoose.model("User", userSchema)

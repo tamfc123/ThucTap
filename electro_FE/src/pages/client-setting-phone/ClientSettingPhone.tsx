@@ -33,6 +33,7 @@ function ClientSettingPhone() {
     schema: zodResolver(formSchema),
   });
 
+
   const updatePhoneSettingApi = useMutation<UserResponse, ErrorMessage, ClientPhoneSettingUserRequest>(
     (requestBody) => FetchUtils.postWithToken(ResourceURL.CLIENT_USER_PHONE_SETTING, requestBody),
     {
@@ -57,7 +58,7 @@ function ClientSettingPhone() {
       <Container size="xl">
         <Grid gutter="lg">
           <Grid.Col md={3}>
-            <ClientUserNavbar/>
+            <ClientUserNavbar />
           </Grid.Col>
 
           <Grid.Col md={9}>

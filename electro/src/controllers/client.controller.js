@@ -281,9 +281,9 @@ export const getProductBySlug = async (req, res, next) => {
       // Include category/brand info if needed
       category: productFromDB.categoryId
         ? {
-            name: productFromDB.categoryId.name,
-            slug: productFromDB.categoryId.slug,
-          }
+          name: productFromDB.categoryId.name,
+          slug: productFromDB.categoryId.slug,
+        }
         : null,
       brand: productFromDB.brandId
         ? { name: productFromDB.brandId.name, slug: productFromDB.brandId.slug }
@@ -410,28 +410,45 @@ export const updateEmail = async (req, res, next) => {
     ).select("-password");
     res.json(user);
   } catch (error) {
+    // === THÊM ĐOẠN NÀY ĐỂ BẪY LỖI ===
+    if (error.code === 11000) {
+      // Nếu là lỗi E11000 (trùng key)
+      return res.status(400).json({
+        message: "Email này đã được sử dụng bởi một tài khoản khác.",
+        field: "email"
+      });
+    }
+    // Nếu là lỗi khác, mới đẩy ra lỗi 500
     next(error);
   }
 };
 
 export const updatePassword = async (req, res, next) => {
   try {
-    const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user.id);
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id); // Dòng này OK
 
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Current password is incorrect" });
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng." });
     }
 
+    // SỬA TÊN HÀM Ở ĐÂY
+    const isMatch = await user.matchPassword(oldPassword); // Đổi từ comparePassword -> matchPassword
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Mật khẩu hiện tại không đúng" });
+    }
+
+    // Hook pre('save') của bạn sẽ tự động hash mật khẩu mới
     user.password = newPassword;
     await user.save();
 
-    res.json({ message: "Password updated successfully" });
+    res.json({ message: "Cập nhật mật khẩu thành công" });
   } catch (error) {
     next(error);
   }
 };
+
 export const getProductById = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id).populate(
@@ -480,6 +497,7 @@ export const addToWishlist = async (req, res, next) => {
       user: req.user.id,
       product: productId,
     });
+    console.log("Existing wishlist item:", existing);
 
     if (existing) {
       return res.status(400).json({ message: "Product already in wishlist" });
@@ -487,7 +505,15 @@ export const addToWishlist = async (req, res, next) => {
 
     const wishlist = new Wishlist({ user: req.user.id, product: productId });
     await wishlist.save();
-    res.status(201).json(wishlist);
+
+    // === THÊM DÒNG NÀY ĐỂ POPULATE ===
+    // Nó sẽ thay thế 'productId' bằng toàn bộ object 'product'
+    await wishlist.populate('product');
+    // Bạn cũng có thể populate 'user' nếu cần: await wishlist.populate('product user');
+    // === LOG Ở ĐÂY ===
+    console.log("Backend log - Data gửi về client:", JSON.stringify(wishlist, null, 2));
+
+    res.status(201).json(wishlist); // 'wishlist' bây giờ chứa đầy đủ object 'product'
   } catch (error) {
     next(error);
   }
@@ -495,7 +521,7 @@ export const addToWishlist = async (req, res, next) => {
 
 export const removeFromWishlist = async (req, res, next) => {
   try {
-    const { ids } = req.body;
+    const ids = req.body;
     await Wishlist.deleteMany({ _id: { $in: ids }, user: req.user.id });
     res.json({ message: "Removed from wishlist" });
   } catch (error) {

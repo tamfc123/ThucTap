@@ -24,23 +24,26 @@ function WaybillUpdate() {
   const theme = useMantineTheme();
 
   const { id } = useParams();
+  if (!id) {
+    return null;
+  }
   const {
     waybill,
     form,
     handleFormSubmit,
     ghnRequiredNoteSelectList,
-  } = useWaybillUpdateViewModel(Number(id));
+  } = useWaybillUpdateViewModel(id);
 
   const waybillStatusBadgeFragment = (status: number) => {
     switch (status) {
-    case 1:
-      return <Badge variant="outline" size="sm" color="gray">Đợi lấy hàng</Badge>;
-    case 2:
-      return <Badge variant="outline" size="sm" color="blue">Đang giao</Badge>;
-    case 3:
-      return <Badge variant="outline" size="sm" color="green">Đã giao</Badge>;
-    case 4:
-      return <Badge variant="outline" size="sm" color="red">Hủy</Badge>;
+      case 1:
+        return <Badge variant="outline" size="sm" color="gray">Đợi lấy hàng</Badge>;
+      case 2:
+        return <Badge variant="outline" size="sm" color="blue">Đang giao</Badge>;
+      case 3:
+        return <Badge variant="outline" size="sm" color="green">Đã giao</Badge>;
+      case 4:
+        return <Badge variant="outline" size="sm" color="red">Hủy</Badge>;
     }
   };
 
@@ -56,7 +59,7 @@ function WaybillUpdate() {
       />
 
       <DefaultPropertyPanel
-        id={waybill.id}
+        id={waybill._id}
         createdAt={waybill.createdAt}
         updatedAt={waybill.updatedAt}
         createdBy="1"
@@ -164,7 +167,7 @@ function WaybillUpdate() {
               </Grid.Col>
             </Grid>
 
-            <Divider mt="xs"/>
+            <Divider mt="xs" />
 
             <Group position="right" p="sm">
               <Button type="submit">Cập nhật</Button>

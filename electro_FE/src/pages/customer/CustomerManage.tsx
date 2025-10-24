@@ -41,7 +41,7 @@ function CustomerManage() {
 
   const showedPropertiesFragment = (entity: CustomerResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.user.fullname}
@@ -53,11 +53,11 @@ function CustomerManage() {
         </Highlight>
       </td>
       <td>
-        <Avatar src={entity.user.avatar} alt={entity.user.fullname} radius="xl" size="sm"/>
+        <Avatar src={entity.user.avatar} alt={entity.user.fullname} radius="xl" size="sm" />
       </td>
       <td>
         <Group spacing="xs">
-          <ColorSwatch color={entity.customerGroup.color}/>
+          <ColorSwatch color={entity.customerGroup.color} />
           <Highlight highlight={searchToken} highlightColor="blue" size="sm">
             {entity.customerGroup.name}
           </Highlight>
@@ -65,7 +65,7 @@ function CustomerManage() {
       </td>
       <td>
         <Group spacing="xs">
-          <ColorSwatch color={entity.customerStatus.color}/>
+          <ColorSwatch color={entity.customerStatus.color} />
           <Highlight highlight={searchToken} highlightColor="blue" size="sm">
             {entity.customerStatus.name}
           </Highlight>
@@ -73,7 +73,7 @@ function CustomerManage() {
       </td>
       <td>
         <Group spacing="xs">
-          <ColorSwatch color={entity.customerResource.color}/>
+          <ColorSwatch color={entity.customerResource.color} />
           <Highlight highlight={searchToken} highlightColor="blue" size="sm">
             {entity.customerResource.name}
           </Highlight>
@@ -86,7 +86,7 @@ function CustomerManage() {
     <>
       <tr>
         <td>{CustomerConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{CustomerConfigs.properties.createdAt.label}</td>
@@ -122,24 +122,24 @@ function CustomerManage() {
       </tr>
       <tr>
         <td>{CustomerConfigs.properties['user.address.province.name'].label}</td>
-        <td>{entity.user.address.province?.name}</td>
+        <td>{entity.user.address.provinceId?.name}</td>
       </tr>
       <tr>
         <td>{CustomerConfigs.properties['user.address.province.code'].label}</td>
-        <td>{entity.user.address.province?.code}</td>
+        <td>{entity.user.address.provinceId?.code}</td>
       </tr>
       <tr>
         <td>{CustomerConfigs.properties['user.address.district.name'].label}</td>
-        <td>{entity.user.address.district?.name}</td>
+        <td>{entity.user.address.districtId?.name}</td>
       </tr>
       <tr>
         <td>{CustomerConfigs.properties['user.address.district.code'].label}</td>
-        <td>{entity.user.address.district?.code}</td>
+        <td>{entity.user.address.districtId?.code}</td>
       </tr>
       <tr>
         <td>{CustomerConfigs.properties['user.avatar'].label}</td>
         <td>
-          <Avatar src={entity.user.avatar} alt={entity.user.fullname} radius="xl" size="sm"/>
+          <Avatar src={entity.user.avatar} alt={entity.user.fullname} radius="xl" size="sm" />
         </td>
       </tr>
       <tr>
@@ -158,7 +158,7 @@ function CustomerManage() {
         <td>{CustomerConfigs.properties['customerGroup.name'].label}</td>
         <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.customerGroup.color}/>
+            <ColorSwatch color={entity.customerGroup.color} />
             {entity.customerGroup.name}
           </Group>
         </td>
@@ -167,7 +167,7 @@ function CustomerManage() {
         <td>{CustomerConfigs.properties['customerStatus.name'].label}</td>
         <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.customerStatus.color}/>
+            <ColorSwatch color={entity.customerStatus.color} />
             {entity.customerStatus.name}
           </Group>
         </td>
@@ -176,7 +176,7 @@ function CustomerManage() {
         <td>{CustomerConfigs.properties['customerResource.name'].label}</td>
         <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.customerResource.color}/>
+            <ColorSwatch color={entity.customerResource.color} />
             {entity.customerResource.name}
           </Group>
         </td>
@@ -198,9 +198,9 @@ function CustomerManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -216,7 +216,7 @@ function CustomerManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

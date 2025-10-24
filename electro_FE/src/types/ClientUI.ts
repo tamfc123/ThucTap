@@ -104,9 +104,9 @@ interface ClientProductResponse_ClientVariantResponse {
 // WISH
 
 export interface ClientWishResponse {
-  wishId: number;
+  _id: string;
   wishCreatedAt: string;
-  wishProduct: ClientListedProductResponse;
+  product: ClientListedProductResponse;
 }
 
 export interface ClientWishRequest {
@@ -232,15 +232,15 @@ export interface ClientPaymentMethodResponse {
 export interface ClientSimpleOrderResponse {
   _id: string; // Giữ nguyên
   id?: string; // Mongoose có thể tự thêm 'id', nên thêm vào cho an toàn
-  
+
   createdAt: string;       // Sửa từ 'orderCreatedAt'
   code: string;            // Sửa từ 'orderCode'
   status: number;          // Sửa từ 'orderStatus'
   totalPay: number;        // Sửa từ 'orderTotalPay'
   paymentStatus: number;   // Sửa từ 'orderPaymentStatus'
-  
+
   // Sửa tên mảng VÀ kiểu dữ liệu của mảng
-  orderVariants: ClientOrderVariantItem[]; 
+  orderVariants: ClientOrderVariantItem[];
 }
 // Định nghĩa kiểu cho sản phẩm đã được populate (bên trong 'variant')
 export interface PopulatedVariant {

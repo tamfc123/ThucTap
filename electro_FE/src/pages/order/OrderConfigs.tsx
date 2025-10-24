@@ -55,13 +55,6 @@ class OrderConfigs extends Configs {
       type: EntityPropertyType.NUMBER,
       isShowInTable: true,
     },
-    warehouse: {
-      label: 'Kho',
-      type: EntityPropertyType.PLACEHOLDER,
-      isShowInTable: true,
-      isNotAddToSortCriteria: true,
-      isNotAddToFilterCriteria: true,
-    },
     status: {
       label: 'Trạng thái đơn hàng',
       type: EntityPropertyType.NUMBER,

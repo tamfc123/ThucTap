@@ -64,18 +64,18 @@ function OrderManage() {
                 NotifyUtils.simple(<Text inherit>Đã sao chép mã đơn hàng <strong>{entity.code}</strong></Text>);
               }}
             >
-              <Clipboard size={15} strokeWidth={1.5}/>
+              <Clipboard size={15} strokeWidth={1.5} />
             </ActionIcon>
           </Group>
         </td>
-        {/* <td>
+        <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.orderResource?.color || theme.colors.gray[5]}/>
+            <ColorSwatch color={entity.orderResource?.color || theme.colors.gray[5]} />
             <Highlight highlight={searchToken} highlightColor="blue" size="sm">
-              {entity.orderResource?.name || 'không '}
+              {entity.orderResource?.name || 'không'}
             </Highlight>
           </Group>
-        </td> */}
+        </td>
         <td>
           <Stack spacing={0}>
             <Highlight highlight={searchToken} highlightColor="blue" size="sm">
@@ -108,21 +108,8 @@ function OrderManage() {
         <td style={{ textAlign: 'right' }}>
           <Stack align="end" spacing={5}>
             <Text weight={500} size="sm">{MiscUtils.formatPrice(entity.totalPay) + ' ₫'}</Text>
-            <PaymentMethodIcon color={theme.colors.gray[5]}/>
+            <PaymentMethodIcon color={theme.colors.gray[5]} />
           </Stack>
-        </td>
-        <td>
-          <ActionIcon
-            color="blue"
-            variant="hover"
-            size={24}
-            title="Tạo phiếu xuất kho"
-            component="a"
-            href={DocketConfigs.managerPath + '/create'}
-            target="_blank"
-          >
-            <Plus/>
-          </ActionIcon>
         </td>
         <td>
           <Stack spacing="xs" sx={{ alignItems: 'start' }}>
@@ -148,9 +135,9 @@ function OrderManage() {
         />
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -166,7 +153,7 @@ function OrderManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

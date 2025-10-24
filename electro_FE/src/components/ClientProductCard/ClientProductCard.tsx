@@ -57,6 +57,7 @@ function ClientProductCard({ product, search }: ClientProductCardProps) {
         userId: user._id,
         productId: product._id,
       };
+      console.log('Creating wish with request:', clientWishRequest);
       createWishApi.mutate(clientWishRequest);
     }
   };

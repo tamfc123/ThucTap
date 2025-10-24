@@ -54,9 +54,9 @@ function ClientSettingPersonal() {
     fullname: user?.fullname as string,
     gender: user?.gender as 'M' | 'F',
     'address.line': user?.address.line as string,
-    'address.provinceId': String(user?.address.province?.id) as string | null,
-    'address.districtId': String(user?.address.district?.id) as string | null,
-    'address.wardId': String(user?.address.ward?.id) as string | null,
+    'address.provinceId': String(user?.address.provinceId?._id) as string | null,
+    'address.districtId': String(user?.address.districtId?._id) as string | null,
+    'address.wardId': String(user?.address.ward?._id) as string | null,
   };
 
   const form = useForm({
@@ -74,7 +74,7 @@ function ClientSettingPersonal() {
     { all: 1 },
     (provinceListResponse) => {
       const selectList: SelectOption[] = provinceListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setProvinceSelectList(selectList);
@@ -84,7 +84,7 @@ function ClientSettingPersonal() {
     { all: 1, filter: `province.id==${form.values['address.provinceId'] || 0}` },
     (districtListResponse) => {
       const selectList: SelectOption[] = districtListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setDistrictSelectList(selectList);
@@ -94,7 +94,7 @@ function ClientSettingPersonal() {
     { all: 1, filter: `district.id==${form.values['address.districtId'] || 0}` },
     (wardListResponse) => {
       const selectList: SelectOption[] = wardListResponse.content.map((item) => ({
-        value: String(item.id),
+        value: String(item._id),
         label: item.name,
       }));
       setWardSelectList(selectList);
@@ -119,9 +119,9 @@ function ClientSettingPersonal() {
       gender: formValues.gender,
       address: {
         line: formValues['address.line'],
-        provinceId: Number(formValues['address.provinceId']),
-        districtId: Number(formValues['address.districtId']),
-        wardId: Number(formValues['address.wardId']),
+        provinceId: formValues['address.provinceId'],
+        districtId: formValues['address.districtId'],
+        wardId: formValues['address.wardId'],
       },
     };
 
@@ -133,7 +133,7 @@ function ClientSettingPersonal() {
       <Container size="xl">
         <Grid gutter="lg">
           <Grid.Col md={3}>
-            <ClientUserNavbar/>
+            <ClientUserNavbar />
           </Grid.Col>
 
           <Grid.Col md={9}>
@@ -153,7 +153,7 @@ function ClientSettingPersonal() {
                           placeholder="Nhập tên tài khoản của bạn"
                           {...form.getInputProps('username')}
                           disabled
-                          // TODO: Hiện tại chưa cho phép sửa username
+                        // TODO: Hiện tại chưa cho phép sửa username
                         />
                         <TextInput
                           required
