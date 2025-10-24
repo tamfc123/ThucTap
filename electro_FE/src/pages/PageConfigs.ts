@@ -15,7 +15,13 @@ import {
   Icon,
   Keyboard,
   Mouse,
-  Wallet
+  Wallet,
+  DeviceTv,
+  Fridge,
+  AirConditioning,
+  FreeRights,
+  Droplet,
+  Snowflake
 } from 'tabler-icons-react';
 import { PaymentMethodType } from 'models/PaymentMethod';
 
@@ -91,6 +97,12 @@ class PageConfigs {
       'balo': Briefcase,
       'tablet': DeviceTablet,
       'smartwatch': DeviceWatch,
+      'maygiat': DeviceSpeaker,
+      'tv':DeviceTv,
+      'tulanh': Fridge,
+      'maylanh':AirConditioning,
+      'tudong':Snowflake,
+      'maylocnuoc': Droplet,
     },
     {
       get: function (target: Record<string, Icon>, name: string) {

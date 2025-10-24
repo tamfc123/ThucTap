@@ -3,7 +3,6 @@ import { Button, Card, Grid, Group, Stack, Text, Title, useMantineTheme, Loader 
 import { List } from 'tabler-icons-react';
 import PageConfigs from 'pages/PageConfigs';
 import { Link } from 'react-router-dom';
-//import MockUtils from 'utils/MockUtils';
 import useGetAllApi from 'hooks/use-get-all-api';
 import { ClientCategoryResponse } from 'types';
 import ResourceURL from 'constants/ResourceURL';

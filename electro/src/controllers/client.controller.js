@@ -16,15 +16,49 @@ import { randomUUID } from 'crypto';
 // Categories
 export const getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({ status: 1 })
+    // 1. Đọc các tham số từ query string (do requestParams gửi lên)
+    // Cung cấp giá trị mặc định phòng trường hợp frontend không gửi
+    const page = parseInt(req.query.page) || 1;
+    const size = parseInt(req.query.size) || 8; // Lấy 'size' từ query, mặc định là 8
+    const sort = req.query.sort || 'priority,asc'; // Lấy 'sort', mặc định là 'priority,asc'
+    const search = req.query.search || '';
+    // (Lưu ý: req.query.filter là 'status==1' nhưng chúng ta đang cứng code { status: 1 }
+    // nên không cần đọc filter nữa)
+
+    // 2. Xây dựng query cơ bản
+    const query = { status: 1 };
+    if (search) {
+      // Nếu bạn muốn hỗ trợ tìm kiếm, hãy thêm logic ở đây
+      // Ví dụ: tìm theo tên
+      query.name = { $regex: search, $options: 'i' };
+    }
+
+    // 3. Xử lý 'sort'
+    // Chuyển chuỗi "priority,asc" thành đối tượng { priority: 1 } cho Mongoose
+    const sortObject = {};
+    const [sortKey, sortOrder] = sort.split(','); // ["priority", "asc"]
+    sortObject[sortKey] = sortOrder === 'asc' ? 1 : -1; // { priority: 1 }
+
+    // 4. Tính toán 'skip' để phân trang
+    const skip = (page - 1) * size;
+
+    // 5. Thực thi câu lệnh Mongoose đầy đủ
+    const categories = await Category.find(query) // Lọc theo { status: 1 }
       .select("name slug description image parentCategory")
       .populate("parentCategory", "name slug")
-    res.json(categories)
+      .sort(sortObject) // <-- SẮP XẾP theo yêu cầu
+      .skip(skip)         // <-- BỎ QUA các trang trước
+      .limit(size);      // <-- GIỚI HẠN số lượng (sẽ lấy 8)
+
+    res.json(categories); // Bây giờ sẽ trả về đúng 8 danh mục
+    
+    // Console log để kiểm tra
+    console.log(`categories client: Fetched ${categories.length} categories.`);
+
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
-
 export const getCategoryBySlug = async (req, res, next) => {
   try {
     const category = await Category.findOne({ slug: req.params.slug, status: 1 }).populate(

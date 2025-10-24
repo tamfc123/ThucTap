@@ -3,7 +3,7 @@ import { getAll } from "./address.controller.js"
 // Get all categories
 export const getAllCategories = async (req, res) => {
   try {
-    const { page = 1, size = 10, sort = "name", search } = req.query
+    const { page = 1, size = 8, sort = "name", search } = req.query
 
     const query = {}
     if (search) {
