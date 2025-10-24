@@ -16,7 +16,7 @@ function ClientUser() {
       <Container size="xl">
         <Grid gutter="lg">
           <Grid.Col md={3}>
-            <ClientUserNavbar/>
+            <ClientUserNavbar />
           </Grid.Col>
 
           <Grid.Col md={9}>
@@ -51,13 +51,13 @@ function ClientUser() {
                         </Button>
                       </Group>
 
-                      <Divider my={3.5} variant="dotted"/>
+                      <Divider my={3.5} variant="dotted" />
 
                       <Group spacing="sm">
                         <ThemeIcon radius="xl" size="lg" variant="light">
                           {user?.gender === 'M'
-                            ? <Mars size={20} strokeWidth={1.5}/>
-                            : <Venus size={20} strokeWidth={1.5}/>}
+                            ? <Mars size={20} strokeWidth={1.5} />
+                            : <Venus size={20} strokeWidth={1.5} />}
                         </ThemeIcon>
                         <Stack spacing={0}>
                           <Text weight={500}>Giới tính</Text>
@@ -67,12 +67,12 @@ function ClientUser() {
 
                       <Group spacing="sm" sx={{ flexWrap: 'nowrap' }}>
                         <ThemeIcon radius="xl" size="lg" variant="light">
-                          <Home size={20} strokeWidth={1.5}/>
+                          <Home size={20} strokeWidth={1.5} />
                         </ThemeIcon>
                         <Stack spacing={0}>
                           <Text weight={500}>Địa chỉ</Text>
                           <Text>
-                            {[user?.address.line, user?.address.ward?.name, user?.address.district?.name, user?.address.province?.name]
+                            {[user?.address.line, user?.address.ward?.name, user?.address.districtId?.name, user?.address.provinceId?.name]
                               .filter(Boolean)
                               .join(', ')}
                           </Text>
@@ -90,7 +90,7 @@ function ClientUser() {
                       <Group position="apart">
                         <Group spacing="sm">
                           <ThemeIcon radius="xl" size="lg" variant="light">
-                            <Phone size={20} strokeWidth={1.5}/>
+                            <Phone size={20} strokeWidth={1.5} />
                           </ThemeIcon>
                           <Stack spacing={0}>
                             <Text weight={500}>Số điện thoại</Text>
@@ -110,7 +110,7 @@ function ClientUser() {
                       <Group position="apart">
                         <Group spacing="sm">
                           <ThemeIcon radius="xl" size="lg" variant="light">
-                            <Mail size={20} strokeWidth={1.5}/>
+                            <Mail size={20} strokeWidth={1.5} />
                           </ThemeIcon>
                           <Stack spacing={0}>
                             <Text weight={500}>Email</Text>
@@ -134,7 +134,7 @@ function ClientUser() {
                       <Group position="apart">
                         <Group spacing="sm">
                           <ThemeIcon radius="xl" size="lg" variant="light">
-                            <Lock size={20} strokeWidth={1.5}/>
+                            <Lock size={20} strokeWidth={1.5} />
                           </ThemeIcon>
                           <Text weight={500}>Đổi mật khẩu</Text>
                         </Group>

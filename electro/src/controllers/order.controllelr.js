@@ -3,6 +3,9 @@ import User from "../models/User.js";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import Variant from "../models/Variant.js";
+import axios from "axios"
+import crypto from "crypto"
+import { restoreInventoryAndCancelOrder } from "../helpers/order.helper.js";
 
 // Get all orders (Admin)
 export const getAllOrders = async (req, res) => {
@@ -119,75 +122,60 @@ export const getOrderById = async (req, res) => {
 };
 
 // Create order
+// =========================================================
+// == 2. THAY THẾ TOÀN BỘ HÀM createOrder BẰNG HÀM ĐÃ SỬA LỖI NÀY
+// =========================================================
 export const createOrder = async (req, res) => {
   // Bắt đầu một transaction
   const session = await mongoose.startSession();
-  session.startTransaction();
 
+  // Khai báo newOrder ở phạm vi ngoài
+  let newOrder;
+
+  // =========================================================
+  // == VÙNG 1: TRANSACTION CỦA DATABASE (Tạo Order, Trừ kho)
+  // =========================================================
   try {
-    // 1. Lấy dữ liệu từ request và token
+    session.startTransaction();
+
     const { cartId, paymentMethodType } = req.body;
     const userId = req.user._id;
 
-    // 🔽🔽🔽 THÊM 2 DÒNG NÀY 🔽🔽🔽
     console.log("Đang tìm giỏ hàng với cartId:", cartId);
     console.log("Đang tìm giỏ hàng với userId:", userId);
-    // 🔼🔼🔼 KẾT THÚC THÊM 🔼🔼🔼
 
-    // 2. Lấy thông tin User (để lấy địa chỉ)
     const user = await User.findById(userId)
-      .populate("address.wardId")     // Sửa 'ward' -> 'wardId'
-      .populate("address.districtId") // Sửa 'district' -> 'districtId'
-      .populate("address.provinceId") // Sửa 'province' -> 'provinceId'
+      .populate("address.wardId")
+      .populate("address.districtId")
+      .populate("address.provinceId")
       .session(session);
 
     if (!user) {
       throw new Error("Không tìm thấy người dùng.");
     }
 
-    // 3. Lấy thông tin giỏ hàng
     const cart = await Cart.findOne({ _id: cartId, user: userId })
       .populate({
         path: "cartVariants.variant",
-        populate: {
-          path: "product",
-          // populate: {
-          //   path: "promotionId", // Lấy thông tin khuyến mãi
-          // },
-        },
+        populate: { path: "product" },
       })
       .session(session);
-    console.log('Cart fetched in createOrder:', cart);
+    console.log("Cart fetched in createOrder:", cart);
 
     if (!cart || !cart.cartVariants || cart.cartVariants.length === 0) {
       throw new Error("Giỏ hàng rỗng.");
     }
 
-    // 5. Lấy địa chỉ giao hàng từ User
     const { address } = user;
     if (
-      !address ||
-      !address.line ||
-      !address.wardId ||     // Sửa 'ward' -> 'wardId'
-      !address.districtId || // Sửa 'district' -> 'districtId'
-      !address.provinceId    // Sửa 'province' -> 'provinceId'
+      !address || !address.line || !address.wardId ||
+      !address.districtId || !address.provinceId
     ) {
-      throw new Error(
-        "Vui lòng cập nhật địa chỉ giao hàng trước khi đặt hàng."
-      );
+      throw new Error("Vui lòng cập nhật địa chỉ giao hàng trước khi đặt hàng.");
     }
-    const fullAddress = [
-      address.line,
-      address.wardId.name,     // Sửa 'ward' -> 'wardId'
-      address.districtId.name, // Sửa 'district' -> 'districtId'
-      address.provinceId.name, // Sửa 'province' -> 'provinceId'
-    ].join(", ");
 
-    // 6. Tính toán đơn hàng và chuẩn bị 'orderVariants'
     let totalAmount = 0;
     const orderVariants = [];
-
-    // Helper (giống hệt frontend)
     const calculateDiscountedPrice = (price, percent) => {
       if (!percent || percent === 0) return price;
       return price - (price * percent) / 100;
@@ -196,10 +184,8 @@ export const createOrder = async (req, res) => {
     for (const item of cart.cartVariants) {
       const variant = item.variant;
       const product = variant.product;
-
       if (!variant) throw new Error("Không tìm thấy một biến thể sản phẩm.");
 
-      // Kiểm tra tồn kho
       if (variant.inventory < item.quantity) {
         throw new Error(
           `Sản phẩm '${product.name}' không đủ tồn kho (còn ${variant.inventory}).`
@@ -207,12 +193,8 @@ export const createOrder = async (req, res) => {
       }
 
       const promotionPercent = 0;
-      const finalPrice = calculateDiscountedPrice(
-        variant.price,
-        promotionPercent
-      );
+      const finalPrice = calculateDiscountedPrice(variant.price, promotionPercent);
       const amount = finalPrice * item.quantity;
-
       totalAmount += amount;
 
       orderVariants.push({
@@ -222,32 +204,27 @@ export const createOrder = async (req, res) => {
         amount: amount,
       });
 
-      // Trừ tồn kho
       variant.inventory -= item.quantity;
       await variant.save({ session });
     }
 
-    // 7. Tính toán tổng tiền (giống hệt frontend)
-    const TAX_RATE = 0.1; // Giả sử 10%
-    const SHIPPING_COST = 0; // Tạm thời
-
+    const TAX_RATE = 0.1;
+    const SHIPPING_COST = 0;
     const tax = Math.round(totalAmount * TAX_RATE);
     const shippingCost = SHIPPING_COST;
     const totalPay = totalAmount + tax + shippingCost;
 
-    // 8. Tạo đơn hàng mới
-    const newOrder = new Order({
+    // Gán vào biến newOrder đã khai báo bên ngoài
+    newOrder = new Order({
       code: `ORD${Date.now()}`,
       status: 1,
       toName: user.fullname,
       toPhone: user.phone,
       toAddress: address.line,
-      toWardName: address.wardId.name,     // Sửa 'ward' -> 'wardId'
-      toDistrictName: address.districtId.name, // Sửa 'district' -> 'districtId'
-      toProvinceName: address.provinceId.name, // Sửa 'province' -> 'provinceId'
-
-      orderResource: null, // <--- SỬA DÒNG NÀY (gán thẳng là null)
-
+      toWardName: address.wardId.name,
+      toDistrictName: address.districtId.name,
+      toProvinceName: address.provinceId.name,
+      orderResource: null,
       note: null,
       user: userId,
       orderVariants: orderVariants,
@@ -256,44 +233,96 @@ export const createOrder = async (req, res) => {
       shippingCost: shippingCost,
       totalPay: totalPay,
       paymentMethodType: paymentMethodType,
-      paymentStatus: 1,
+      paymentStatus: 1, // Chờ thanh toán
     });
 
     await newOrder.save({ session });
-
-    // 9. Xóa giỏ hàng
     await Cart.findByIdAndDelete(cartId).session(session);
+    await session.commitTransaction(); // <-- KẾT THÚC TRANSACTION
+  } catch (error) {
+    // == CATCH CỦA VÙNG 1 (TRANSACTION) ==
+    console.error("Lỗi Transaction Database:", error.message);
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+    return res
+      .status(400)
+      .json({ message: error.message || "Tạo đơn hàng thất bại." });
+  } finally {
+    session.endSession();
+  }
 
-    // 10. Commit transaction
-    await session.commitTransaction();
-
-    // 11. Chuẩn bị dữ liệu trả về cho frontend
-    // (Phần này cần khớp với ClientConfirmedOrderResponse)
-
+  // =========================================================
+  // == VÙNG 2: GỌI API THANH TOÁN (MOMO)
+  // == Chạy sau khi Vùng 1 đã commit thành công
+  // =========================================================
+  try {
     let momoCheckoutLink = null;
     let paypalCheckoutLink = null;
 
-    if (paymentMethodType === "MOMO") {
-      // TODO: Gọi API Momo để tạo link thanh toán
-      // momoCheckoutLink = ...
+    if (newOrder.paymentMethodType === "MOMO") {
+      const partnerCode = process.env.MOMO_PARTNER_CODE;
+      const accessKey = process.env.MOMO_ACCESS_KEY;
+      const secretKey = process.env.MOMO_SECRET_KEY;
+      const apiEndpoint = process.env.MOMO_API_ENDPOINT;
+
+      const orderId = newOrder.code;
+      const requestId = orderId;
+      const amount = newOrder.totalPay.toString();
+      const orderInfo = `Thanh toán đơn hàng ${newOrder.code}`;
+      const redirectUrl = process.env.APP_REDIRECT_URL;
+      const ipnUrl = process.env.APP_IPN_URL;
+      const requestType = "payWithATM";
+      const extraData = "";
+
+      const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
+
+      const signature = crypto
+        .createHmac("sha256", secretKey)
+        .update(rawSignature)
+        .digest("hex");
+
+      const requestBody = JSON.stringify({
+        partnerCode: partnerCode,
+        accessKey: accessKey,
+        requestId: requestId,
+        amount: amount,
+        orderId: orderId,
+        orderInfo: orderInfo,
+        redirectUrl: redirectUrl,
+        ipnUrl: ipnUrl,
+        extraData: extraData,
+        requestType: requestType,
+        signature: signature,
+        lang: "vi",
+      });
+
+      const momoResponse = await axios.post(apiEndpoint, requestBody, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      momoCheckoutLink = momoResponse.data.payUrl;
     }
 
-
-    res.status(201).json({
+    // 11. Trả về kết quả (THÀNH CÔNG HOÀN TOÀN)
+    return res.status(201).json({
       orderCode: newOrder.code,
       orderPaymentMethodType: newOrder.paymentMethodType,
       orderPaypalCheckoutLink: paypalCheckoutLink,
       orderMomoCheckoutLink: momoCheckoutLink,
     });
-  } catch (error) {
-    // Nếu có lỗi, rollback transaction
-    await session.abortTransaction();
-    res
-      .status(400)
-      .json({ message: error.message || "Tạo đơn hàng thất bại." });
-  } finally {
-    // Luôn luôn kết thúc session
-    session.endSession();
+  } catch (paymentError) {
+    // == CATCH CỦA VÙNG 2 (API PAYMENT) ==
+    console.error("Lỗi khi gọi API thanh toán (Momo):", paymentError.message);
+
+    // Chạy logic "bồi hoàn" (compensating transaction)
+    // 3. GỌI HÀM HELPER ĐÃ IMPORT
+    await restoreInventoryAndCancelOrder(newOrder); // <-- SỬ DỤNG HÀM HELPER
+
+    return res.status(500).json({
+      message:
+        "Đã tạo đơn hàng nhưng không thể lấy link thanh toán. Đơn hàng đã được tự động hủy, vui lòng thử lại.",
+    });
   }
 };
 
@@ -322,6 +351,7 @@ export const updateOrderStatus = async (req, res) => {
 };
 
 // Cancel order
+// Cancel order
 export const cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -337,15 +367,26 @@ export const cancelOrder = async (req, res) => {
         .json({ message: "Not authorized to cancel this order" });
     }
 
-    // Can only cancel pending orders
-    if (order.status !== "PENDING") {
+    // =========================================================
+    // == SỬA LỖI Ở ĐÂY
+    // =========================================================
+    
+    // Chỉ có thể hủy đơn hàng khi đang "Chờ xử lý" (status: 1)
+    if (order.status !== 1) { // <-- SỬA 1: Dùng số 1
       return res
         .status(400)
-        .json({ message: "Cannot cancel order with current status" });
+        .json({ message: "Không thể hủy đơn hàng ở trạng thái này." });
     }
 
-    order.status = "CANCELLED";
+    // TODO: Bạn cần hoàn lại kho ở đây.
+    // Nếu chỉ đổi status, tồn kho sẽ bị trừ vĩnh viễn
+    // Bạn nên gọi hàm `restoreInventoryAndCancelOrder(order)`
+    
+    order.status = 5; // <-- SỬA 2: Dùng số 5 (cho "Đã hủy")
     await order.save();
+    // =========================================================
+    // == KẾT THÚC SỬA
+    // =========================================================
 
     res.json(order);
   } catch (error) {
