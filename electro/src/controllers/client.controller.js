@@ -1,18 +1,18 @@
-import Product from "../models/Product.js"
-import Category from "../models/Category.js"
-import User from "../models/User.js"
-import Cart from "../models/Cart.js"
-import Order from "../models/Order.js"
-import Review from "../models/Review.js"
-import Wishlist from "../models/Wishlist.js"
-import Preorder from "../models/Preorder.js"
-import Notification from "../models/Notification.js"
-import PaymentMethod from "../models/PaymentMethod.js"
-import Room from "../models/Room.js"
-import Reward from "../models/Reward.js"
+import Product from "../models/Product.js";
+import Category from "../models/Category.js";
+import User from "../models/User.js";
+import Cart from "../models/Cart.js";
+import Order from "../models/Order.js";
+import Review from "../models/Review.js";
+import Wishlist from "../models/Wishlist.js";
+import Preorder from "../models/Preorder.js";
+import Notification from "../models/Notification.js";
+import PaymentMethod from "../models/PaymentMethod.js";
+import Room from "../models/Room.js";
+import Reward from "../models/Reward.js";
 import Brand from "../models/Brand.js";
 import Variant from "../models/Variant.js";
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 // Categories
 export const getCategories = async (req, res, next) => {
   try {
@@ -20,8 +20,8 @@ export const getCategories = async (req, res, next) => {
     // Cung cấp giá trị mặc định phòng trường hợp frontend không gửi
     const page = parseInt(req.query.page) || 1;
     const size = parseInt(req.query.size) || 8; // Lấy 'size' từ query, mặc định là 8
-    const sort = req.query.sort || 'priority,asc'; // Lấy 'sort', mặc định là 'priority,asc'
-    const search = req.query.search || '';
+    const sort = req.query.sort || "priority,asc"; // Lấy 'sort', mặc định là 'priority,asc'
+    const search = req.query.search || "";
     // (Lưu ý: req.query.filter là 'status==1' nhưng chúng ta đang cứng code { status: 1 }
     // nên không cần đọc filter nữa)
 
@@ -30,14 +30,14 @@ export const getCategories = async (req, res, next) => {
     if (search) {
       // Nếu bạn muốn hỗ trợ tìm kiếm, hãy thêm logic ở đây
       // Ví dụ: tìm theo tên
-      query.name = { $regex: search, $options: 'i' };
+      query.name = { $regex: search, $options: "i" };
     }
 
     // 3. Xử lý 'sort'
     // Chuyển chuỗi "priority,asc" thành đối tượng { priority: 1 } cho Mongoose
     const sortObject = {};
-    const [sortKey, sortOrder] = sort.split(','); // ["priority", "asc"]
-    sortObject[sortKey] = sortOrder === 'asc' ? 1 : -1; // { priority: 1 }
+    const [sortKey, sortOrder] = sort.split(","); // ["priority", "asc"]
+    sortObject[sortKey] = sortOrder === "asc" ? 1 : -1; // { priority: 1 }
 
     // 4. Tính toán 'skip' để phân trang
     const skip = (page - 1) * size;
@@ -47,44 +47,47 @@ export const getCategories = async (req, res, next) => {
       .select("name slug description image parentCategory")
       .populate("parentCategory", "name slug")
       .sort(sortObject) // <-- SẮP XẾP theo yêu cầu
-      .skip(skip)         // <-- BỎ QUA các trang trước
-      .limit(size);      // <-- GIỚI HẠN số lượng (sẽ lấy 8)
+      .skip(skip) // <-- BỎ QUA các trang trước
+      .limit(size); // <-- GIỚI HẠN số lượng (sẽ lấy 8)
 
     res.json(categories); // Bây giờ sẽ trả về đúng 8 danh mục
 
     // Console log để kiểm tra
     console.log(`categories client: Fetched ${categories.length} categories.`);
-
   } catch (error) {
     next(error);
   }
-}
+};
 export const getCategoryBySlug = async (req, res, next) => {
   try {
-    const category = await Category.findOne({ slug: req.params.slug, status: 1 }).populate(
-      "parentCategory",
-      "name slug",
-    )
-    console.log('category by slug:', category);
+    const category = await Category.findOne({
+      slug: req.params.slug,
+      status: 1,
+    }).populate("parentCategory", "name slug");
+    console.log("category by slug:", category);
     if (!category) {
-      return res.status(404).json({ message: "Category not found" })
+      return res.status(404).json({ message: "Category not found" });
     }
-    res.json(category)
+    res.json(category);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Products
 export const getProducts = async (req, res, next) => {
   try {
     // 1. Sửa lại: Đọc 'saleable'
     const {
-      page = 1, size = 12, sort = "-createdAt",
+      page = 1,
+      size = 12,
+      sort = "-createdAt",
       category, // Đây là 'slug' (ví dụ: 'laptop')
-      brand,    // Đây là 'slug' (ví dụ: 'dell')
-      minPrice, maxPrice, search,
-      saleable
+      brand, // Đây là 'slug' (ví dụ: 'dell')
+      minPrice,
+      maxPrice,
+      search,
+      saleable,
     } = req.query;
 
     const query = { status: 1 };
@@ -94,13 +97,20 @@ export const getProducts = async (req, res, next) => {
     // 2. Lọc Category (bằng Slug)
     if (category) {
       // Tìm ID của category dựa trên slug
-      const categoryDoc = await Category.findOne({ slug: category }).select("_id");
+      const categoryDoc = await Category.findOne({ slug: category }).select(
+        "_id"
+      );
       if (categoryDoc) {
         // (Giả sử trường trong Product model là 'categoryId')
         query.categoryId = categoryDoc._id;
       } else {
         // Nếu slug không tồn tại, trả về mảng rỗng
-        return res.json({ content: [], totalElements: 0, totalPages: 1, size: 0 });
+        return res.json({
+          content: [],
+          totalElements: 0,
+          totalPages: 1,
+          size: 0,
+        });
       }
     }
 
@@ -144,18 +154,21 @@ export const getProducts = async (req, res, next) => {
 
     // 7. BIẾN ĐỔI DỮ LIỆU (Rất quan trọng)
     // (Đây là logic từ câu trước, để tính priceRange và variants)
-    const transformedProducts = products.map(product => {
-      const prices = (product.variants || []).map(v => v.price);
+    const transformedProducts = products.map((product) => {
+      const prices = (product.variants || []).map((v) => v.price);
       let priceRange = [0];
       if (prices.length > 0) {
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-        priceRange = (minPrice === maxPrice) ? [minPrice] : [minPrice, maxPrice];
+        priceRange = minPrice === maxPrice ? [minPrice] : [minPrice, maxPrice];
       }
-      const hasStock = (product.variants || []).some(v => (v.inventory || 0) > 0); // Giả sử variant có 'inventory'
+      const hasStock = (product.variants || []).some(
+        (v) => (v.inventory || 0) > 0
+      ); // Giả sử variant có 'inventory'
       const isSaleable = product.status === 1 && hasStock;
-      const thumbnail = (product.images || []).find(img => img.isThumbnail)?.path || null;
-      const clientVariants = (product.variants || []).map(v => ({
+      const thumbnail =
+        (product.images || []).find((img) => img.isThumbnail)?.path || null;
+      const clientVariants = (product.variants || []).map((v) => ({
         variantId: v._id,
       }));
 
@@ -170,7 +183,7 @@ export const getProducts = async (req, res, next) => {
         productPromotion: null, // (Tự thêm logic khuyến mãi)
       };
     });
-    console.log('Transformed Products:', transformedProducts);
+    console.log("Transformed Products:", transformedProducts);
 
     res.json({
       content: transformedProducts, // <-- Gửi dữ liệu đã biến đổi
@@ -181,7 +194,7 @@ export const getProducts = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 // Helper function to transform Map to CollectionWrapper (from previous examples)
 const transformMapToCollection_Response = (mapData) => {
@@ -200,10 +213,13 @@ const transformMapToCollection_Response = (mapData) => {
 // ============================================
 export const getProductBySlug = async (req, res, next) => {
   try {
-    const productFromDB = await Product.findOne({ slug: req.params.slug, status: 1 })
+    const productFromDB = await Product.findOne({
+      slug: req.params.slug,
+      status: 1,
+    })
       .populate("categoryId", "name slug") // Populate only needed fields
-      .populate("brandId", "name slug")   // Populate only needed fields
-      .populate("variants")              // Populate full variants (needed for details)
+      .populate("brandId", "name slug") // Populate only needed fields
+      .populate("variants") // Populate full variants (needed for details)
       // .populate("specifications") // Specifications are likely stored directly as Map, no need to populate
       .lean(); // <-- (1) Add .lean() for performance and easier object handling
 
@@ -214,23 +230,26 @@ export const getProductBySlug = async (req, res, next) => {
     // (2) TRANSFORM THE DATA before sending
 
     // Calculate priceRange (similar to getProducts)
-    const prices = (productFromDB.variants || []).map(v => v.price);
+    const prices = (productFromDB.variants || []).map((v) => v.price);
     let priceRange = [0];
     if (prices.length > 0) {
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
-      priceRange = (minPrice === maxPrice) ? [minPrice] : [minPrice, maxPrice];
+      priceRange = minPrice === maxPrice ? [minPrice] : [minPrice, maxPrice];
     }
 
     // Calculate saleable (similar to getProducts)
-    const hasStock = (productFromDB.variants || []).some(v => (v.inventory || 0) > 0); // Check 'inventory' field
+    const hasStock = (productFromDB.variants || []).some(
+      (v) => (v.inventory || 0) > 0
+    ); // Check 'inventory' field
     const isSaleable = productFromDB.status === 1 && hasStock;
 
     // Get thumbnail (similar to getProducts)
-    const thumbnail = (productFromDB.images || []).find(img => img.isThumbnail)?.path || null;
+    const thumbnail =
+      (productFromDB.images || []).find((img) => img.isThumbnail)?.path || null;
 
     // Transform variants for CLIENT (EXCLUDE COST)
-    const clientVariants = (productFromDB.variants || []).map(v => ({
+    const clientVariants = (productFromDB.variants || []).map((v) => ({
       variantId: v._id,
       sku: v.sku, // Client might need SKU for display
       price: v.price, // Send price
@@ -242,8 +261,12 @@ export const getProductBySlug = async (req, res, next) => {
     }));
 
     // (Optional) Transform specifications and properties if needed by frontend
-    const clientSpecifications = transformMapToCollection_Response(productFromDB.specifications);
-    const clientProperties = transformMapToCollection_Response(productFromDB.properties);
+    const clientSpecifications = transformMapToCollection_Response(
+      productFromDB.specifications
+    );
+    const clientProperties = transformMapToCollection_Response(
+      productFromDB.properties
+    );
 
     // Create the final client-safe product object
     const clientProduct = {
@@ -252,19 +275,26 @@ export const getProductBySlug = async (req, res, next) => {
       slug: productFromDB.slug,
       shortDescription: productFromDB.shortDescription,
       description: productFromDB.description, // Include full description
-      images: productFromDB.images || [],       // Include all images
+      images: productFromDB.images || [], // Include all images
       status: productFromDB.status,
 
       // Include category/brand info if needed
-      category: productFromDB.categoryId ? { name: productFromDB.categoryId.name, slug: productFromDB.categoryId.slug } : null,
-      brand: productFromDB.brandId ? { name: productFromDB.brandId.name, slug: productFromDB.brandId.slug } : null,
+      category: productFromDB.categoryId
+        ? {
+            name: productFromDB.categoryId.name,
+            slug: productFromDB.categoryId.slug,
+          }
+        : null,
+      brand: productFromDB.brandId
+        ? { name: productFromDB.brandId.name, slug: productFromDB.brandId.slug }
+        : null,
 
       tags: productFromDB.tags || [], // You might want to populate tags with name/slug too
 
       specifications: clientSpecifications, // Include transformed specifications
-      properties: clientProperties,         // Include transformed properties
+      properties: clientProperties, // Include transformed properties
 
-      variants: clientVariants,             // Include DETAILED, client-safe variants
+      variants: clientVariants, // Include DETAILED, client-safe variants
       weight: productFromDB.weight,
 
       // Add calculated fields
@@ -281,125 +311,132 @@ export const getProductBySlug = async (req, res, next) => {
 
     // (4) Send the TRANSFORMED data
     res.json(clientProduct);
-
   } catch (error) {
     next(error);
   }
-}
+};
 
 // Filters
 export const getFiltersByCategory = async (req, res, next) => {
   try {
-    const { slug } = req.query
-    const category = await Category.findOne({ slug })
+    const { slug } = req.query;
+    const category = await Category.findOne({ slug });
 
     if (!category) {
-      return res.status(404).json({ message: "Category not found" })
+      return res.status(404).json({ message: "Category not found" });
     }
 
-    const brands = await Product.distinct("brand", { category: category._id })
+    const brands = await Product.distinct("brand", { category: category._id });
     const priceRange = await Product.aggregate([
       { $match: { category: category._id } },
-      { $group: { _id: null, min: { $min: "$price" }, max: { $max: "$price" } } },
-    ])
+      {
+        $group: { _id: null, min: { $min: "$price" }, max: { $max: "$price" } },
+      },
+    ]);
 
     res.json({
       brands,
       priceRange: priceRange[0] || { min: 0, max: 0 },
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const getFiltersBySearch = async (req, res, next) => {
   try {
-    const { search } = req.query
-    const query = search ? { $text: { $search: search } } : {}
+    const { search } = req.query;
+    const query = search ? { $text: { $search: search } } : {};
 
-    const brands = await Product.distinct("brand", query)
-    const categories = await Product.distinct("category", query)
+    const brands = await Product.distinct("brand", query);
+    const categories = await Product.distinct("category", query);
 
-    res.json({ brands, categories })
+    res.json({ brands, categories });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // User Info & Settings
 export const getUserInfo = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select("-password") // <-- Đường dẫn là 'address'
-      .populate('address.provinceId', 'name code')
-      .populate('address.districtId', 'name code')
-      .populate('address.wardId', 'name code')
-      .populate('roles');
-    res.json(user)
+    const user = await User.findById(req.user.id)
+      .select("-password") // <-- Đường dẫn là 'address'
+      .populate("address.provinceId", "name code")
+      .populate("address.districtId", "name code")
+      .populate("address.wardId", "name code")
+      .populate("roles");
+    res.json(user);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updatePersonalInfo = async (req, res, next) => {
   try {
-    const { fullName, gender, dateOfBirth, avatar } = req.body
+    const { fullName, gender, dateOfBirth, avatar } = req.body;
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { fullName, gender, dateOfBirth, avatar },
-      { new: true, runValidators: true },
-    ).select("-password")
-    res.json(user)
+      { new: true, runValidators: true }
+    ).select("-password");
+    res.json(user);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updatePhone = async (req, res, next) => {
   try {
-    const { phone } = req.body
-    const user = await User.findByIdAndUpdate(req.user.id, { phone }, { new: true, runValidators: true }).select(
-      "-password",
-    )
-    res.json(user)
+    const { phone } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { phone },
+      { new: true, runValidators: true }
+    ).select("-password");
+    res.json(user);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updateEmail = async (req, res, next) => {
   try {
-    const { email } = req.body
-    const user = await User.findByIdAndUpdate(req.user.id, { email }, { new: true, runValidators: true }).select(
-      "-password",
-    )
-    res.json(user)
+    const { email } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { email },
+      { new: true, runValidators: true }
+    ).select("-password");
+    res.json(user);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updatePassword = async (req, res, next) => {
   try {
-    const { currentPassword, newPassword } = req.body
-    const user = await User.findById(req.user.id)
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
 
-    const isMatch = await user.comparePassword(currentPassword)
+    const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) {
-      return res.status(400).json({ message: "Current password is incorrect" })
+      return res.status(400).json({ message: "Current password is incorrect" });
     }
 
-    user.password = newPassword
-    await user.save()
+    user.password = newPassword;
+    await user.save();
 
-    res.json({ message: "Password updated successfully" })
+    res.json({ message: "Password updated successfully" });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 export const getProductById = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id)
-      .populate("categoryId brandId variants specifications");
+    const product = await Product.findById(req.params.id).populate(
+      "categoryId brandId variants specifications"
+    );
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -415,194 +452,206 @@ export const getProductById = async (req, res, next) => {
   }
 };
 
-
 // Wishlist
 export const getWishlist = async (req, res, next) => {
   try {
-    const { page = 1, size = 10 } = req.query
+    const { page = 1, size = 10 } = req.query;
     const wishlist = await Wishlist.find({ user: req.user.id })
       .populate("product")
       .limit(size * 1)
-      .skip((page - 1) * size)
+      .skip((page - 1) * size);
 
-    const total = await Wishlist.countDocuments({ user: req.user.id })
+    const total = await Wishlist.countDocuments({ user: req.user.id });
 
     res.json({
       content: wishlist,
       totalElements: total,
       totalPages: Math.ceil(total / size),
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const addToWishlist = async (req, res, next) => {
   try {
-    const { productId } = req.body
-    const existing = await Wishlist.findOne({ user: req.user.id, product: productId })
+    const { productId } = req.body;
+    const existing = await Wishlist.findOne({
+      user: req.user.id,
+      product: productId,
+    });
 
     if (existing) {
-      return res.status(400).json({ message: "Product already in wishlist" })
+      return res.status(400).json({ message: "Product already in wishlist" });
     }
 
-    const wishlist = new Wishlist({ user: req.user.id, product: productId })
-    await wishlist.save()
-    res.status(201).json(wishlist)
+    const wishlist = new Wishlist({ user: req.user.id, product: productId });
+    await wishlist.save();
+    res.status(201).json(wishlist);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const removeFromWishlist = async (req, res, next) => {
   try {
-    const { ids } = req.body
-    await Wishlist.deleteMany({ _id: { $in: ids }, user: req.user.id })
-    res.json({ message: "Removed from wishlist" })
+    const { ids } = req.body;
+    await Wishlist.deleteMany({ _id: { $in: ids }, user: req.user.id });
+    res.json({ message: "Removed from wishlist" });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Preorders
 export const getPreorders = async (req, res, next) => {
   try {
-    const { page = 1, size = 10 } = req.query
+    const { page = 1, size = 10 } = req.query;
     const preorders = await Preorder.find({ user: req.user.id })
       .populate("product")
       .limit(size * 1)
-      .skip((page - 1) * size)
+      .skip((page - 1) * size);
 
-    const total = await Preorder.countDocuments({ user: req.user.id })
+    const total = await Preorder.countDocuments({ user: req.user.id });
 
     res.json({
       content: preorders,
       totalElements: total,
       totalPages: Math.ceil(total / size),
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const createPreorder = async (req, res, next) => {
   try {
-    const preorder = new Preorder({ ...req.body, user: req.user.id })
-    await preorder.save()
-    res.status(201).json(preorder)
+    const preorder = new Preorder({ ...req.body, user: req.user.id });
+    await preorder.save();
+    res.status(201).json(preorder);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const updatePreorder = async (req, res, next) => {
   try {
-    const { id, ...updateData } = req.body
-    const preorder = await Preorder.findOneAndUpdate({ _id: id, user: req.user.id }, updateData, { new: true })
-    res.json(preorder)
+    const { id, ...updateData } = req.body;
+    const preorder = await Preorder.findOneAndUpdate(
+      { _id: id, user: req.user.id },
+      updateData,
+      { new: true }
+    );
+    res.json(preorder);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const deletePreorders = async (req, res, next) => {
   try {
-    const { ids } = req.body
-    await Preorder.deleteMany({ _id: { $in: ids }, user: req.user.id })
-    res.json({ message: "Preorders deleted" })
+    const { ids } = req.body;
+    await Preorder.deleteMany({ _id: { $in: ids }, user: req.user.id });
+    res.json({ message: "Preorders deleted" });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Reviews
 export const getUserReviews = async (req, res, next) => {
   try {
-    const { page = 1, size = 10 } = req.query
+    const { page = 1, size = 10 } = req.query;
     const reviews = await Review.find({ user: req.user.id })
       .populate("product")
       .limit(size * 1)
-      .skip((page - 1) * size)
+      .skip((page - 1) * size);
 
-    const total = await Review.countDocuments({ user: req.user.id })
+    const total = await Review.countDocuments({ user: req.user.id });
 
     res.json({
       content: reviews,
       totalElements: total,
       totalPages: Math.ceil(total / size),
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const getProductReviews = async (req, res, next) => {
   try {
-    const { page = 1, size = 10 } = req.query
-    const product = await Product.findOne({ slug: req.params.slug })
+    const { page = 1, size = 10 } = req.query;
+    const product = await Product.findOne({ slug: req.params.slug });
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found" })
+      return res.status(404).json({ message: "Product not found" });
     }
 
-    const reviews = await Review.find({ product: product._id, status: "APPROVED" })
+    const reviews = await Review.find({
+      product: product._id,
+      status: "APPROVED",
+    })
       .populate("user", "fullName avatar")
       .limit(size * 1)
       .skip((page - 1) * size)
-      .sort("-createdAt")
+      .sort("-createdAt");
 
-    const total = await Review.countDocuments({ product: product._id, status: "APPROVED" })
+    const total = await Review.countDocuments({
+      product: product._id,
+      status: "APPROVED",
+    });
 
     res.json({
       content: reviews,
       totalElements: total,
       totalPages: Math.ceil(total / size),
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const createReview = async (req, res, next) => {
   try {
-    const review = new Review({ ...req.body, user: req.user.id })
-    await review.save()
-    res.status(201).json(review)
+    const review = new Review({ ...req.body, user: req.user.id });
+    await review.save();
+    res.status(201).json(review);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const deleteReviews = async (req, res, next) => {
   try {
-    const { ids } = req.body
-    await Review.deleteMany({ _id: { $in: ids }, user: req.user.id })
-    res.json({ message: "Reviews deleted" })
+    const { ids } = req.body;
+    await Review.deleteMany({ _id: { $in: ids }, user: req.user.id });
+    res.json({ message: "Reviews deleted" });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Notifications
 export const getNotifications = async (req, res, next) => {
   try {
-    const { page = 1, size = 10 } = req.query
+    const { page = 1, size = 10 } = req.query;
     const notifications = await Notification.find({ user: req.user.id })
       .sort("-createdAt")
       .limit(size * 1)
-      .skip((page - 1) * size)
+      .skip((page - 1) * size);
 
-    const total = await Notification.countDocuments({ user: req.user.id })
+    const total = await Notification.countDocuments({ user: req.user.id });
 
     res.json({
       content: notifications,
       totalElements: total,
       totalPages: Math.ceil(total / size),
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const initNotificationEvents = async (req, res, next) => {
   try {
@@ -616,78 +665,136 @@ export const initNotificationEvents = async (req, res, next) => {
 
 export const updateNotification = async (req, res, next) => {
   try {
-    const notification = await Notification.findOneAndUpdate({ _id: req.params.id, user: req.user.id }, req.body, {
-      new: true,
-    })
-    res.json(notification)
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.json(notification);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Cart
 export const getCart = async (req, res, next) => {
   try {
-    const cart = await Cart.findOne({ user: req.user.id }).populate("items.product items.variant")
-    res.json(cart || { items: [] })
+    const cart = await Cart.findOne({ user: req.user.id }).populate(
+      "items.product items.variant"
+    );
+    res.json(cart || { items: [] });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const saveCart = async (req, res, next) => {
   try {
-    let cart = await Cart.findOne({ user: req.user.id })
+    let cart = await Cart.findOne({ user: req.user.id });
 
     if (cart) {
-      cart.items = req.body.items
-      await cart.save()
+      cart.items = req.body.items;
+      await cart.save();
     } else {
-      cart = new Cart({ user: req.user.id, items: req.body.items })
-      await cart.save()
+      cart = new Cart({ user: req.user.id, items: req.body.items });
+      await cart.save();
     }
 
-    res.json(cart)
+    res.json(cart);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const removeFromCart = async (req, res, next) => {
   try {
-    const { itemIds } = req.body
-    const cart = await Cart.findOne({ user: req.user.id })
+    const { itemIds } = req.body;
+    const cart = await Cart.findOne({ user: req.user.id });
 
     if (cart) {
-      cart.items = cart.items.filter((item) => !itemIds.includes(item._id.toString()))
-      await cart.save()
+      cart.items = cart.items.filter(
+        (item) => !itemIds.includes(item._id.toString())
+      );
+      await cart.save();
     }
 
-    res.json(cart)
+    res.json(cart);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Orders
+// Thay thế hàm getOrders cũ
 export const getOrders = async (req, res, next) => {
   try {
-    const { page = 1, size = 10, status } = req.query;
+    const { page = 1, size = 10, status } = req.query; // Thêm lại 2 dòng này để phân trang
+
+    const skip = (page - 1) * size;
+    const limit = Number.parseInt(size);
+
     const query = { user: req.user.id };
-    if (status) query.status = status;
+    if (status) query.status = status; // 1. POPULATE LỒNG NHAU + .lean()
 
     const orders = await Order.find(query)
       .sort("-createdAt")
-      .limit(size * 1)
-      .skip((page - 1) * size)
-      // SỬA DÒNG NÀY:
-      .populate("orderVariants.variant"); // <-- Đổi từ "items.product"
+      .skip(skip) // Dùng skip
+      .limit(limit) // Dùng limit
+      .populate({
+        path: "orderVariants.variant", // Populate 'variant'
+        model: "Variant",
+        populate: {
+          path: "product", // *Bên trong* 'variant', populate tiếp 'product'
+          model: "Product",
+          select: "name slug images", // Chỉ lấy các trường cần thiết
+        },
+      })
+      .lean(); // <-- Dùng .lean() để biến đổi dữ liệu
 
-    const total = await Order.countDocuments(query);
-    console.log('Fetched Orders:', orders);
+    const total = await Order.countDocuments(query); // 2. BIẾN ĐỔI (TRANSFORM) DỮ LIỆU
+
+    const transformedOrders = orders.map((order) => {
+      const transformedVariants = order.orderVariants.map((item) => {
+        // Xử lý nếu variant/product đã bị xóa
+        if (!item.variant || !item.variant.product) {
+          return {
+            ...item,
+            variant: {
+              name: "Sản phẩm không tồn tại",
+              slug: "#",
+              thumbnail: null,
+            },
+          };
+        }
+
+        const product = item.variant.product;
+        const thumbnail =
+          product.images.find((img) => img.isThumbnail)?.path || null; // Tạo object 'variant' phẳng mà frontend mong đợi
+
+        const newVariant = {
+          _id: item.variant._id,
+          name: product.name,
+          slug: product.slug,
+          thumbnail: thumbnail,
+          properties: item.variant.properties, // Giữ lại size/color...
+        };
+
+        return {
+          ...item, // Giữ lại _id, price, quantity
+          variant: newVariant, // Ghi đè 'variant' cũ
+        };
+      });
+
+      return {
+        ...order,
+        orderVariants: transformedVariants, // Ghi đè 'orderVariants' cũ
+      };
+    }); // console.log('Fetched Orders:', transformedOrders); // Log dữ liệu đã biến đổi // 3. TRẢ VỀ DỮ LIỆU ĐÃ BIẾN ĐỔI
 
     res.json({
-      content: orders,
+      content: transformedOrders, // <-- Gửi đi dữ liệu mới
       totalElements: total,
       totalPages: Math.ceil(total / size),
     });
@@ -696,109 +803,156 @@ export const getOrders = async (req, res, next) => {
   }
 };
 
+// Thay thế hàm getOrderByCode cũ
 export const getOrderByCode = async (req, res, next) => {
   try {
-    const order = await Order.findOne({ code: req.params.code, user: req.user.id })
-      .populate('user', 'fullname email phone') // Populate thông tin người dùng
-      .populate('orderVariants.variant') // <-- Sửa 1: Đây là đường dẫn đúng
-      //.populate('paymentMethod'); // <-- Giữ nguyên
-    // .populate('waybill'); // TODO: Bạn cũng cần populate vận đơn (waybill)
-    // nếu frontend cần (tên trường tùy theo schema)
-    console.log('Fetched Order:', order);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" })
-    }
+    // 1. POPULATE LỒNG NHAU + .lean()
+    const order = await Order.findOne({
+      code: req.params.code,
+      user: req.user.id,
+    })
+      .populate("user", "fullname email phone")
+      .populate({
+        path: "orderVariants.variant", // Populate 'variant'
+        model: "Variant",
+        populate: {
+          path: "product", // *Bên trong* 'variant', populate tiếp 'product'
+          model: "Product",
+          select: "name slug images",
+        },
+      })
+      .lean(); // <-- Dùng .lean()
 
-    res.json(order)
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    } // 2. BIẾN ĐỔI (TRANSFORM) DỮ LIỆU
+
+    const transformedVariants = order.orderVariants.map((item) => {
+      if (!item.variant || !item.variant.product) {
+        return {
+          ...item,
+          variant: {
+            name: "Sản phẩm không tồn tại",
+            slug: "#",
+            thumbnail: null,
+          },
+        };
+      }
+
+      const product = item.variant.product;
+      const thumbnail =
+        product.images.find((img) => img.isThumbnail)?.path || null;
+
+      const newVariant = {
+        _id: item.variant._id,
+        name: product.name,
+        slug: product.slug,
+        thumbnail: thumbnail,
+        properties: item.variant.properties,
+      };
+
+      return {
+        ...item,
+        variant: newVariant,
+      };
+    });
+
+    const transformedOrder = { ...order, orderVariants: transformedVariants }; // console.log('Fetched Order:', transformedOrder); // 3. TRẢ VỀ DỮ LIỆU ĐÃ BIẾN ĐỔI
+
+    res.json(transformedOrder);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
 export const createOrder = async (req, res, next) => {
   try {
-    const orderCode = "ORD" + Date.now()
+    const orderCode = "ORD" + Date.now();
     const order = new Order({
       ...req.body,
       user: req.user.id,
       code: orderCode,
       status: "PENDING",
-    })
-    await order.save()
+    });
+    await order.save();
 
     // Clear cart after order
-    await Cart.findOneAndUpdate({ user: req.user.id }, { items: [] })
+    await Cart.findOneAndUpdate({ user: req.user.id }, { items: [] });
 
-    res.status(201).json(order)
+    res.status(201).json(order);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const cancelOrder = async (req, res, next) => {
   try {
-    const order = await Order.findOne({ code: req.params.code, user: req.user.id })
+    const order = await Order.findOne({
+      code: req.params.code,
+      user: req.user.id,
+    });
 
     if (!order) {
-      return res.status(404).json({ message: "Order not found" })
+      return res.status(404).json({ message: "Order not found" });
     }
 
     if (order.status !== "PENDING") {
-      return res.status(400).json({ message: "Cannot cancel this order" })
+      return res.status(400).json({ message: "Cannot cancel this order" });
     }
 
-    order.status = "CANCELLED"
-    await order.save()
+    order.status = "CANCELLED";
+    await order.save();
 
-    res.json(order)
+    res.json(order);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Payment Methods
 export const getPaymentMethods = async (req, res, next) => {
   try {
-    const paymentMethods = await PaymentMethod.find({ status: 1 })
-    res.json(paymentMethods)
+    const paymentMethods = await PaymentMethod.find({ status: 1 });
+    res.json(paymentMethods);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Chat
 export const getChatRoom = async (req, res, next) => {
   try {
-    const room = await Room.findOne({ user: req.user.id })
-    res.json(room)
+    const room = await Room.findOne({ user: req.user.id });
+    res.json(room);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const createChatRoom = async (req, res, next) => {
   try {
-    let room = await Room.findOne({ user: req.user.id })
+    let room = await Room.findOne({ user: req.user.id });
 
     if (!room) {
-      room = new Room({ user: req.user.id, name: `Room ${req.user.id}` })
-      await room.save()
+      room = new Room({ user: req.user.id, name: `Room ${req.user.id}` });
+      await room.save();
     }
 
-    res.json(room)
+    res.json(room);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 // Rewards
 export const getRewards = async (req, res, next) => {
   try {
-    const rewards = await Reward.find({ user: req.user.id })
-    res.json(rewards)
+    const rewards = await Reward.find({ user: req.user.id });
+    res.json(rewards);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export default {
   getCategories,
@@ -837,5 +991,5 @@ export default {
   getChatRoom,
   createChatRoom,
   getRewards,
-  getProductById
-}
+  getProductById,
+};

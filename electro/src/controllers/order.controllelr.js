@@ -3,8 +3,8 @@ import User from "../models/User.js";
 import Order from "../models/Order.js";
 import Cart from "../models/Cart.js";
 import Variant from "../models/Variant.js";
-import axios from "axios"
-import crypto from "crypto"
+import axios from "axios";
+import crypto from "crypto";
 import { restoreInventoryAndCancelOrder } from "../helpers/order.helper.js";
 
 // Get all orders (Admin)
@@ -27,20 +27,55 @@ export const getAllOrders = async (req, res) => {
     }
 
     const skip = (page - 1) * size;
-    const limit = Number.parseInt(size);
+    const limit = Number.parseInt(size); // 1. POPULATE LỒNG NHAU + .lean()
 
     const orders = await Order.find(query)
-      .populate("user", "username email fullname phone")
-      .populate("orderVariants.variant")
+      .populate("user", "username email fullname phone") // SỬA ĐOẠN NÀY:
+      .populate({
+        path: "orderVariants.variant", // <--- Sửa 1: Tên trường đúng
+        model: "Variant",
+        populate: {
+          path: "product", // <--- Sửa 2: Populate lồng product
+          model: "Product",
+          select: "name slug images",
+        },
+      })
       .sort(sort)
       .skip(skip)
-      .limit(limit);
-    console.log('Fetched orders:', orders);
+      .limit(limit)
+      .lean(); // <--- Sửa 3: Thêm .lean() để transform
 
-    const total = await Order.countDocuments(query);
+    const total = await Order.countDocuments(query); // 2. BIẾN ĐỔI (TRANSFORM) DỮ LIỆU // (Logic y hệt hàm getMyOrders đã sửa)
+
+    const transformedOrders = orders.map((order) => {
+      const transformedVariants = order.orderVariants.map((item) => {
+        if (!item.variant || !item.variant.product) {
+          return {
+            ...item,
+            variant: {
+              name: "Sản phẩm không tồn tại",
+              slug: "#",
+              thumbnail: null,
+            },
+          };
+        }
+        const product = item.variant.product;
+        const thumbnail =
+          product.images.find((img) => img.isThumbnail)?.path || null;
+        const newVariant = {
+          _id: item.variant._id,
+          name: product.name,
+          slug: product.slug,
+          thumbnail: thumbnail,
+          properties: item.variant.properties,
+        };
+        return { ...item, variant: newVariant };
+      });
+      return { ...order, orderVariants: transformedVariants };
+    }); // 3. TRẢ VỀ DỮ LIỆU ĐÃ BIẾN ĐỔI
 
     res.json({
-      content: orders,
+      content: transformedOrders, // <-- SỬ DỤNG BIẾN MỚI
       totalElements: total,
       totalPages: Math.ceil(total / size),
       size: limit,
@@ -51,7 +86,7 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// Get my orders
+// Get my orders (SỬA LẠI CHO ĐÚNG)
 export const getMyOrders = async (req, res) => {
   try {
     const { page = 1, size = 10, status } = req.query;
@@ -62,61 +97,114 @@ export const getMyOrders = async (req, res) => {
     }
 
     const skip = (page - 1) * size;
-    const limit = Number.parseInt(size);
+    const limit = Number.parseInt(size); // 1. POPULATE LỒNG NHAU (Giống hệt getAllOrders)
 
     const orders = await Order.find(query)
-      // === SỬA Ở ĐÂY ===
-      // Xóa 2 dòng .populate() cũ
-      .populate("orderVariants.variant") // Thay bằng 1 dòng này
-      // ==================
+      .populate({
+        path: "orderVariants.variant", // <--- Sửa 1
+        model: "Variant",
+        populate: {
+          path: "product",
+          model: "Product",
+          select: "name slug images",
+        },
+      })
       .sort("-createdAt")
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean(); // <--- Sửa 2
 
-    const total = await Order.countDocuments(query);
+    const total = await Order.countDocuments(query); // 2. BIẾN ĐỔI DỮ LIỆU (Giống hệt getAllOrders)
+
+    const transformedOrders = orders.map((order) => {
+      const transformedVariants = (order.orderVariants || []).map((item) => {
+        if (!item.variant || !item.variant.product) {
+          return {
+            ...item,
+            variant: {
+              name: "Sản phẩm không tồn tại",
+              slug: "#",
+              thumbnail: null,
+            },
+          };
+        }
+        const product = item.variant.product;
+        const thumbnail =
+          product.images.find((img) => img.isThumbnail)?.path || null;
+        const newVariant = {
+          _id: item.variant._id,
+          name: product.name,
+          slug: product.slug,
+          thumbnail: thumbnail,
+          properties: item.variant.properties,
+        };
+        return { ...item, variant: newVariant };
+      });
+      return { ...order, orderVariants: transformedVariants };
+    }); // 3. TRẢ VỀ DỮ LIỆU ĐÃ BIẾN ĐỔI
 
     res.json({
-      content: orders,
+      content: transformedOrders, // <--- Sửa 3
       totalElements: total,
       totalPages: Math.ceil(total / size),
       size: limit,
       number: Number.parseInt(page) - 1,
     });
   } catch (error) {
-    // Thêm log lỗi để dễ debug nếu có lỗi khác
-    console.error("Lỗi getMyOrders:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Get order by ID
+// Get order by ID (Admin)
 export const getOrderById = async (req, res) => {
   try {
+    // 1. POPULATE (Đã đúng)
     const order = await Order.findById(req.params.id)
       .populate("user", "username email fullname phone")
-      // === SỬA Ở ĐÂY ===
-      .populate("orderVariants.variant"); // Thay 2 dòng cũ bằng 1 dòng này
-    console.log('Fetched order in getOrderById:', order);
+      .populate({
+        path: "orderVariants.variant",
+        model: "Variant",
+        populate: {
+          path: "product",
+          model: "Product",
+          select: "name slug images",
+        },
+      })
+      .lean();
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
-    }
+    } // 2. BIẾN ĐỔI (TRANSFORM) // SỬA Ở ĐÂY: Thêm (order.orderVariants || []) để chống crash
 
-    // Check if user owns this order or is admin
-    // Chú ý: req.user._id (từ token) có thể là string, 
-    // order.user._id (từ populate) là object.
-    // Nên check 'order.user' (trường user trong order) thay vì 'order.user._id'
-    if (
-      order.user._id.toString() !== req.user._id.toString() &&
-      req.user.role !== "ADMIN"
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to view this order" });
-    }
+    const transformedVariants = (order.orderVariants || []).map((item) => {
+      if (!item.variant || !item.variant.product) {
+        return {
+          ...item,
+          variant: {
+            name: "Sản phẩm không tồn tại",
+            slug: "#",
+            thumbnail: null,
+          },
+        };
+      }
+      const product = item.variant.product;
+      const thumbnail =
+        product.images.find((img) => img.isThumbnail)?.path || null;
+      const newVariant = {
+        _id: item.variant._id,
+        name: product.name,
+        slug: product.slug,
+        thumbnail: thumbnail,
+        properties: item.variant.properties,
+      };
+      return { ...item, variant: newVariant };
+    });
 
-    res.json(order);
+    const transformedOrder = { ...order, orderVariants: transformedVariants };
+
+    res.json(transformedOrder);
   } catch (error) {
-    console.error("Lỗi getOrderById:", error); // Thêm log
+    console.error("Lỗi getOrderById (Admin):", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -168,10 +256,15 @@ export const createOrder = async (req, res) => {
 
     const { address } = user;
     if (
-      !address || !address.line || !address.wardId ||
-      !address.districtId || !address.provinceId
+      !address ||
+      !address.line ||
+      !address.wardId ||
+      !address.districtId ||
+      !address.provinceId
     ) {
-      throw new Error("Vui lòng cập nhật địa chỉ giao hàng trước khi đặt hàng.");
+      throw new Error(
+        "Vui lòng cập nhật địa chỉ giao hàng trước khi đặt hàng."
+      );
     }
 
     let totalAmount = 0;
@@ -193,7 +286,10 @@ export const createOrder = async (req, res) => {
       }
 
       const promotionPercent = 0;
-      const finalPrice = calculateDiscountedPrice(variant.price, promotionPercent);
+      const finalPrice = calculateDiscountedPrice(
+        variant.price,
+        promotionPercent
+      );
       const amount = finalPrice * item.quantity;
       totalAmount += amount;
 
@@ -326,26 +422,35 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Update order status (Admin)
+// === THAY THẾ TOÀN BỘ HÀM NÀY ===
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    // SỬA 1: Lấy toàn bộ req.body, không chỉ { status }
+    // Form của bạn đang gửi lên status, paymentStatus, toName, ...
+    const updateData = req.body;
 
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { status },
+      updateData, // SỬA 2: Cập nhật toàn bộ data
       { new: true }
     )
-      .populate("user", "username email fullname phone")
-      .populate("orderItems.product")
-      .populate("orderItems.variant");
-
+      .populate("user", "username email fullname phone") // SỬA 3: Populate lại cho đúng
+      .populate({
+        path: "orderVariants.variant",
+        model: "Variant",
+        populate: {
+          path: "product",
+          model: "Product",
+          select: "name slug images",
+        },
+      }); // (Lưu ý: bạn cũng có thể .lean() và transform // giống hệt getOrderById nếu frontend cần)
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
     res.json(order);
   } catch (error) {
+    console.error("Lỗi updateOrderStatus (Admin):", error); // Thêm log
     res.status(400).json({ message: error.message });
   }
 };
@@ -370,9 +475,10 @@ export const cancelOrder = async (req, res) => {
     // =========================================================
     // == SỬA LỖI Ở ĐÂY
     // =========================================================
-    
+
     // Chỉ có thể hủy đơn hàng khi đang "Chờ xử lý" (status: 1)
-    if (order.status !== 1) { // <-- SỬA 1: Dùng số 1
+    if (order.status !== 1) {
+      // <-- SỬA 1: Dùng số 1
       return res
         .status(400)
         .json({ message: "Không thể hủy đơn hàng ở trạng thái này." });
@@ -381,7 +487,7 @@ export const cancelOrder = async (req, res) => {
     // TODO: Bạn cần hoàn lại kho ở đây.
     // Nếu chỉ đổi status, tồn kho sẽ bị trừ vĩnh viễn
     // Bạn nên gọi hàm `restoreInventoryAndCancelOrder(order)`
-    
+
     order.status = 5; // <-- SỬA 2: Dùng số 5 (cho "Đã hủy")
     await order.save();
     // =========================================================

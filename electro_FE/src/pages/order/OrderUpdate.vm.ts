@@ -7,19 +7,19 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 import { VariantResponse } from 'models/Variant';
-import useGetAllApi from 'hooks/use-get-all-api';
-import { OrderResourceResponse } from 'models/OrderResource';
-import OrderResourceConfigs from 'pages/order-resource/OrderResourceConfigs';
-import { OrderCancellationReasonResponse } from 'models/OrderCancellationReason';
-import OrderCancellationReasonConfigs from 'pages/order-cancellation-reason/OrderCancellationReasonConfigs';
+// import useGetAllApi from 'hooks/use-get-all-api'; // Bị comment/xóa vì không còn dùng
+// import { OrderResourceResponse } from 'models/OrderResource'; // XÓA
+// import OrderResourceConfigs from 'pages/order-resource/OrderResourceConfigs'; // XÓA
+// import { OrderCancellationReasonResponse } from 'models/OrderCancellationReason'; // XÓA
+// import OrderCancellationReasonConfigs from 'pages/order-cancellation-reason/OrderCancellationReasonConfigs'; // XÓA
 import { OrderVariantKeyRequest, OrderVariantRequest } from 'models/OrderVariant';
 import produce from 'immer';
 import useDeleteByIdsApi from 'hooks/use-delete-by-ids-api';
 import ResourceURL from 'constants/ResourceURL';
-import { PaymentMethodResponse } from 'models/PaymentMethod';
-import PaymentMethodConfigs from 'pages/payment-method/PaymentMethodConfigs';
+// import { PaymentMethodResponse } from 'models/PaymentMethod'; // XÓA
+// import PaymentMethodConfigs from 'pages/payment-method/PaymentMethodConfigs'; // XÓA
 
-function useOrderUpdateViewModel(id: number) {
+function useOrderUpdateViewModel(id: string | undefined) {
   const form = useForm({
     initialValues: OrderConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(OrderConfigs.createUpdateFormSchema),
@@ -28,11 +28,45 @@ function useOrderUpdateViewModel(id: number) {
   const [order, setOrder] = useState<OrderResponse>();
   const [prevFormValues, setPrevFormValues] = useState<typeof form.values>();
 
-  const [orderResourceSelectList, setOrderResourceSelectList] = useState<SelectOption[]>([]);
-  const [orderCancellationReasonSelectList, setOrderCancellationReasonSelectList] = useState<SelectOption[]>([]);
-  const [paymentMethodSelectList, setPaymentMethodSelectList] = useState<SelectOption[]>([]);
+  // XÓA 2 STATE NÀY
+  // const [orderResourceSelectList, setOrderResourceSelectList] = useState<SelectOption[]>([]);
+  // const [orderCancellationReasonSelectList, setOrderCancellationReasonSelectList] = useState<SelectOption[]>([]);
+
+  // SỬA LẠI PAYMENT METHOD: Dùng const, không gọi API
+  const paymentMethodSelectList: SelectOption[] = [
+    { value: 'MOMO', label: 'Ví Momo' },
+    { value: 'CASH', label: 'Tiền mặt (COD)' },
+    // Thêm các phương thức khác nếu có
+  ];
 
   const [variants, setVariants] = useState<VariantResponse[]>([]);
+
+  // SỬA: Thêm Guard Clause (if !id) để fix lỗi 'string | undefined'
+  if (!id) {
+    // Trả về một object rỗng (nhưng đúng shape) để component không bị crash
+    return {
+      order: undefined,
+      form,
+      handleFormSubmit: () => {
+      },
+      handleClickVariantResultItem: () => {
+      },
+      handleQuantityInput: () => {
+      },
+      handleDeleteVariantButton: () => {
+      },
+      handleShippingCostInput: () => {
+      },
+      resetForm: () => {
+      },
+      orderResourceSelectList: [], // Trả về mảng rỗng
+      orderCancellationReasonSelectList: [], // Trả về mảng rỗng
+      paymentMethodSelectList: [], // Trả về mảng rỗng
+      statusSelectList: [],
+      paymentStatusSelectList: [],
+      variants: [],
+    };
+  }
 
   const updateApi = useUpdateApi<OrderRequest, OrderResponse>(OrderConfigs.resourceUrl, OrderConfigs.resourceKey, id);
   useGetByIdApi<OrderResponse>(OrderConfigs.resourceUrl, OrderConfigs.resourceKey, id,
@@ -47,14 +81,15 @@ function useOrderUpdateViewModel(id: number) {
         toWardName: orderResponse.toWardName,
         toDistrictName: orderResponse.toDistrictName,
         toProvinceName: orderResponse.toProvinceName,
-        orderResourceId: String(orderResponse.orderResource.id),
+        // SỬA LỖI: Dùng _id và kiểm tra null
+        orderResourceId: orderResponse.orderResource ? String(orderResponse.orderResource._id) : '1', // Sửa .id -> ._id và fallback
         orderCancellationReasonId: orderResponse.orderCancellationReason
-          ? String(orderResponse.orderCancellationReason.id) : null,
+          ? String(orderResponse.orderCancellationReason._id) : null, // Sửa .id -> ._id
         note: orderResponse.note || '',
-        userId: String(orderResponse.user.id),
+        userId: String(orderResponse.user._id), // SỬA LỖI: .id -> ._id
         orderVariants: orderResponse.orderVariants
           .map(orderVariantResponse => ({
-            variantId: orderVariantResponse.variant.id,
+            variantId: orderVariantResponse.variant._id, // SỬA LỖI: .id -> ._id
             price: orderVariantResponse.price,
             quantity: orderVariantResponse.quantity,
             amount: orderVariantResponse.amount,
@@ -71,38 +106,14 @@ function useOrderUpdateViewModel(id: number) {
       setVariants(orderResponse.orderVariants.map(orderVariant => orderVariant.variant));
     }
   );
-  useGetAllApi<OrderResourceResponse>(OrderResourceConfigs.resourceUrl, OrderResourceConfigs.resourceKey,
-    { sort: 'id,asc', all: 1 },
-    (orderResourceListResponse) => {
-      const selectList: SelectOption[] = orderResourceListResponse.content.map((item) => ({
-        value: String(item.id),
-        label: item.name,
-      }));
-      setOrderResourceSelectList(selectList);
-    }
-  );
-  useGetAllApi<OrderCancellationReasonResponse>(OrderCancellationReasonConfigs.resourceUrl, OrderCancellationReasonConfigs.resourceKey,
-    { sort: 'id,asc', all: 1 },
-    (orderCancellationReasonListResponse) => {
-      const selectList: SelectOption[] = orderCancellationReasonListResponse.content.map((item) => ({
-        value: String(item.id),
-        label: item.name,
-      }));
-      setOrderCancellationReasonSelectList(selectList);
-    }
-  );
-  useGetAllApi<PaymentMethodResponse>(PaymentMethodConfigs.resourceUrl, PaymentMethodConfigs.resourceKey,
-    { sort: 'id,asc', all: 1 },
-    (paymentMethodListResponse) => {
-      const selectList: SelectOption[] = paymentMethodListResponse.content.map((item) => ({
-        value: item.code,
-        label: item.name,
-      }));
-      setPaymentMethodSelectList(selectList);
-    }
-  );
 
-  const deleteByIdsApi = useDeleteByIdsApi<OrderVariantKeyRequest>(
+  // XÓA TOÀN BỘ 3 KHỐI useGetAllApi
+  // useGetAllApi<OrderResourceResponse>(...) // XÓA
+  // useGetAllApi<OrderCancellationReasonResponse>(...) // XÓA
+  // useGetAllApi<PaymentMethodResponse>(...) // XÓA
+
+  // SỬA LỖI 9: Đổi generic type từ OrderVariantKeyRequest thành kiểu dữ liệu đúng (dùng string)
+  const deleteByIdsApi = useDeleteByIdsApi<{ orderId: string, variantId: string }>(
     ResourceURL.ORDER_VARIANT,
     'order-variants'
   );
@@ -119,10 +130,11 @@ function useOrderUpdateViewModel(id: number) {
         toWardName: formValues.toWardName,
         toDistrictName: formValues.toDistrictName,
         toProvinceName: formValues.toProvinceName,
-        orderResourceId: Number(formValues.orderResourceId),
-        orderCancellationReasonId: Number(formValues.orderCancellationReasonId) || null,
+        // SỬA: Xóa 2 dòng ...Id này
+        // orderResourceId: Number(formValues.orderResourceId), // XÓA
+        // orderCancellationReasonId: Number(formValues.orderCancellationReasonId) || null, // XÓA
         note: formValues.note || null,
-        userId: Number(formValues.userId),
+        userId: formValues.userId as string, // SỬA: Bỏ Number()
         orderVariants: formValues.orderVariants,
         totalAmount: formValues.totalAmount,
         tax: formValues.tax,
@@ -133,10 +145,11 @@ function useOrderUpdateViewModel(id: number) {
       };
       updateApi.mutate(requestBody);
 
-      const deletedOrderVariantKeyRequests: OrderVariantKeyRequest[] = prevFormValues.orderVariants
+      // SỬA LỖI 9: (Code này giờ đã khớp với generic type ở trên)
+      const deletedOrderVariantKeyRequests: { orderId: string, variantId: string }[] = prevFormValues.orderVariants
         .map(orderVariantRequest => orderVariantRequest.variantId)
         .filter(variantId => !formValues.orderVariants.map(item => item.variantId).includes(variantId))
-        .map(variantId => ({ orderId: id, variantId: variantId }));
+        .map(variantId => ({ orderId: id, variantId: variantId })); // id giờ đã là string
 
       if (deletedOrderVariantKeyRequests.length > 0) {
         deleteByIdsApi.mutate(deletedOrderVariantKeyRequests);
@@ -158,7 +171,7 @@ function useOrderUpdateViewModel(id: number) {
   const handleClickVariantResultItem = (variant: VariantResponse) => {
     setTimeout(() => {
       const orderVariantRequest: OrderVariantRequest = {
-        variantId: variant.id,
+        variantId: variant._id, // SỬA LỖI 10: .id -> ._id
         price: variant.price,
         quantity: 1,
         amount: variant.price,
@@ -246,9 +259,9 @@ function useOrderUpdateViewModel(id: number) {
     handleDeleteVariantButton,
     handleShippingCostInput,
     resetForm,
-    orderResourceSelectList,
-    orderCancellationReasonSelectList,
-    paymentMethodSelectList,
+    orderResourceSelectList: [], // SỬA: Trả về mảng rỗng
+    orderCancellationReasonSelectList: [], // SỬA: Trả về mảng rỗng
+    paymentMethodSelectList, // SỬA: Trả về const
     statusSelectList,
     paymentStatusSelectList,
     variants,

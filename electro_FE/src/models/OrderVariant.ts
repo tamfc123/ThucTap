@@ -25,13 +25,13 @@ interface ProductResponse extends BaseResponse {
 }
 
 export interface OrderVariantRequest {
-  variantId: number;
+  variantId: string;
   price: number;
   quantity: number;
   amount: number;
 }
 
 export interface OrderVariantKeyRequest {
-  orderId: number;
-  variantId: number;
+  orderId: string;
+  variantId: string;
 }

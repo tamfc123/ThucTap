@@ -68,14 +68,14 @@ function OrderManage() {
             </ActionIcon>
           </Group>
         </td>
-        <td>
+        {/* <td>
           <Group spacing="xs">
             <ColorSwatch color={entity.orderResource?.color || theme.colors.gray[5]}/>
             <Highlight highlight={searchToken} highlightColor="blue" size="sm">
               {entity.orderResource?.name || 'không '}
             </Highlight>
           </Group>
-        </td>
+        </td> */}
         <td>
           <Stack spacing={0}>
             <Highlight highlight={searchToken} highlightColor="blue" size="sm">

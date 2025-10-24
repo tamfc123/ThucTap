@@ -11,6 +11,6 @@ router.put("/:id/cancel", authenticate, authorize("ADMIN"),  orderController.can
 
 // authenticateed routes - Admin
 router.get("/", authenticate, authorize("ADMIN"), orderController.getAllOrders)
-router.put("/:id/status", authenticate, authorize("ADMIN"), orderController.updateOrderStatus)
+router.put("/:id", authenticate, authorize("ADMIN"), orderController.updateOrderStatus)
 
 export default router
