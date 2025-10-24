@@ -41,7 +41,7 @@ function CustomerResourceManage() {
 
   const showedPropertiesFragment = (entity: CustomerResourceResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.code}
@@ -55,18 +55,19 @@ function CustomerResourceManage() {
       <td>
         <Group spacing="xs">
           <ColorSwatch color={entity.color}/>
-          <Code>{entity.color.toLowerCase()}</Code>
+          <Code>{entity.color?.toLowerCase()}</Code>
         </Group>
       </td>
       <td>{customerResourceStatusBadgeFragment(entity.status)}</td>
     </>
   );
 
-  const entityDetailTableRowsFragment = (entity: CustomerResourceResponse) => (
-    <>
+  const entityDetailTableRowsFragment = (entity: CustomerResourceResponse) => {
+    console.log('entity in detail fragment', entity);
+    return (<>
       <tr>
         <td>{CustomerResourceConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{CustomerResourceConfigs.properties.createdAt.label}</td>
@@ -93,7 +94,7 @@ function CustomerResourceManage() {
         <td>
           <Group spacing="xs">
             <ColorSwatch color={entity.color}/>
-            <Code>{entity.color.toLowerCase()}</Code>
+            <Code>{entity.color?.toLowerCase()}</Code>
           </Group>
         </td>
       </tr>
@@ -101,8 +102,10 @@ function CustomerResourceManage() {
         <td>{CustomerResourceConfigs.properties.status.label}</td>
         <td>{customerResourceStatusBadgeFragment(entity.status)}</td>
       </tr>
-    </>
-  );
+    </>)
+  }
+    
+
 
   return (
     <Stack>

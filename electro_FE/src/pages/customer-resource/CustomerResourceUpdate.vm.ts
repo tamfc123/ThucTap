@@ -7,7 +7,7 @@ import useGetByIdApi from 'hooks/use-get-by-id-api';
 import MiscUtils from 'utils/MiscUtils';
 import { SelectOption } from 'types';
 
-function useCustomerResourceUpdateViewModel(id: number) {
+function useCustomerResourceUpdateViewModel(id: string) {
   const form = useForm({
     initialValues: CustomerResourceConfigs.initialCreateUpdateFormValues,
     schema: zodResolver(CustomerResourceConfigs.createUpdateFormSchema),
