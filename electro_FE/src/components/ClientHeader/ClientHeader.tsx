@@ -226,9 +226,6 @@ function ClientHeader() {
                     <Menu.Item icon={<Heart size={14}/>} component={Link} to="/user/wishlist">
                       Sản phẩm yêu thích
                     </Menu.Item>
-                    <Menu.Item icon={<Alarm size={14}/>} component={Link} to="/user/preorder">
-                      Đặt trước sản phẩm
-                    </Menu.Item>
                     <Menu.Item color="pink" icon={<Logout size={14}/>} onClick={handleSignoutMenu}>
                       Đăng xuất
                     </Menu.Item>

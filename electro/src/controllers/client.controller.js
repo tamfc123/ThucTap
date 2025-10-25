@@ -366,26 +366,69 @@ export const getUserInfo = async (req, res, next) => {
       .populate("address.districtId", "name code")
       .populate("address.wardId", "name code")
       .populate("roles");
+    console.log("Fetched User Info:", user);
     res.json(user);
   } catch (error) {
     next(error);
   }
 };
 
+// Ví dụ: controller/clientUserController.js
+// (Hãy đặt tên hàm cho đúng với route của bạn)
 export const updatePersonalInfo = async (req, res, next) => {
   try {
-    const { fullName, gender, dateOfBirth, avatar } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { fullName, gender, dateOfBirth, avatar },
-      { new: true, runValidators: true }
-    ).select("-password");
-    res.json(user);
+    // 1. Lấy dữ liệu từ frontend
+    // Bỏ qua 'username' vì ta không cho phép đổi
+    const { fullname, gender, address } = req.body;
+
+    // 2. Tìm user bằng ID đã xác thực (từ req.user.id)
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // 3. Cập nhật các trường chính
+    // (Dùng 'fullname' (chữ n thường) chứ không phải 'fullName')
+    if (fullname !== undefined) {
+      user.fullname = fullname;
+    }
+    if (gender !== undefined) {
+      user.gender = gender;
+    }
+
+    // 4. Cập nhật đối tượng address (rất quan trọng)
+    if (address) {
+      // Đảm bảo user.address là một object trước khi gán
+      if (!user.address) {
+        user.address = {};
+      }
+      
+      // Gán từng trường con của address
+      // (Dùng 'null' nếu frontend gửi 'null' để xóa)
+      user.address.line = address.line;
+      user.address.provinceId = address.provinceId;
+      user.address.districtId = address.districtId;
+      user.address.wardId = address.wardId;
+    }
+
+    // 5. Lưu lại, Mongoose sẽ chạy validators
+    await user.save();
+
+    // 6. Lấy lại user VÀ populate địa chỉ để gửi về client
+    // (Frontend cần dữ liệu populate để cập nhật store)
+    const populatedUser = await User.findById(req.user.id)
+      .populate('address.provinceId')
+      .populate('address.districtId')
+      .populate('address.wardId')
+      .select("-password"); // Luôn luôn giấu password
+
+    res.json(populatedUser);
+
   } catch (error) {
     next(error);
   }
 };
-
 export const updatePhone = async (req, res, next) => {
   try {
     const { phone } = req.body;

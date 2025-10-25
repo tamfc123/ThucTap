@@ -70,12 +70,12 @@ function ClientFooter() {
                 <Headset size={52} color={theme.colors[theme.primaryColor][6]} strokeWidth={1.25}/>
                 <Stack spacing={theme.spacing.xs / 4}>
                   <Text size="sm" color="dimmed">Tổng đài hỗ trợ</Text>
-                  <Text size="xl">(024) 3535 7272, (028) 35 111 222</Text>
+                  <Text size="xl">0708694694</Text>
                 </Stack>
               </Group>
               <Stack spacing={theme.spacing.xs / 2}>
                 <Text weight={500}>Địa chỉ liên hệ</Text>
-                <Text>Tòa nhà Bitexco, Quận 1, Thành phố Hồ Chí Minh</Text>
+                <Text>Số 299C, Tổ 13, Khu phố Tân Lập, Phường Long Nguyên, TP Hồ Chí Minh.</Text>
               </Stack>
               <Group spacing="sm">
                 <ActionIcon color="blue" size="xl" radius="xl" variant="light">

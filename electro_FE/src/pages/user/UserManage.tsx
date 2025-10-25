@@ -39,8 +39,10 @@ function UserManage() {
     return <Badge color="red" variant="outline" size="sm">Chưa kích hoạt</Badge>;
   };
 
-  const showedPropertiesFragment = (entity: UserResponse) => (
-    <>
+  const showedPropertiesFragment = (entity: UserResponse) => {
+    console.log('Rendering table row for user:', entity);
+    return (
+      <>
       <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
@@ -68,10 +70,14 @@ function UserManage() {
         </Stack>
       </td>
     </>
-  );
+    );
+  }
+  
 
-  const entityDetailTableRowsFragment = (entity: UserResponse) => (
-    <>
+  const entityDetailTableRowsFragment = (entity: UserResponse) => {
+    console.log('Rendering detail rows for user:', entity);
+    return (
+      <>
       <tr>
         <td>{UserConfigs.properties.id.label}</td>
         <td>{entity._id}</td>
@@ -143,7 +149,9 @@ function UserManage() {
         </td>
       </tr>
     </>
-  );
+    );
+  }
+
 
   return (
     <Stack>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, Code, ColorSwatch, Group, Highlight, Stack } from '@mantine/core';
+import { Badge, Code, ColorSwatch, Group, Highlight, Stack, Button } from '@mantine/core';
 import {
   FilterPanel,
   ManageHeader,
@@ -19,6 +19,8 @@ import useResetManagePageState from 'hooks/use-reset-manage-page-state';
 import useInitFilterPanelState from 'hooks/use-init-filter-panel-state';
 import useGetAllApi from 'hooks/use-get-all-api';
 import useAppStore from 'stores/use-app-store';
+import NotifyUtils from 'utils/NotifyUtils';
+import { Plus, Trash } from 'tabler-icons-react';
 
 function CustomerStatusManage() {
   useResetManagePageState();
@@ -41,7 +43,7 @@ function CustomerStatusManage() {
 
   const showedPropertiesFragment = (entity: CustomerStatusResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.code}
@@ -54,7 +56,7 @@ function CustomerStatusManage() {
       </td>
       <td>
         <Group spacing="xs">
-          <ColorSwatch color={entity.color}/>
+          <ColorSwatch color={entity.color} />
           <Code>{entity.color.toLowerCase()}</Code>
         </Group>
       </td>
@@ -66,7 +68,7 @@ function CustomerStatusManage() {
     <>
       <tr>
         <td>{CustomerStatusConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{CustomerStatusConfigs.properties.createdAt.label}</td>
@@ -92,7 +94,7 @@ function CustomerStatusManage() {
         <td>{CustomerStatusConfigs.properties.color.label}</td>
         <td>
           <Group spacing="xs">
-            <ColorSwatch color={entity.color}/>
+            <ColorSwatch color={entity.color} />
             <Code>{entity.color.toLowerCase()}</Code>
           </Group>
         </td>
@@ -103,6 +105,9 @@ function CustomerStatusManage() {
       </tr>
     </>
   );
+  const handleFeatureInProgress = () => {
+    NotifyUtils.simpleFailed('Tính năng này đang được phát triển');
+  };
 
   return (
     <Stack>
@@ -111,16 +116,20 @@ function CustomerStatusManage() {
           titleLinks={CustomerStatusConfigs.manageTitleLinks}
           title={CustomerStatusConfigs.manageTitle}
         />
-        <ManageHeaderButtons
-          listResponse={listResponse}
-          resourceUrl={CustomerStatusConfigs.resourceUrl}
-          resourceKey={CustomerStatusConfigs.resourceKey}
-        />
+        <Group spacing="xs">
+          <Button
+            onClick={handleFeatureInProgress}
+            variant="outline"
+            leftIcon={<Plus />}
+          >
+            Thêm mới
+          </Button>
+        </Group>
       </ManageHeader>
 
-      <SearchPanel/>
+      <SearchPanel />
 
-      <FilterPanel/>
+      <FilterPanel />
 
       <ManageMain
         listResponse={listResponse}
@@ -136,7 +145,7 @@ function CustomerStatusManage() {
         />
       </ManageMain>
 
-      <ManagePagination listResponse={listResponse}/>
+      <ManagePagination listResponse={listResponse} />
     </Stack>
   );
 }

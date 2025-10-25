@@ -310,13 +310,14 @@ export const getAllUsers = async (req, res) => {
         { fullname: { $regex: search, $options: "i" } },
       ]
     }
-    if (role) query.role = role
+    if (role) query.roles = role
     if (status) query.status = status
 
     const users = await User.find(query)
       .limit(size * 1)
       .skip((page - 1) * size)
       .sort({ createdAt: -1 })
+      .populate('roles') // <-- Lấy chi tiết 'roles' (chỉ lấy name và code)
       .lean()
 
     const total = await User.countDocuments(query)
@@ -341,7 +342,6 @@ export const getUserById = async (req, res) => {
       .populate('address.provinceId', 'name code') // Populate lồng nhau
       .populate('address.districtId', 'name code')
       .populate('address.wardId', 'name code');
-    console.log('User with populated roles and address:', user);
     if (!user) {
       return res.status(404).json({ message: "Không tìm thấy người dùng" })
     }
@@ -381,29 +381,55 @@ export const createUser = async (req, res) => {
 }
 
 // Admin: Update user
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
   try {
-    const { username, email, fullname, phone, role, status } = req.body
+    // 1. Lấy ĐÚNG và ĐỦ các trường từ body
+    const { fullname, email, phone, gender, address, avatar, status, roles } = req.body;
 
-    const user = await User.findById(req.params.id)
+    // 2. Tìm user
+    const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "Không tìm thấy người dùng" })
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
     }
 
-    if (username) user.username = username
-    if (email) user.email = email
-    if (fullname) user.fullname = fullname
-    if (phone) user.phone = phone
-    if (role) user.role = role
-    if (status) user.status = status
+    // 3. Cập nhật an toàn (kiểm tra 'undefined')
+    // KHÔNG BAO GIỜ cập nhật username
+    if (fullname !== undefined) user.fullname = fullname;
+    if (email !== undefined) user.email = email;
+    if (phone !== undefined) user.phone = phone;
+    if (gender !== undefined) user.gender = gender;
+    if (avatar !== undefined) user.avatar = avatar;
+    if (status !== undefined) user.status = status;
+    if (roles !== undefined) user.roles = roles.map(role => role.id);
 
-    await user.save()
+    // 4. Cập nhật địa chỉ
+    if (address !== undefined) {
+      if (!user.address) user.address = {}; // Khởi tạo nếu chưa có
+      user.address.line = address.line;
+      user.address.provinceId = address.provinceId;
+      user.address.districtId = address.districtId;
+      user.address.wardId = address.wardId;
+    }
 
-    res.json({ message: "Cập nhật người dùng thành công", user })
+    // 5. Lưu và trả về
+    await user.save();
+
+    // Lấy lại user đã populate đầy đủ để trả về (tùy chọn nhưng nên làm)
+    const populatedUser = await User.findById(user._id)
+      .populate('address.provinceId')
+      .populate('address.districtId')
+      .populate('address.wardId')
+      .populate('roles'); // Giả sử model User của bạn có populate 'roles'
+
+    res.json({ message: "Cập nhật người dùng thành công", user: populatedUser });
+
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error: error.message })
+    // Thêm 'next(error)' để middleware xử lý lỗi chung (nếu có)
+    next(error); 
+    // Hoặc giữ lại res.status(500)
+    // res.status(500).json({ message: "Lỗi server", error: error.message });
   }
-}
+};
 
 // Admin: Delete user
 export const deleteUser = async (req, res) => {

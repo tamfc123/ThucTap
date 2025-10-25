@@ -54,8 +54,9 @@ function useUserUpdateViewModel(id: string) {
         'address.districtId': userResponse.address.districtId ? String(userResponse.address.districtId._id) : null,
         avatar: userResponse.avatar || '',
         status: String(userResponse.status),
-        roles: userResponse.roles.map((role) => String(role._id)),
+        roles: userResponse.roles.map((role) => String((role as any).id)),
       };
+      //console.log('Loaded user for update:', userResponse, formValues);
       form.setValues(formValues);
       setPrevFormValues(formValues);
     }
@@ -134,8 +135,6 @@ function useUserUpdateViewModel(id: string) {
         form.setFieldError('roles', 'Người quản trị không được xóa quyền Người quản trị');
       } else {
         const requestBody: UserRequest = {
-          username: formValues.username,
-          password: formValues.password || null,
           fullname: formValues.fullname,
           email: formValues.email,
           phone: formValues.phone,

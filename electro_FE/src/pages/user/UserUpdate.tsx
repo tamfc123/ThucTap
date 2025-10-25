@@ -61,6 +61,7 @@ function UserUpdate() {
                   required
                   label={UserConfigs.properties.username.label}
                   {...form.getInputProps('username')}
+                  disabled
                 />
               </Grid.Col>
               <Grid.Col xs={6}>
@@ -68,6 +69,8 @@ function UserUpdate() {
                   label={UserConfigs.properties.password.label}
                   {...form.getInputProps('password')}
                   placeholder="Nhập mật khẩu mới hoặc để trống"
+                  disabled
+
                 />
               </Grid.Col>
               <Grid.Col xs={6}>

@@ -7,7 +7,7 @@ export interface AddressResponse extends BaseResponse {
   line: string | null;
   provinceId: ProvinceResponse | null;
   districtId: AddressResponse_DistrictResponse | null;
-  ward: AddressResponse_WardResponse | null;
+  wardId: AddressResponse_WardResponse | null;
 }
 
 type AddressResponse_DistrictResponse = Omit<DistrictResponse, 'province'>;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Badge, ColorSwatch, Group, Highlight, Stack } from '@mantine/core';
+import { Avatar, Badge, ColorSwatch, Group, Highlight, Stack, Button } from '@mantine/core';
 import {
   FilterPanel,
   ManageHeader,
@@ -10,6 +10,7 @@ import {
   ManageTable,
   SearchPanel
 } from 'components';
+import { Plus, Trash } from 'tabler-icons-react';
 import DateUtils from 'utils/DateUtils';
 import { CustomerResponse } from 'models/Customer';
 import { ListResponse } from 'utils/FetchUtils';
@@ -19,6 +20,7 @@ import useResetManagePageState from 'hooks/use-reset-manage-page-state';
 import useInitFilterPanelState from 'hooks/use-init-filter-panel-state';
 import useGetAllApi from 'hooks/use-get-all-api';
 import useAppStore from 'stores/use-app-store';
+import NotifyUtils from 'utils/NotifyUtils';
 
 function CustomerManage() {
   useResetManagePageState();
@@ -183,6 +185,9 @@ function CustomerManage() {
       </tr>
     </>
   );
+  const handleFeatureInProgress = () => {
+    NotifyUtils.simpleFailed('Tính năng này đang được phát triển');
+  };
 
   return (
     <Stack>
@@ -191,11 +196,15 @@ function CustomerManage() {
           titleLinks={CustomerConfigs.manageTitleLinks}
           title={CustomerConfigs.manageTitle}
         />
-        <ManageHeaderButtons
-          listResponse={listResponse}
-          resourceUrl={CustomerConfigs.resourceUrl}
-          resourceKey={CustomerConfigs.resourceKey}
-        />
+        <Group spacing="xs">
+          <Button
+            onClick={handleFeatureInProgress}
+            variant="outline"
+            leftIcon={<Plus />}
+          >
+            Thêm mới
+          </Button>
+        </Group>
       </ManageHeader>
 
       <SearchPanel />

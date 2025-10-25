@@ -15,8 +15,6 @@ export interface UserResponse extends BaseResponse {
 }
 
 export interface UserRequest {
-  username: string;
-  password: string | null;
   fullname: string;
   email: string;
   phone: string;

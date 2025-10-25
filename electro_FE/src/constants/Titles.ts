@@ -10,7 +10,7 @@ const titles: Record<string, string> = {
   '/user/setting/email': 'Cập nhật email',
   '/user/setting/password': 'Đổi mật khẩu',
   '/user/wishlist': 'Sản phẩm yêu thích',
-  '/user/preorder': 'Đặt trước sản phẩm',
+  //'/user/preorder': 'Đặt trước sản phẩm',
   // '/user/review': 'Đánh giá sản phẩm',
   '/user/notification': 'Thông báo',
   '/cart': 'Giỏ hàng',

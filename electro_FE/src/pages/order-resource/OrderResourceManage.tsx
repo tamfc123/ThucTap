@@ -41,7 +41,7 @@ function OrderResourceManage() {
 
   const showedPropertiesFragment = (entity: OrderResourceResponse) => (
     <>
-      <td>{entity.id}</td>
+      <td>{entity._id}</td>
       <td>
         <Highlight highlight={searchToken} highlightColor="blue" size="sm">
           {entity.code}
@@ -76,7 +76,7 @@ function OrderResourceManage() {
     <>
       <tr>
         <td>{OrderResourceConfigs.properties.id.label}</td>
-        <td>{entity.id}</td>
+        <td>{entity._id}</td>
       </tr>
       <tr>
         <td>{OrderResourceConfigs.properties.createdAt.label}</td>

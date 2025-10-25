@@ -31,7 +31,6 @@ function ClientUserNavbar() {
       {/* {navButton('Đánh giá sản phẩm', '/user/review', Star)} */}
       {navButton('Sản phẩm yêu thích', '/user/wishlist', Heart)}
       {navButton('Điểm thưởng', '/user/reward', Award)}
-      {navButton('Đặt trước sản phẩm', '/user/preorder', Alarm)}
       {navButton('Yêu cầu tư vấn', '/user/chat', MessageCircle)}
     </Stack>
   );
